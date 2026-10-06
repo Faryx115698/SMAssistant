@@ -1,194 +1,253 @@
 <?php
+
 session_start();
 
-$error = "";
+require_once "db.php";
 
-$usersFile = "users.json";
+if (isset($_SESSION["user"])) {
+    $role = strtolower(trim($_SESSION["user"]["role"] ?? ""));
 
-$users = [];
+    if (in_array($role, ["admin", "administrator"], true)) {
+        header("Location: dashboard.php");
+        exit;
+    }
 
-if (file_exists($usersFile)) {
-    $users = json_decode(file_get_contents($usersFile), true);
-
-    if (!is_array($users)) {
-        $users = [];
+    if ($role === "patient") {
+        header("Location: patient-home.php");
+        exit;
     }
 }
 
-$loggedInUser = null;
 $message = "";
-$messageType = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $email = $_POST["email"] ?? "";
+
+    $emailOrUsername = trim($_POST["email"] ?? "");
     $password = $_POST["password"] ?? "";
 
-    if ($loggedInUser === null) {
+    if ($emailOrUsername === "" || $password === "") {
 
-        foreach ($users as $user) {
-
-            if (
-                strtolower($user["email"]) === strtolower($email) &&
-                password_verify($password, $user["password"])
-            ) {
-
-                $loggedInUser = $user;
-                break;
-            }
-        }
-    }
-
-
-    if ($loggedInUser !== null) {
-
-        $_SESSION["user"] = [
-            "email" => $loggedInUser["email"],
-            "first_name" => $loggedInUser["first_name"],
-            "last_name" => $loggedInUser["last_name"],
-            "role" => $loggedInUser["role"]
-        ];
-
-        header("Location: home.php");
-        exit;
+        $message = "Please enter your username/email and password.";
 
     } else {
 
-        $error = "Invalid email or password.";
-        $message = $error;
-        $messageType = "error";
+        $adminStmt = $conn->prepare("
+            SELECT admin_id, full_name, username, password, role
+            FROM admin
+            WHERE username = ?
+            LIMIT 1
+        ");
+
+        if ($adminStmt) {
+
+            $adminStmt->bind_param("s", $emailOrUsername);
+            $adminStmt->execute();
+
+            $adminResult = $adminStmt->get_result();
+
+            if ($adminResult->num_rows === 1) {
+
+                $admin = $adminResult->fetch_assoc();
+
+                if (password_verify($password, $admin["password"])) {
+
+                    session_regenerate_id(true);
+
+                    $_SESSION["user"] = [
+                        "admin_id" => $admin["admin_id"],
+                        "full_name" => $admin["full_name"],
+                        "username" => $admin["username"],
+                        "role" => $admin["role"]
+                    ];
+
+                    header("Location: dashboard.php");
+                    exit;
+
+                } else {
+
+                    $message = "Invalid username or password.";
+                }
+
+            } else {
+
+                $userStmt = $conn->prepare("
+                    SELECT
+                        user_id,
+                        first_name,
+                        last_name,
+                        email,
+                        password
+                    FROM user_profile
+                    WHERE email = ?
+                    LIMIT 1
+                ");
+
+                if ($userStmt) {
+
+                    $userStmt->bind_param("s", $emailOrUsername);
+                    $userStmt->execute();
+
+                    $userResult = $userStmt->get_result();
+
+                    if ($userResult->num_rows === 1) {
+
+                        $user = $userResult->fetch_assoc();
+
+                        if (password_verify($password, $user["password"])) {
+
+                            session_regenerate_id(true);
+
+                            $_SESSION["user"] = [
+                                "user_id" => $user["user_id"],
+                                "first_name" => $user["first_name"],
+                                "last_name" => $user["last_name"],
+                                "email" => $user["email"],
+                                "role" => "Patient"
+                            ];
+
+                            header("Location: patient-home.php");
+                            exit;
+
+                        } else {
+
+                            $message = "Invalid email or password.";
+                        }
+
+                    } else {
+
+                        $message = "Invalid username/email or password.";
+                    }
+
+                    $userStmt->close();
+
+                } else {
+
+                    $message = "Unable to process the login request.";
+                }
+            }
+
+            $adminStmt->close();
+
+        } else {
+
+            $message = "Unable to process the login request.";
+        }
     }
 }
+
+$conn->close();
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Join Smart Assistant</title>
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Assistant</title>
     <link rel="stylesheet" href="login.css">
-
+    <script src="darkmode.js"></script>
 </head>
 
 <body>
 
-    <div class="login-box">
+    <header class="navbar">
 
-        <div class="login-topbar">
+        <a href="home.php" class="brand">
+            <img src="logo.png" alt="Barangay Talimundoc Logo">
+            <span>SMART ASSISTANT</span>
+        </a>
 
-            <div class="brand">
+        <nav>
+            <a href="home.php">Home</a>
+            <a href="home.php#about">About</a>
+            <a href="home.php#services">Services</a>
+            <a href="login.php" class="active">Login</a>
+            <a href="signup.php" class="register-btn">Register</a>
+        </nav>
 
-                <img
-                    src="logo.png"
-                    alt="Smart Assistant Logo"
-                    class="brand-logo"
-                >
+    </header>
 
-                <h4>Join Smart Assistant</h4>
+    <main class="login-page">
 
+        <div class="decor decor-top"></div>
+        <div class="decor decor-bottom"></div>
+
+        <section class="intro">
+
+            <div class="intro-small">
+                BARANGAY TALIMUNDOC HEALTH CENTER
             </div>
 
-        </div>
+            <h1>
+                <span>Join</span> SMART<br>ASSISTANT
+            </h1>
 
-        <div class="login-body">
+        </section>
 
-            <p class="terms">
+        <section class="login-container">
 
-                By clicking <strong>'Login'</strong>, you are agreeing
-                to our <strong>terms of service</strong> and acknowledging
-                that you have read our <strong>privacy policy</strong>.
+            <div class="login-card">
 
-            </p>
+                <p class="terms">
+                    By clicking ‘Log in’, you are agree to our
+                    <a href="#">terms of service</a> and acknowledge you have
+                    read our <a href="#">privacy policy</a>
+                </p>
 
-            <form method="POST" action="login.php">
+                <div class="line"></div>
 
-                <div class="form-group">
+                <form method="POST" action="login.php" id="loginForm">
 
-                    <label for="email">
-                        Email
-                    </label>
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            name="email"
+                            id="email"
+                            placeholder="Username or Email"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
 
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="you@example.com"
-                        required
-                        value="<?php echo htmlspecialchars($_POST["email"] ?? ""); ?>"
-                    >
+                    <div class="input-group">
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Password"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
 
-                </div>
+                    <?php if ($message !== ""): ?>
 
-                <div class="form-group">
+                        <div class="message error">
+                            <?php echo htmlspecialchars($message); ?>
+                        </div>
 
-                    <label for="password">
-                        Password
-                    </label>
+                    <?php endif; ?>
 
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="••••••••"
-                        required
-                    >
+                    <button type="submit" class="login-button">
+                        Login
+                    </button>
 
-                </div>
-
-                <button
-                    type="submit"
-                    class="login-btn"
-                >
-                    <p>Login</p>
-                </button>
-
-            </form>
-
-
-            <div
-                class="message <?php echo $messageType; ?>"
-                <?php if ($message === "") echo 'style="display:none;"'; ?>
-            >
-                <?php echo htmlspecialchars($message); ?>
-            </div>
-
-            <div class="links">
-
-                <a
-                    href="#"
-                    class="forgot-link"
-                >
-                    Forgot Password?
-                </a>
+                </form>
 
                 <p class="signup-text">
-
-                    Don't have an account?
-
-                    <a href="signup.php">
-                        Sign up here
-                    </a>
-
+                    Don’t have an account?
+                    <a href="signup.php">Sign up here</a>
                 </p>
 
             </div>
 
-        </div>
+        </section>
 
-    </div>
+    </main>
+
+    <script src="login.js"></script>
 
 </body>
 

@@ -1,320 +1,224 @@
 <?php
 session_start();
 
+$host = "localhost";
+$username = "root";
+$password = "";
+$database = "talimundoc_smart_assistant";
+
+$conn = new mysqli($host, $username, $password, $database);
+
+if ($conn->connect_error) {
+    die("Database connection failed.");
+}
+
 $message = "";
-$messageType = "";
+$messageClass = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
     $fullname = trim($_POST["fullname"] ?? "");
     $email = trim($_POST["email"] ?? "");
-    $password = $_POST["password"] ?? "";
+    $userPassword = $_POST["password"] ?? "";
     $confirmPassword = $_POST["confirm_password"] ?? "";
+    $sex = trim($_POST["sex"] ?? "");
+    $birthDate = trim($_POST["birth_date"] ?? "");
+    $address = trim($_POST["address"] ?? "");
+    $contactNumber = trim($_POST["contact_number"] ?? "");
 
-    if ($fullname === "" || $email === "" || $password === "" || $confirmPassword === "") {
-
+    if ($fullname === "" || $email === "" || $userPassword === "" || $confirmPassword === "") {
         $message = "Please complete all fields.";
-        $messageType = "error";
-
-    }
-
-    elseif ($password !== $confirmPassword) {
-
+        $messageClass = "error";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $message = "Please enter a valid email address.";
+        $messageClass = "error";
+    } elseif ($userPassword !== $confirmPassword) {
         $message = "Passwords do not match.";
-        $messageType = "error";
+        $messageClass = "error";
+    } else {
+        $check = $conn->prepare("SELECT user_id FROM user_profile WHERE email = ?");
+        $check->bind_param("s", $email);
+        $check->execute();
+        $check->store_result();
 
-    }
-
-    elseif (strlen($password) < 6) {
-
-        $message = "Password must be at least 6 characters.";
-        $messageType = "warning";
-
-    }
-
-    else {
-
-        /*
-         * For now, save registered accounts in a JSON file.
-         * This is for your local/demo version.
-         */
-
-        $usersFile = "users.json";
-
-        if (!file_exists($usersFile)) {
-            file_put_contents($usersFile, json_encode([]));
-        }
-
-        $users = json_decode(file_get_contents($usersFile), true);
-
-        if (!is_array($users)) {
-            $users = [];
-        }
-
-        $emailExists = false;
-
-        foreach ($users as $user) {
-
-            if (strtolower($user["email"]) === strtolower($email)) {
-                $emailExists = true;
-                break;
-            }
-        }
-
-        if ($emailExists) {
-
+        if ($check->num_rows > 0) {
             $message = "An account with this email already exists.";
-            $messageType = "error";
-
+            $messageClass = "error";
         } else {
+            $nameParts = preg_split('/\s+/', $fullname);
 
-            // Create new account
-            $users[] = [
-                "email" => $email,
-                "password" => password_hash($password, PASSWORD_DEFAULT),
-                "full_name" => $fullname,
-                "role" => "Patient"
-            ];
+            if (count($nameParts) === 1) {
+                $firstName = $nameParts[0];
+                $lastName = $nameParts[0];
+            } else {
+                $lastName = array_pop($nameParts);
+                $firstName = implode(" ", $nameParts);
+            }
 
-            // Save account
-            file_put_contents(
-                $usersFile,
-                json_encode($users, JSON_PRETTY_PRINT)
+            $hashedPassword = password_hash($userPassword, PASSWORD_DEFAULT);
+
+            $sexValue = $sex !== "" ? $sex : null;
+            $birthDateValue = $birthDate !== "" ? $birthDate : null;
+            $addressValue = $address !== "" ? $address : null;
+            $contactNumberValue = $contactNumber !== "" ? $contactNumber : null;
+
+            $insert = $conn->prepare(
+                "INSERT INTO user_profile (first_name, last_name, sex, birth_date, address, contact_number, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
             );
 
-            $message = "Account created successfully! You can now login.";
-            $messageType = "success";
+            $insert->bind_param(
+                "ssssssss",
+                $firstName,
+                $lastName,
+                $sexValue,
+                $birthDateValue,
+                $addressValue,
+                $contactNumberValue,
+                $email,
+                $hashedPassword
+            );
+
+            if ($insert->execute()) {
+                $message = "Account created successfully.";
+                $messageClass = "success";
+
+                header("refresh:1.5;url=login.php");
+            } else {
+                $message = "Unable to create account.";
+                $messageClass = "error";
+            }
+
+            $insert->close();
         }
+
+        $check->close();
     }
 }
+
+$conn->close();
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join Smart Assistant</title>
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    >
-
     <link rel="stylesheet" href="signup.css">
-
+    <script src="darkmode.js"></script>
 </head>
 
 <body>
 
-    <div class="signup-box">
-
-        <div class="signup-topbar">
-
-            <div class="brand">
-
-                <img
-                    src="logo.png"
-                    alt="Logo"
-                    class="brand-logo"
-                >
-
-                <h4>Join Smart Assistant</h4>
-
-            </div>
-
+    <header class="navbar">
+        <div class="navbar-brand">
+            <img src="logo.png" alt="Smart Assistant Logo">
+            <span>SMART ASSISTANT</span>
         </div>
 
+        <nav>
+            <a href="home.php ">Home</a>
+            <a href="home.php#about">About</a>
+            <a href="home.php#services">Services</a>
+            <a href="login.php">Login</a>
+            <a href="signup.php" class="register-btn">Register</a>
+        </nav>
+    </header>
 
-        <div class="signup-body">
+    <main class="signup-section">
 
-            <p class="terms">
-
-                By clicking <strong>'Sign up'</strong>, you are agreeing
-                to our <strong>terms of service</strong> and acknowledge
-                that you have read our <strong>privacy policy</strong>.
-
-            </p>
-
-
-            <div class="google-signup">
-
-                <button
-                    type="button"
-                    class="google-btn"
-                    onclick="googleSignup()"
-                >
-
-                    <span class="google-icon">
-
-                        <svg viewBox="0 0 24 24">
-
-                            <path
-                                fill="#4285F4"
-                                d="M21.35 12.27c0-.71-.06-1.39-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.95 2.94v2.45h3.16c1.85-1.7 2.9-4.2 2.9-7.22z"
-                            />
-
-                            <path
-                                fill="#34A853"
-                                d="M12 21.75c2.64 0 4.86-.87 6.48-2.36l-3.16-2.45c-.87.58-1.98.92-3.32.92-2.55 0-4.71-1.72-5.49-4.04H3.25v2.53A9.79 9.79 0 0 0 12 21.75z"
-                            />
-
-                            <path
-                                fill="#FBBC05"
-                                d="M6.51 13.82A5.87 5.87 0 0 1 6.2 12c0-.63.11-1.24.31-1.82V7.65H3.25A9.77 9.77 0 0 0 2.2 12c0 1.57.38 3.05 1.05 4.35l3.26-2.53z"
-                            />
-
-                            <path
-                                fill="#EA4335"
-                                d="M12 6.14c1.44 0 2.73.5 3.75 1.48l2.81-2.81C16.85 3.25 14.64 2.25 12 2.25a9.79 9.79 0 0 0-8.75 5.4l3.26 2.53C7.29 7.86 9.45 6.14 12 6.14z"
-                            />
-
-                        </svg>
-
-                    </span>
-
-                    <span class="google-btn-text">
-                        Sign up with Google
-                    </span>
-
-                </button>
-
-            </div>
-
-
-            <div class="or-divider">
-
-                <span></span>
-
-                <p>or</p>
-
-                <span></span>
-
-            </div>
-
-
-            <form method="POST" action="signup.php">
-
-                <div class="form-group">
-
-                    <label for="fullname">
-                        Full Name
-                    </label>
-
-                    <input
-                        type="text"
-                        id="fullname"
-                        name="fullname"
-                        placeholder="Enter your full name"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="email">
-                        Email
-                    </label>
-
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="you@example.com"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="password">
-                        Password
-                    </label>
-
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="••••••••"
-                        required
-                    >
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="confirm-password">
-                        Confirm Password
-                    </label>
-
-                    <input
-                        type="password"
-                        id="confirm-password"
-                        name="confirm_password"
-                        placeholder="••••••••"
-                        required
-                    >
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="signup-btn"
-                >
-                    Sign Up
-                </button>
-
-            </form>
-
-
-            <?php if ($message !== ""): ?>
-
-                <div class="message <?php echo $messageType; ?>">
-
-                    <?php echo htmlspecialchars($message); ?>
-
-                </div>
-
-            <?php endif; ?>
-
-
-            <div class="links">
-
-                <p class="signup-text">
-
-                    Already have an account?
-
-                    <a href="login.php">
-                        Login here
-                    </a>
-
+        <div class="signup-left">
+            <div class="signup-title">
+                <span>Join</span>
+                <h1>SMART ASSISTANT</h1>
+                <p>
+                    <span>BARANGAY</span>
+                    <span>TALIMUNDOC</span>
+                    <span>HEALTH</span>
+                    <span>CENTER</span>
                 </p>
-
             </div>
-
         </div>
 
-    </div>
+        <div class="signup-right">
+            <div class="signup-box">
 
+                <div class="signup-form">
 
-    <script
-        src="https://accounts.google.com/gsi/client"
-        async
-        defer
-    ></script>
+                    <div class="terms">
+                        By clicking 'Sign up', you are agree to our
+                        <a href="#">terms of service</a> and acknowledge you have read our
+                        <a href="#">privacy policy</a>
+                    </div>
+
+                    <button type="button" class="google-btn" onclick="googleSignup()">
+                        <svg class="google-icon" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#4285F4"
+                                d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z" />
+                            <path fill="#34A853"
+                                d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z" />
+                            <path fill="#FBBC05"
+                                d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z" />
+                            <path fill="#EA4335"
+                                d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z" />
+                        </svg>
+                        <span>Sign up with Google</span>
+                    </button>
+
+                    <div class="divider">
+                        <span></span>
+                        <p>or</p>
+                        <span></span>
+                    </div>
+
+                    <?php if ($message !== ""): ?>
+                        <div class="message <?php echo $messageClass; ?>">
+                            <?php echo htmlspecialchars($message); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form method="POST" action="signup.php">
+
+                        <input type="text" name="fullname" placeholder="Fullname" autocomplete="name" required>
+
+                        <select name="sex">
+                            <option value="" disabled selected>Sex</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+
+                        <input type="date" name="birth_date" placeholder="Birth Date">
+
+                        <input type="text" name="address" placeholder="Address" autocomplete="street-address">
+
+                        <input type="tel" name="contact_number" placeholder="Contact Number" autocomplete="tel">
+
+                        <input type="email" name="email" placeholder="Email" autocomplete="email" required>
+
+                        <input type="password" name="password" placeholder="Password" autocomplete="new-password"
+                            required>
+
+                        <input type="password" name="confirm_password" placeholder="Confirm Password"
+                            autocomplete="new-password" required>
+
+                        <button type="submit" class="signup-btn">
+                            Sign up
+                        </button>
+
+                    </form>
+
+                    <div class="login-link">
+                        Already have an account?
+                        <a href="login.php">Login</a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </main>
 
     <script src="signup.js"></script>
 

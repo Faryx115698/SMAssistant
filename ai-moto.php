@@ -1,0 +1,440 @@
+<?php
+session_start();
+
+if (!isset($_SESSION["user"])) {
+    header("Location: login.php");
+    exit();
+}
+
+include "sidebar.php";
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Moto</title>
+    <link rel="stylesheet" href="ai-moto.css">
+    <script src="darkmode.js"></script>
+</head>
+
+<body>
+
+    <main class="main-content">
+
+        <header class="page-header">
+            <div>
+                <h1>AI Moto</h1>
+                <p>Your intelligent assistant for fast insights, smart suggestions, and everyday help.</p>
+            </div>
+
+            <div class="header-right">
+                <div class="date-notification">
+                    <span>May 19, 2026</span>
+                    <span>|</span>
+                    <span>Saturday</span>
+                    <i class="fa-solid fa-bell"></i>
+                </div>
+
+                <div class="admin-profile">
+                    <div class="admin-text">
+                        <small>You are logged in as</small>
+                        <strong>
+                            <?php
+                            echo htmlspecialchars(
+                                $_SESSION["user"]["full_name"]
+                                ?? "ADMIN CYRON"
+                            );
+                            ?>
+                        </strong>
+                        <small>Administrator</small>
+                    </div>
+
+                    <div class="admin-photo">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-down profile-arrow"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="ai-tools">
+
+            <div class="tool-card purple">
+                <div class="tool-icon">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <h3>Ask AI Moto</h3>
+                <p>Ask questions about health, appointments, reports, and more.</p>
+                <button onclick="focusChat()">Start Chat</button>
+            </div>
+
+            <div class="tool-card green">
+                <div class="tool-icon">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h3>Smart Insights</h3>
+                <p>Get useful patterns and insights from health center data.</p>
+                <button onclick="alert('Smart Insights opened.')">View Insights</button>
+            </div>
+
+            <div class="tool-card orange">
+                <div class="tool-icon">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </div>
+                <h3>Predict & Alert</h3>
+                <p>AI predicts trends and sends useful alerts.</p>
+                <button onclick="alert('Prediction and alerts opened.')">View Alerts</button>
+            </div>
+
+            <div class="tool-card blue">
+                <div class="tool-icon">
+                    <i class="fa-solid fa-microphone"></i>
+                </div>
+                <h3>Voice Assistant</h3>
+                <p>Use voice commands to navigate and search.</p>
+                <button onclick="startVoice()">Start Voice</button>
+            </div>
+
+            <div class="tool-card pink">
+                <div class="tool-icon">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h3>Help Center</h3>
+                <p>Learn how to use your AI assistant.</p>
+                <button onclick="alert('Help Center opened.')">Learn More</button>
+            </div>
+
+            <div class="tool-card teal">
+                <div class="tool-icon">
+                    <i class="fa-solid fa-gear"></i>
+                </div>
+                <h3>AI Settings</h3>
+                <p>Customize AI Moto preferences.</p>
+                <button onclick="alert('AI Settings opened.')">Manage</button>
+            </div>
+
+        </section>
+
+        <section class="ai-grid">
+
+            <div class="card chat-card">
+                <div class="card-title">
+                    <h2>Chat with AI Moto</h2>
+                </div>
+
+                <div class="robot-area">
+                    <div class="robot-placeholder">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+
+                    <div class="robot-message">
+                        Hello Admin! How can I help you today?
+                    </div>
+                </div>
+
+                <h3 class="sub-title">Suggested Questions</h3>
+
+                <button class="suggestion" onclick="askQuestion('Show immunization coverage this month')">
+                    Show immunization coverage this month
+                </button>
+
+                <button class="suggestion" onclick="askQuestion('List patients with missed appointments')">
+                    List patients with missed appointments
+                </button>
+
+                <button class="suggestion" onclick="askQuestion('Which medicines are running low?')">
+                    Which medicines are running low?
+                </button>
+
+                <button class="suggestion" onclick="askQuestion('Generate report on TB DOTS cases')">
+                    Generate report on TB DOTS cases
+                </button>
+
+                <button class="suggestion" onclick="askQuestion('Summarize today’s consultations')">
+                    Summarize today's consultations
+                </button>
+
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Type your question...">
+                    <button onclick="sendMessage()">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="middle-column">
+
+                <div class="card insights-card">
+                    <div class="card-title">
+                        <h2>AI Insights (This Month)</h2>
+                        <a href="#">View All Insights</a>
+                    </div>
+
+                    <div class="insight-grid">
+
+                        <div class="insight-box green-box">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Immunization Coverage</span>
+                            <strong>74%</strong>
+                            <small>+4% from last month</small>
+                        </div>
+
+                        <div class="insight-box orange-box">
+                            <i class="fa-solid fa-box"></i>
+                            <span>Med. Appointments</span>
+                            <strong>18</strong>
+                            <small>↓ 6 from last month</small>
+                        </div>
+
+                        <div class="insight-box blue-box">
+                            <i class="fa-solid fa-user-clock"></i>
+                            <span>TB DOTS Completion</span>
+                            <strong>89%</strong>
+                            <small>+3% from last month</small>
+                        </div>
+
+                        <div class="insight-box purple-box">
+                            <i class="fa-solid fa-pills"></i>
+                            <span>Medicine Stock Risk</span>
+                            <strong>7</strong>
+                            <small>Low stock items</small>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card recommendations-card">
+                    <div class="card-title">
+                        <div>
+                            <h2>AI Recommendations</h2>
+                            <small>Based on recent health center data</small>
+                        </div>
+                        <a href="#">View All</a>
+                    </div>
+
+                    <div class="recommendation">
+                        <i class="fa-solid fa-user-doctor"></i>
+                        <div>
+                            <strong>Increase maternal education efforts</strong>
+                            <p>Maternal health counseling is lower than target.</p>
+                        </div>
+                        <span>High Priority</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+
+                    <div class="recommendation">
+                        <i class="fa-solid fa-users"></i>
+                        <div>
+                            <strong>Schedule follow-ups for patients</strong>
+                            <p>Several patients have upcoming appointments.</p>
+                        </div>
+                        <span>Important</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+
+                    <div class="recommendation">
+                        <i class="fa-solid fa-pills"></i>
+                        <div>
+                            <strong>Restock medicine inventory</strong>
+                            <p>Several medicines are below the reorder level.</p>
+                        </div>
+                        <span>Action Needed</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+
+                    <div class="recommendation">
+                        <i class="fa-solid fa-lungs"></i>
+                        <div>
+                            <strong>Continue monitoring TB DOTS cases</strong>
+                            <p>Monitor patients who require regular follow-ups.</p>
+                        </div>
+                        <span>On Track</span>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="right-column">
+
+                <div class="card alerts-card">
+                    <div class="card-title">
+                        <h2>Smart Alerts</h2>
+                        <a href="#">View All</a>
+                    </div>
+
+                    <div class="alert-item red">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div>
+                            <strong>High Risk Pregnancy</strong>
+                            <p>5 registered cases need close monitoring.</p>
+                        </div>
+                        <small>1 hr ago</small>
+                    </div>
+
+                    <div class="alert-item yellow">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div>
+                            <strong>Need TB DOTS</strong>
+                            <p>3 patients have missed doses recently.</p>
+                        </div>
+                        <small>30 mins ago</small>
+                    </div>
+
+                    <div class="alert-item blue-alert">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <div>
+                            <strong>Upcoming Stock-Out</strong>
+                            <p>Two medicines will run out soon.</p>
+                        </div>
+                        <small>1 hr ago</small>
+                    </div>
+
+                    <div class="alert-item green-alert">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <div>
+                            <strong>Report Ready</strong>
+                            <p>Monthly health report is ready.</p>
+                        </div>
+                        <small>2 hrs ago</small>
+                    </div>
+                </div>
+
+                <div class="card quick-ai">
+                    <div class="card-title">
+                        <h2>Quick Actions with AI</h2>
+                    </div>
+
+                    <div class="quick-grid">
+                        <button>
+                            <i class="fa-solid fa-file-medical"></i>
+                            Generate Reports
+                        </button>
+
+                        <button>
+                            <i class="fa-solid fa-chart-column"></i>
+                            Data Analysis
+                        </button>
+
+                        <button>
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                            Predict Trends
+                        </button>
+
+                        <button>
+                            <i class="fa-solid fa-bell"></i>
+                            Smart Reminders
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="bottom-grid">
+
+            <div class="card voice-card">
+                <h2>Voice Command</h2>
+
+                <div class="voice-icon">
+                    <i class="fa-solid fa-microphone"></i>
+                </div>
+
+                <p>Click the microphone and say a command.</p>
+
+                <button onclick="startVoice()">Start Voice Command</button>
+            </div>
+
+            <div class="card trends-card">
+                <div class="card-title">
+                    <h2>Trends Overview (AI Analysis)</h2>
+                </div>
+
+                <div class="fake-chart">
+                    <div class="chart-line line-one"></div>
+                    <div class="chart-line line-two"></div>
+                    <div class="chart-line line-three"></div>
+                </div>
+
+                <div class="chart-labels">
+                    <span>Dec</span>
+                    <span>Jan</span>
+                    <span>Feb</span>
+                    <span>Mar</span>
+                    <span>Apr</span>
+                    <span>May</span>
+                </div>
+            </div>
+
+            <div class="card topics-card">
+                <div class="card-title">
+                    <h2>Top Health Topics (AI Detected)</h2>
+                    <a href="#">View All</a>
+                </div>
+
+                <ol>
+                    <li>Maternal Health Counseling <span>324 queries</span></li>
+                    <li>Immunization <span>287 queries</span></li>
+                    <li>Mental Health Awareness <span>238 queries</span></li>
+                    <li>Medicine Care <span>188 queries</span></li>
+                    <li>Hypertension & Diabetes <span>165 queries</span></li>
+                </ol>
+            </div>
+
+            <div class="card tips-card">
+                <h2>AI Moto Tips</h2>
+
+                <p><i class="fa-solid fa-check"></i> Use specific questions for better results.</p>
+                <p><i class="fa-solid fa-check"></i> Use voice commands for quick access.</p>
+                <p><i class="fa-solid fa-check"></i> Check reports regularly.</p>
+                <p><i class="fa-solid fa-check"></i> AI is for support and not diagnosis.</p>
+
+                <div class="tip-robot">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+            </div>
+
+        </section>
+
+        <div class="disclaimer">
+            <i class="fa-solid fa-circle-info"></i>
+            AI Moto uses information to provide insights and helpful suggestions. It does not replace professional
+            medical advice.
+        </div>
+
+    </main>
+
+    <script>
+        function focusChat() {
+            document.getElementById("chatInput").focus();
+        }
+
+        function askQuestion(question) {
+            document.getElementById("chatInput").value = question;
+            document.getElementById("chatInput").focus();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById("chatInput");
+
+            if (input.value.trim() === "") {
+                return;
+            }
+
+            alert("AI Moto received: " + input.value);
+            input.value = "";
+        }
+
+        function startVoice() {
+            alert("Voice Assistant is ready.");
+        }
+    </script>
+
+</body>
+
+</html>
