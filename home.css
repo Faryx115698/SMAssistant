@@ -1,0 +1,295 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #eef0ff;
+    min-height: 100vh;
+    display: flex;
+}
+
+.sidebar {
+    width: 280px;
+    min-height: 100vh;
+    background: #063083;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.brand {
+    height: 95px;
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    background: #063083;
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    margin-right: 12px;
+}
+
+.brand-text h1 {
+    color: white;
+    font-size: 21px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1;
+}
+
+.brand-text h2 {
+    color: #00d982;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-top: 5px;
+}
+
+.menu {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.menu-section {
+    width: 100%;
+}
+
+.menu-title {
+    width: 100%;
+    padding: 15px 18px;
+    border: none;
+    background: #1647b7;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: left;
+    cursor: pointer;
+}
+
+.menu-title:hover {
+    background: #2055ca;
+}
+
+.submenu {
+    display: none;
+    background: #063083;
+}
+
+.submenu.active {
+    display: block;
+}
+
+.submenu a {
+    display: block;
+    padding: 13px 22px;
+    color: white;
+    background: #063083;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    border-left: 4px solid transparent;
+}
+
+.submenu a:hover {
+    background: #193f86;
+    border-left-color: #00d982;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    margin-top: auto;
+    background: #00d982;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.logout-btn:hover {
+    background: #00c675;
+}
+
+.main {
+    flex: 1;
+    min-width: 0;
+    min-height: 100vh;
+    background: #eef0ff;
+}
+
+.topbar {
+    height: 55px;
+    display: flex;
+    align-items: center;
+    padding: 0 22px;
+    background: #00d982;
+    color: white;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.home-content {
+    padding: 28px;
+    min-height: calc(100vh - 55px);
+}
+
+.home-card {
+    width: 100%;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    gap: 45px;
+    padding: 40px;
+    background: #dfe3ff;
+    border-radius: 20px;
+}
+
+.home-logo {
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #cbd1ff;
+    border-radius: 50%;
+}
+
+.home-logo img {
+    width: 125px;
+    height: 125px;
+    object-fit: contain;
+}
+
+.home-text {
+    max-width: 800px;
+}
+
+.home-text h1 {
+    margin-bottom: 12px;
+    color: #111;
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.home-text h3 {
+    margin-bottom: 18px;
+    color: #1647b7;
+    font-size: 18px;
+}
+
+.home-text p {
+    margin-bottom: 14px;
+    color: #303030;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.welcome-card {
+    margin-top: 18px;
+    padding: 25px 30px;
+    background: #cbd1ff;
+    border-radius: 18px;
+}
+
+.welcome-card h2 {
+    margin-bottom: 10px;
+    color: #111;
+    font-size: 21px;
+}
+
+.welcome-card p {
+    color: #303030;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.menu::-webkit-scrollbar {
+    width: 7px;
+}
+
+.menu::-webkit-scrollbar-track {
+    background: #063083;
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background: #36528d;
+    border-radius: 10px;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 230px;
+    }
+
+    .home-card {
+        gap: 25px;
+        padding: 30px;
+    }
+
+    .home-logo {
+        width: 140px;
+        height: 140px;
+    }
+
+    .home-logo img {
+        width: 95px;
+        height: 95px;
+    }
+
+    .home-text h1 {
+        font-size: 30px;
+    }
+}
+
+@media (max-width: 650px) {
+    body {
+        display: block;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+    }
+
+    .menu {
+        max-height: 400px;
+    }
+
+    .logout-btn {
+        height: 45px;
+    }
+
+    .home-content {
+        padding: 18px;
+    }
+
+    .home-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 30px 20px;
+    }
+
+    .home-logo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .home-logo img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .home-text h1 {
+        font-size: 28px;
+    }
+}

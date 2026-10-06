@@ -1,0 +1,16 @@
+[
+    {
+        "email": "admin@smartassistant.com",
+        "password": "$2y$10$Qcd3slhdqSbrAGEQmiVKge8VmqbM7aeoTivHy2bUUZcXK1LjhocOu",
+        "first_name": "Admin",
+        "last_name": "",
+        "role": "Patient"
+    },
+    {
+        "email": "evanarose1106@gmail.com",
+        "password": "$2y$10$QVpMTBZbgmuYAvOZjO\/0u.iRgY0F6TZ0w1EhGSFbVmtmg8SznGehK",
+        "first_name": "Evana",
+        "last_name": "Rose De Belen",
+        "role": "Patient"
+    }
+]
