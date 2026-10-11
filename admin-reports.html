@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin & Reports</title>
+
+    <link rel="stylesheet" href="admin-reports.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="darkmode.js"></script>
+</head>
+
+<body>
+
+<div id="sidebar-container"></div>
+
+<main class="main-content">
+
+    <header class="page-header">
+
+        <div>
+            <h1>Admin & Reports</h1>
+            <p>Manage system administration, generate reports, analyze data, and monitor system activity.</p>
+        </div>
+
+        <div class="header-right">
+
+            <div class="admin-profile">
+
+                <div class="admin-text">
+                    <small>You are logged in as</small>
+
+                    <strong>
+                        <span class="admin-name">ADMIN</span>
+                    </strong>
+
+                    <span>Administrator</span>
+                </div>
+
+                <div class="admin-photo">
+                    <img src="icons/admin.png" alt="Admin">
+                </div>
+
+            </div>
+
+            <button class="ask-ai" type="button">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                Ask AI Moto
+            </button>
+
+        </div>
+
+    </header>
+
+    <section class="summary-cards">
+
+        <div class="summary-card purple">
+            <div class="summary-icon">
+                <img src="icons/total users.png" alt="Total Users">
+            </div>
+
+            <div class="summary-content">
+                <span>TOTAL USERS</span>
+                <strong>24</strong>
+                <small>System users</small>
+            </div>
+        </div>
+
+        <div class="summary-card green">
+            <div class="summary-icon">
+                <img src="icons/total patients.png" alt="Total Patients">
+            </div>
+
+            <div class="summary-content">
+                <span>TOTAL PATIENTS</span>
+                <strong>3,482</strong>
+                <small>Registered patients</small>
+            </div>
+        </div>
+
+        <div class="summary-card orange">
+            <div class="summary-icon">
+                <img src="icons/total appointments.png" alt="Total Appointments">
+            </div>
+
+            <div class="summary-content">
+                <span>TOTAL APPOINTMENTS</span>
+                <strong>1,256</strong>
+                <small>This month</small>
+            </div>
+        </div>
+
+        <div class="summary-card blue">
+            <div class="summary-icon">
+                <img src="icons/report generated.png" alt="Reports">
+            </div>
+
+            <div class="summary-content">
+                <span>REPORT GENERATED</span>
+                <strong>56</strong>
+                <small>This month</small>
+            </div>
+        </div>
+
+        <div class="summary-card red">
+            <div class="summary-icon">
+                <img src="icons/system status.png" alt="System Status">
+            </div>
+
+            <div class="summary-content">
+                <span>SYSTEM STATUS</span>
+                <strong class="status-text">All Systems Operational</strong>
+                <small>From 56 incidents</small>
+            </div>
+        </div>
+
+    </section>
+
+    <nav class="report-tabs">
+
+        <button class="report-tab active" type="button" data-tab="user-management">
+            User Management
+        </button>
+
+        <button class="report-tab" type="button" data-tab="reports">
+            Reports
+        </button>
+
+        <button class="report-tab" type="button" data-tab="analytics">
+            Data Analytics
+        </button>
+
+        <button class="report-tab" type="button" data-tab="logs">
+            System Logs
+        </button>
+
+        <button class="report-tab" type="button" data-tab="backup">
+            Backup & Restore
+        </button>
+
+        <button class="report-tab" type="button" data-tab="audit">
+            Audit Trail
+        </button>
+
+        <button class="report-tab" type="button" data-tab="settings">
+            Settings
+        </button>
+
+    </nav>
+
+    <section class="report-layout">
+
+        <div class="left-column">
+
+            <div class="card report-categories">
+
+                <div class="card-title">
+                    <h2>REPORT CATEGORIES</h2>
+                </div>
+
+                <button class="category-item active" type="button">
+                    <i class="fa-solid fa-chart-column"></i>
+                    Overview
+                </button>
+
+                <button class="category-item" type="button">
+                    <i class="fa-solid fa-folder"></i>
+                    Patients Reports
+                </button>
+
+                <button class="category-item" type="button">
+                    <i class="fa-solid fa-notes-medical"></i>
+                    Health Programs
+                </button>
+
+                <button class="category-item" type="button">
+                    <i class="fa-solid fa-box"></i>
+                    Inventory Reports
+                </button>
+
+                <button class="category-item" type="button">
+                    <i class="fa-solid fa-money-bill"></i>
+                    Financial Reports
+                </button>
+
+                <button class="category-item" type="button">
+                    <i class="fa-solid fa-gears"></i>
+                    Operational Reports
+                </button>
+
+                <button class="category-item" type="button">
+                    <i class="fa-solid fa-comments"></i>
+                    Communication Reports
+                </button>
+
+                <button class="category-item" type="button">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                    Custom Reports
+                </button>
+
+            </div>
+
+            <div class="card report-filter">
+
+                <div class="card-title">
+                    <h2>REPORT FILTER</h2>
+                </div>
+
+                <label>Date Range</label>
+
+                <div class="input-box">
+                    <span>May 1 - May 10, 2026</span>
+                    <i class="fa-regular fa-calendar"></i>
+                </div>
+
+                <label>Location</label>
+
+                <select>
+                    <option>All Locations</option>
+                    <option>Barangay Talimundoc</option>
+                </select>
+
+                <label>Program</label>
+
+                <select>
+                    <option>All Programs</option>
+                    <option>Immunization</option>
+                    <option>Maternal Health</option>
+                    <option>Infant & Child Health</option>
+                    <option>TB DOTS</option>
+                </select>
+
+                <button class="apply-button" type="button">
+                    Apply Filter
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="center-column">
+
+            <div class="card report-overview">
+
+                <div class="card-title overview-title">
+                    <h2>Report Overview</h2>
+
+                    <button class="view-all" type="button">
+                        View All
+                    </button>
+                </div>
+
+                <div class="overview-cards">
+
+                    <div class="overview-card">
+                        <span>Total Consultations</span>
+                        <strong>892</strong>
+                        <small class="positive">↑ 12.5%</small>
+                        <small>vs last month</small>
+                    </div>
+
+                    <div class="overview-card">
+                        <span>Immunization Given</span>
+                        <strong>615</strong>
+                        <small class="positive">↑ 6.3%</small>
+                        <small>vs last month</small>
+                    </div>
+
+                    <div class="overview-card green-box">
+                        <span>Maternal Check-ups</span>
+                        <strong>146</strong>
+                        <small class="positive">↑ 15.2%</small>
+                        <small>vs last month</small>
+                    </div>
+
+                    <div class="overview-card pink-box">
+                        <span>Follow-Up Visits</span>
+                        <strong>28</strong>
+                        <small class="negative">↓ 3.4%</small>
+                        <small>vs last month</small>
+                    </div>
+
+                    <div class="overview-card purple-box">
+                        <span>Health Education Sessions</span>
+                        <strong>34</strong>
+                        <small class="positive">↑ 15.2%</small>
+                        <small>vs last month</small>
+                    </div>
+
+                </div>
+
+                <div class="analytics-row">
+
+                    <div class="chart-card">
+
+                        <div class="chart-header">
+                            <h3>Consultation Trend</h3>
+
+                            <select>
+                                <option>Daily</option>
+                                <option>Weekly</option>
+                                <option>Monthly</option>
+                            </select>
+                        </div>
+
+                        <div class="legend">
+
+                            <span>
+                                <i class="dot blue-dot"></i>
+                                Total Visits
+                            </span>
+
+                            <span>
+                                <i class="dot gray-dot"></i>
+                                Last Month
+                            </span>
+
+                        </div>
+
+                        <div class="line-chart">
+
+                            <div class="y-labels">
+                                <span>200</span>
+                                <span>150</span>
+                                <span>100</span>
+                                <span>50</span>
+                                <span>0</span>
+                            </div>
+
+                            <div class="chart-area">
+
+                                <div class="grid-line line-1"></div>
+                                <div class="grid-line line-2"></div>
+                                <div class="grid-line line-3"></div>
+                                <div class="grid-line line-4"></div>
+                                <div class="grid-line line-5"></div>
+
+                                <svg viewBox="0 0 500 210" preserveAspectRatio="none">
+
+                                    <polyline
+                                        points="20,145 110,82 200,76 290,94 380,70 470,82"
+                                        fill="none"
+                                        stroke="#0759b7"
+                                        stroke-width="3"
+                                    />
+
+                                    <polyline
+                                        points="20,170 110,148 200,143 290,154 380,140 470,112"
+                                        fill="none"
+                                        stroke="#a9b1bc"
+                                        stroke-width="2"
+                                        stroke-dasharray="7 6"
+                                    />
+
+                                    <circle cx="20" cy="145" r="4"/>
+                                    <circle cx="110" cy="82" r="4"/>
+                                    <circle cx="200" cy="76" r="4"/>
+                                    <circle cx="290" cy="94" r="4"/>
+                                    <circle cx="380" cy="70" r="4"/>
+                                    <circle cx="470" cy="82" r="4"/>
+
+                                </svg>
+
+                                <div class="x-labels">
+                                    <span>May 1</span>
+                                    <span>May 3</span>
+                                    <span>May 5</span>
+                                    <span>May 7</span>
+                                    <span>May 9</span>
+                                    <span>May 10</span>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="chart-card donut-card">
+
+                        <h3>Report by Category</h3>
+
+                        <div class="donut-content">
+
+                            <div class="donut-chart"></div>
+
+                            <div class="donut-legend">
+
+                                <span>
+                                    <i class="legend-dot blue"></i>
+                                    Patient Reports
+                                    <b>32%</b>
+                                </span>
+
+                                <span>
+                                    <i class="legend-dot green"></i>
+                                    Health Programs
+                                    <b>24%</b>
+                                </span>
+
+                                <span>
+                                    <i class="legend-dot orange"></i>
+                                    Inventory
+                                    <b>18%</b>
+                                </span>
+
+                                <span>
+                                    <i class="legend-dot purple"></i>
+                                    Financial
+                                    <b>12%</b>
+                                </span>
+
+                                <span>
+                                    <i class="legend-dot red"></i>
+                                    Operations
+                                    <b>8%</b>
+                                </span>
+
+                                <span>
+                                    <i class="legend-dot gray"></i>
+                                    Others
+                                    <b>6%</b>
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card generated-reports">
+
+                <div class="card-title">
+                    <h2>Recently Generated Reports</h2>
+                </div>
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Report Name</th>
+                                <th>Category</th>
+                                <th>Date Generated</th>
+                                <th>Generated By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Weekly Consultation Report</td>
+                                <td>Patient Reports</td>
+                                <td>May 10, 2026 10:45 AM</td>
+                                <td>Admin</td>
+                                <td>
+                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
+                                    <button type="button"><i class="fa-solid fa-download"></i></button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Immunization Coverage Report</td>
+                                <td>Health Programs</td>
+                                <td>May 10, 2026 09:30 AM</td>
+                                <td>Admin Cyron</td>
+                                <td>
+                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
+                                    <button type="button"><i class="fa-solid fa-download"></i></button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Inventory Stock Report</td>
+                                <td>Inventory Reports</td>
+                                <td>May 10, 2026 08:40 AM</td>
+                                <td>Admin</td>
+                                <td>
+                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
+                                    <button type="button"><i class="fa-solid fa-download"></i></button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Financial Summary Report</td>
+                                <td>Financial Reports</td>
+                                <td>May 9, 2026 04:20 PM</td>
+                                <td>Admin</td>
+                                <td>
+                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
+                                    <button type="button"><i class="fa-solid fa-download"></i></button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>TB DOTS Monitoring Report</td>
+                                <td>Health Programs</td>
+                                <td>May 9, 2026 03:15 PM</td>
+                                <td>BHW Admin</td>
+                                <td>
+                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
+                                    <button type="button"><i class="fa-solid fa-download"></i></button>
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <button class="view-more" type="button">
+                    View all reports
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="right-column">
+
+            <div class="card shortcuts-card">
+
+                <div class="card-title">
+                    <h2>System Shortcuts</h2>
+                </div>
+
+                <div class="shortcut-grid">
+
+                    <button type="button">
+                        <div class="shortcut-icon">
+                            <img src="icons/add new user.png" alt="">
+                        </div>
+                        <span>Add New User</span>
+                    </button>
+
+                    <button type="button">
+                        <div class="shortcut-icon">
+                            <img src="icons/user roles.png" alt="">
+                        </div>
+                        <span>User Roles</span>
+                    </button>
+
+                    <button type="button">
+                        <div class="shortcut-icon">
+                            <img src="icons/report builder.png" alt="">
+                        </div>
+                        <span>Report Builder</span>
+                    </button>
+
+                    <button type="button">
+                        <div class="shortcut-icon">
+                            <img src="icons/data export.png" alt="">
+                        </div>
+                        <span>Data Export</span>
+                    </button>
+
+                    <button type="button">
+                        <div class="shortcut-icon">
+                            <img src="icons/backup.png" alt="">
+                        </div>
+                        <span>Database Backup</span>
+                    </button>
+
+                    <button type="button">
+                        <div class="shortcut-icon">
+                            <img src="icons/system settings.png" alt="">
+                        </div>
+                        <span>System Settings</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="card activity-card">
+
+                <div class="card-title">
+                    <h2>System Activity</h2>
+                </div>
+
+                <div class="activity-item">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>New Patient Registered</span>
+                    <strong>142</strong>
+                    <small>↑ 7.8%</small>
+                </div>
+
+                <div class="activity-item">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Appointments Scheduled</span>
+                    <strong>1,092</strong>
+                    <small>↑ 4.2%</small>
+                </div>
+
+                <div class="activity-item">
+                    <i class="fa-solid fa-pills"></i>
+                    <span>Medicine Issued</span>
+                    <strong>1,248</strong>
+                    <small>↑ 2.6%</small>
+                </div>
+
+                <div class="activity-item">
+                    <i class="fa-solid fa-message"></i>
+                    <span>Feedback Received</span>
+                    <strong>76</strong>
+                    <small>↑ 4.8%</small>
+                </div>
+
+            </div>
+
+            <div class="card system-info">
+
+                <div class="card-title">
+                    <h2>System Information</h2>
+                </div>
+
+                <div class="info-row">
+                    <span>System Version</span>
+                    <strong>v2.3.1</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Last Backup</span>
+                    <strong>May 10, 2026 · 2:00 AM</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Database Size</span>
+                    <strong>125 MB</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Uptime</span>
+                    <strong>14 days, 7 hours</strong>
+                </div>
+
+                <div class="info-row">
+                    <span>Environment</span>
+                    <strong>Production</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <div class="bottom-notice">
+
+        <i class="fa-solid fa-circle-info"></i>
+
+        <span>
+            Use the reports and analytics to monitor performance, improve services, and make data-driven decisions.
+        </span>
+
+    </div>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const tabs = document.querySelectorAll(".report-tab");
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+
+            tabs.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            this.classList.add("active");
+        });
+    });
+
+    const categories = document.querySelectorAll(".category-item");
+
+    categories.forEach(function (category) {
+        category.addEventListener("click", function () {
+
+            categories.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            this.classList.add("active");
+        });
+    });
+
+});
+</script>
+
+<script src="sidebar.js"></script>
+<script src="auth-guard.js"></script>
+</body>
+</html>

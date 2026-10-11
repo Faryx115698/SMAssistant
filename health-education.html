@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Education &amp; Seminars - Barangay Talimundoc Health Center</title>
+    <link rel="stylesheet" href="health-education.css">
+    <link rel="stylesheet" href="darkmode.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth-guard.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="darkmode.js"></script>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h1>Health Education &amp; Seminars</h1>
+                <p>Community health literacy, preventative wellness campaigns, maternal lectures, and IEC materials.</p>
+            </div>
+            <div class="header-right">
+                <div class="admin-profile">
+                    <div class="admin-text">
+                        <small>You are logged in as</small>
+                        <strong class="admin-name">ADMINISTRATOR</strong>
+                    </div>
+                    <div class="admin-photo">
+                        <img src="icons/admin.png" alt="Admin" onerror="this.src='logo.png'">
+                    </div>
+                </div>
+                <button class="ask-ai" onclick="location.href='ai-moto.html'">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Ask AI Moto
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Grid -->
+        <section class="summary-grid">
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div>
+                    <h3>Seminars Conducted</h3>
+                    <strong id="statSeminars">24</strong>
+                    <small>Year to date</small>
+                </div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                <div>
+                    <h3>Residents Reached</h3>
+                    <strong id="statAttendees">1,480</strong>
+                    <small>Participants logged</small>
+                </div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                <div>
+                    <h3>Upcoming Sessions</h3>
+                    <strong id="statUpcoming">3</strong>
+                    <small>Next 30 days</small>
+                </div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-icon"><i class="fa-solid fa-file-invoice"></i></div>
+                <div>
+                    <h3>IEC Distributed</h3>
+                    <strong id="statIec">3,250</strong>
+                    <small>Flyers &amp; Pamphlets</small>
+                </div>
+            </div>
+            <div class="stat-card teal">
+                <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
+                <div>
+                    <h3>Satisfaction Score</h3>
+                    <strong>4.9 / 5.0</strong>
+                    <small>Community rating</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="record-tabs">
+            <button class="record-tab active" data-tab="seminars">Campaigns &amp; Seminars</button>
+            <button class="record-tab" data-tab="iec">IEC Library &amp; Materials</button>
+            <button class="record-tab" data-tab="attendance">Purok Attendance Logs</button>
+        </nav>
+
+        <!-- TAB 1: Campaigns & Seminars -->
+        <section class="tab-content active" id="seminars">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Community Health Sessions &amp; Assemblies</h2>
+                    <button class="btn-primary" onclick="openSeminarModal()">
+                        <i class="fa-solid fa-plus"></i> Schedule New Seminar
+                    </button>
+                </div>
+                <div class="seminar-grid" id="seminarGrid">
+                    <!-- Populated dynamically via health-education.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: IEC Library -->
+        <section class="tab-content" id="iec">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Information, Education and Communication (IEC) Materials</h2>
+                    <button class="btn-outline" onclick="alert('Upload feature will allow adding custom brochures and infographics.')">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload New IEC
+                    </button>
+                </div>
+                <div class="iec-grid">
+                    <div class="iec-card">
+                        <i class="fa-solid fa-file-pdf iec-icon"></i>
+                        <div class="iec-info">
+                            <h4>4S Kontra Dengue (Tagalog)</h4>
+                            <p>Search &amp; destroy mosquito sites, Self-protection, Seek early consultation, Say yes to fogging.</p>
+                            <span class="seminar-badge completed">PDF • 450 Printed</span>
+                        </div>
+                    </div>
+                    <div class="iec-card">
+                        <i class="fa-solid fa-file-pdf iec-icon"></i>
+                        <div class="iec-info">
+                            <h4>Unang Yakap (Essential Newborn Care)</h4>
+                            <p>Immediate skin-to-skin contact, early breastfeeding initiation, delayed cord clamping guide.</p>
+                            <span class="seminar-badge completed">PDF • 320 Printed</span>
+                        </div>
+                    </div>
+                    <div class="iec-card">
+                        <i class="fa-solid fa-file-pdf iec-icon"></i>
+                        <div class="iec-info">
+                            <h4>Wastong Nutrisyon Laban sa Malnutrisyon</h4>
+                            <p>Pinggang Pinoy guide for growing toddlers and school-age children.</p>
+                            <span class="seminar-badge completed">PDF • 600 Printed</span>
+                        </div>
+                    </div>
+                    <div class="iec-card">
+                        <i class="fa-solid fa-file-pdf iec-icon"></i>
+                        <div class="iec-info">
+                            <h4>Hypertension &amp; Salt Reduction Guide</h4>
+                            <p>DOH guidelines for low-sodium diet, regular BP monitoring, and daily exercise.</p>
+                            <span class="seminar-badge completed">PDF • 400 Printed</span>
+                        </div>
+                    </div>
+                    <div class="iec-card">
+                        <i class="fa-solid fa-file-pdf iec-icon"></i>
+                        <div class="iec-info">
+                            <h4>Modern Family Planning Options</h4>
+                            <p>Brochure explaining Pills, Injectables, Implants, IUD, and Natural Family Planning methods.</p>
+                            <span class="seminar-badge completed">PDF • 510 Printed</span>
+                        </div>
+                    </div>
+                    <div class="iec-card">
+                        <i class="fa-solid fa-file-pdf iec-icon"></i>
+                        <div class="iec-info">
+                            <h4>Rabies Awareness &amp; Pet Vaccination</h4>
+                            <p>First-aid protocol for animal bites: wash with soap for 15 minutes and visit animal bite center.</p>
+                            <span class="seminar-badge completed">PDF • 350 Printed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: Purok Attendance Logs -->
+        <section class="tab-content" id="attendance">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Purok Coverage &amp; Participation Records</h2>
+                    <button class="btn-primary" onclick="alert('Attendance scanner or manual entry ready.')">
+                        <i class="fa-solid fa-user-check"></i> Record Attendance
+                    </button>
+                </div>
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Session Date</th>
+                                <th>Seminar Title</th>
+                                <th>Location / Venue</th>
+                                <th>Target Group</th>
+                                <th>Attendees Registered</th>
+                                <th>Resource Speaker</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Schedule Seminar -->
+    <div class="modal-overlay" id="seminarModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Schedule Health Seminar</h3>
+                <button class="modal-close" onclick="closeSeminarModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="seminarForm" onsubmit="handleScheduleSeminar(event)">
+                <div class="form-group">
+                    <label>Seminar Title *</label>
+                    <input type="text" id="semTitle" required placeholder="e.g. Dengue Prevention and Clean-Up Drive">
+                </div>
+                <div class="form-group">
+                    <label>Description / Objectives *</label>
+                    <textarea id="semDesc" rows="3" required placeholder="Brief description of the health topics to be discussed..."></textarea>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Date *</label>
+                        <input type="date" id="semDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time *</label>
+                        <input type="time" id="semTime" required value="09:00">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Venue *</label>
+                        <input type="text" id="semVenue" required value="Barangay Covered Court">
+                    </div>
+                    <div class="form-group">
+                        <label>Resource Speaker</label>
+                        <input type="text" id="semSpeaker" required value="Dr. Cyron / Midwife Teresa">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeSeminarModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Schedule Session</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="health-education.js"></script>
+</body>
+</html>

@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Patient Registration and Record</title>
+
+    <link rel="stylesheet" href="patient-registration.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="darkmode.js"></script>
+
+</head>
+
+<body>
+
+<div id="sidebar-container"></div>
+
+<main class="main-content">
+
+    <header class="page-header">
+
+        <div>
+
+            <h1>
+                Patient Registration and Record
+            </h1>
+
+            <p>
+                Register new patient, manage patient information and view their health record.
+            </p>
+
+        </div>
+
+        <div class="header-right">
+
+            <div class="logged-admin">
+
+                <span>
+                    You are logged in as:
+                </span>
+
+                <strong>
+                    <span class="admin-name">ADMIN</span>
+                </strong>
+
+            </div>
+
+            <div class="admin-photo">
+                <img src="logo.png" alt="Admin">
+            </div>
+
+        </div>
+
+    </header>
+
+    <div class="ai-row">
+
+        <a href="ai-moto.html" class="ask-ai">
+
+            <img src="icons/ai moto.png" alt="AI Moto">
+
+            Ask AI Moto
+
+        </a>
+
+    </div>
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+
+            <div class="stat-icon blue">
+                <img src="icons/total registered patients.png" alt="Total Patients">
+            </div>
+
+            <div>
+                <span>Total Patients</span>
+                <strong>423</strong>
+                <small>Registered in system</small>
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-icon green">
+                <img src="icons/new this months.png" alt="New Patients">
+            </div>
+
+            <div>
+                <span>New This Month</span>
+                <strong>28</strong>
+                <small>Newly registered</small>
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-icon purple">
+                <img src="icons/active patient.png" alt="Active Patients">
+            </div>
+
+            <div>
+                <span>Active Patients</span>
+                <strong>395</strong>
+                <small>Currently active</small>
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-icon orange">
+                <img src="icons/archive records.png" alt="Archive Records">
+            </div>
+
+            <div>
+                <span>Archive Records</span>
+                <strong>14</strong>
+                <small>Inactive / Archive</small>
+            </div>
+
+        </div>
+
+        <div class="stat-card">
+
+            <div class="stat-icon navy">
+                <img src="icons/pending profiles.png" alt="Pending Profiles">
+            </div>
+
+            <div>
+                <span>Pending Profiles</span>
+                <strong>14</strong>
+                <small>For verification</small>
+            </div>
+
+        </div>
+
+    </section>
+
+    <div id="alertMessage" style="display:none;" class="alert-box"></div>
+
+    <section class="patient-layout">
+
+        <aside class="patient-list-card">
+
+            <div class="patient-list-header">
+
+                <h2>
+                    Patient List
+                </h2>
+
+                <form method="GET" class="patient-search">
+
+                    <input
+                        type="text"
+                        name="search"
+                        value=""
+                        placeholder="Search name, ID or contact number..."
+                    >
+
+                    <button type="submit">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+
+                </form>
+
+                <a href="patient-registration.html?new_patient=1" class="new-patient-btn">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    New Patient
+
+                </a>
+
+            </div>
+
+            <div class="patient-list">
+
+                
+        <a class="patient-card selected" href="patient-registration.html?patient_id=1">
+            <div class="patient-card-header">
+                <strong>Juan D. Dela Cruz</strong>
+                <span class="patient-card-id">PR-2026-0001</span>
+            </div>
+            <div class="patient-card-details">
+                <span>34 yrs old • Male</span>
+                <span class="status-badge status-active">Active</span>
+            </div>
+        </a>
+        <a class="patient-card" href="patient-registration.html?patient_id=2">
+            <div class="patient-card-header">
+                <strong>Maria Clara Santos</strong>
+                <span class="patient-card-id">PR-2026-0002</span>
+            </div>
+            <div class="patient-card-details">
+                <span>28 yrs old • Female</span>
+                <span class="status-badge status-active">Active</span>
+            </div>
+        </a>
+        <a class="patient-card" href="patient-registration.html?patient_id=3">
+            <div class="patient-card-header">
+                <strong>Pedro O. Penduko</strong>
+                <span class="patient-card-id">PR-2026-0003</span>
+            </div>
+            <div class="patient-card-details">
+                <span>41 yrs old • Male</span>
+                <span class="status-badge status-active">Active</span>
+            </div>
+        </a>
+    
+
+                
+
+            </div>
+
+            <div class="patient-list-footer">
+
+                Showing
+                423
+                patients
+
+            </div>
+
+        </aside>
+
+        <section class="record-card">
+
+            
+
+                <div class="new-patient-header">
+
+                    <div>
+
+                        <h2>
+                            New Patient
+                        </h2>
+
+                        <p>
+                            Add a new patient and create their health profile.
+                        </p>
+
+                    </div>
+
+                    <a href="patient-registration.html" class="cancel-new-patient">
+                        Cancel
+                    </a>
+
+                </div>
+
+                <form method="POST" class="new-patient-form">
+
+                    <input type="hidden" name="save_new_patient" value="1">
+
+                    <section class="form-section">
+
+                        <h3>
+                            Personal Information
+                        </h3>
+
+                        <div class="form-grid">
+
+                            <label>
+                                First Name
+                                <input
+                                    type="text"
+                                    name="first_name"
+                                    value=""
+                                    required
+                                >
+                            </label>
+
+                            <label>
+                                Middle Name
+                                <input
+                                    type="text"
+                                    name="middle_name"
+                                    value=""
+                                >
+                            </label>
+
+                            <label>
+                                Last Name
+                                <input
+                                    type="text"
+                                    name="last_name"
+                                    value=""
+                                    required
+                                >
+                            </label>
+
+                            <label>
+                                Suffix
+                                <input
+                                    type="text"
+                                    name="suffix"
+                                    value=""
+                                    placeholder="Optional"
+                                >
+                            </label>
+
+                            <label>
+                                Date of Birth
+                                <input
+                                    type="date"
+                                    name="birth_date"
+                                    value=""
+                                >
+                            </label>
+
+                            <label>
+                                Sex
+                                <select name="sex">
+                                    <option value="">Select Sex</option>
+                                    <option value="Male" >Male</option>
+                                    <option value="Female" >Female</option>
+                                </select>
+                            </label>
+
+                            <label>
+                                Civil Status
+                                <select name="civil_status">
+                                    <option value="">Select Civil Status</option>
+                                    <option value="Single" >Single</option>
+                                    <option value="Married" >Married</option>
+                                    <option value="Widowed" >Widowed</option>
+                                    <option value="Separated" >Separated</option>
+                                </select>
+                            </label>
+
+                            <label>
+                                Nationality
+                                <input
+                                    type="text"
+                                    name="nationality"
+                                    value=""
+                                    placeholder="Optional"
+                                >
+                            </label>
+
+                            <label>
+                                Religion
+                                <input
+                                    type="text"
+                                    name="religion"
+                                    value=""
+                                    placeholder="Optional"
+                                >
+                            </label>
+
+                            <label>
+                                Occupation
+                                <input
+                                    type="text"
+                                    name="occupation"
+                                    value=""
+                                    placeholder="Optional"
+                                >
+                            </label>
+
+                            <label>
+                                Mobile Number
+                                <input
+                                    type="text"
+                                    name="contact_number"
+                                    value=""
+                                >
+                            </label>
+
+                            <label>
+                                Telephone
+                                <input
+                                    type="text"
+                                    name="telephone"
+                                    value=""
+                                    placeholder="Optional"
+                                >
+                            </label>
+
+                            <label>
+                                Email Address
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value=""
+                                    placeholder="Optional"
+                                >
+                            </label>
+
+                            <label class="span-2">
+                                Complete Address
+                                <input
+                                    type="text"
+                                    name="address"
+                                    value=""
+                                >
+                            </label>
+
+                        </div>
+
+                    </section>
+
+                    <section class="form-section health-form-section">
+
+                        <h3>
+                            Health Profile
+                        </h3>
+
+                        <div class="form-grid">
+
+                            <label>
+                                Blood Type
+                                <select name="blood_type">
+                                    <option value="">Select Blood Type</option>
+                                    
+                                        <option
+                                            value=""
+                                            
+                                        >
+                                            
+                                        </option>
+                                    
+                                </select>
+                            </label>
+
+                            <label>
+                                Height
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="height"
+                                    value=""
+                                    placeholder="cm"
+                                >
+                            </label>
+
+                            <label>
+                                Weight
+                                <input
+                                    type="number"
+                                    step="0.01"
+                                    name="weight"
+                                    value=""
+                                    placeholder="kg"
+                                >
+                            </label>
+
+                            <label class="span-2">
+                                Allergies
+                                <textarea
+                                    name="allergies"
+                                    placeholder="Enter known allergies"
+                                ></textarea>
+                            </label>
+
+                            <label class="span-2">
+                                Chronic Conditions
+                                <textarea
+                                    name="medical_conditions"
+                                    placeholder="Enter existing medical conditions"
+                                ></textarea>
+                            </label>
+
+                        </div>
+
+                    </section>
+
+                    <div class="new-patient-actions">
+
+                        <a href="patient-registration.html" class="cancel-button">
+                            Cancel
+                        </a>
+
+                        <button type="submit" class="save-button">
+
+                            <i class="fa-solid fa-user-plus"></i>
+
+                            Save Patient
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            
+
+                <div class="record-header">
+
+                    <div class="record-person">
+
+                        <div class="record-name-information">
+
+                            <div class="record-name-row">
+
+                                <h2>
+                                    Juan D. Dela Cruz
+                                </h2>
+
+                                <span class="status active">
+                                    
+                                </span>
+
+                            </div>
+
+                            <p class="patient-id">
+
+                                Patient ID:
+
+                                <strong>
+                                    PT-2026-0001
+                                </strong>
+
+                            </p>
+
+                            <div class="patient-meta">
+
+                                <span>
+                                    <i class="fa-regular fa-calendar"></i>
+                                    
+                                </span>
+
+                                <span>
+                                    <i class="fa-solid fa-cake-candles"></i>
+                                    34 years old
+                                </span>
+
+                                <span>
+                                    <i class="fa-solid fa-venus-mars"></i>
+                                    
+                                </span>
+
+                                <span>
+                                    <i class="fa-solid fa-phone"></i>
+                                    
+                                </span>
+
+                            </div>
+
+                            <div class="patient-address">
+
+                                <i class="fa-solid fa-location-dot"></i>
+
+                                
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="record-actions">
+
+                        <button type="button" onclick="focusPersonalForm()">
+                            <i class="fa-solid fa-pen"></i>
+                            Edit
+                        </button>
+
+                        <button type="button" onclick="window.print()">
+                            <i class="fa-solid fa-print"></i>
+                            Print
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <nav class="record-tabs">
+
+                    <button class="tab-button active" data-tab="personal">
+                        Personal Information
+                    </button>
+
+                    <button class="tab-button" data-tab="health">
+                        Health Profile
+                    </button>
+
+                    <button class="tab-button" data-tab="history">
+                        Medical History
+                    </button>
+
+                    <button class="tab-button" data-tab="records">
+                        Records
+                    </button>
+
+                    <button class="tab-button" data-tab="appointment">
+                        Appointment
+                    </button>
+
+                    <button class="tab-button" data-tab="documents">
+                        Documents
+                    </button>
+
+                </nav>
+
+                <div class="tab-content active" id="tab-personal">
+
+                    <div class="record-main">
+
+                        <form method="POST" class="personal-form" id="personalForm">
+
+                            <input type="hidden" name="save_patient" value="1">
+
+                            <input
+                                type="hidden"
+                                name="user_id"
+                                value="1"
+                            >
+
+                            <h3>
+                                Personal Information
+                            </h3>
+
+                            <div class="form-grid">
+
+                                <label>
+                                    First Name
+                                    <input
+                                        type="text"
+                                        name="first_name"
+                                        value=""
+                                        required
+                                    >
+                                </label>
+
+                                <label>
+                                    Middle Name
+                                    <input
+                                        type="text"
+                                        name="middle_name"
+                                        value=""
+                                        placeholder="Optional"
+                                    >
+                                </label>
+
+                                <label>
+                                    Last Name
+                                    <input
+                                        type="text"
+                                        name="last_name"
+                                        value=""
+                                        required
+                                    >
+                                </label>
+
+                                <label>
+                                    Suffix
+                                    <input
+                                        type="text"
+                                        name="suffix"
+                                        value=""
+                                        placeholder="Optional"
+                                    >
+                                </label>
+
+                                <label>
+                                    Date of Birth
+                                    <input
+                                        type="date"
+                                        name="birth_date"
+                                        value=""
+                                    >
+                                </label>
+
+                                <label>
+                                    Age
+                                    <input
+                                        type="text"
+                                        value=""
+                                        readonly
+                                    >
+                                </label>
+
+                                <label>
+                                    Sex
+                                    <select name="sex">
+                                        <option value="">Select Sex</option>
+                                        <option value="Male" >Male</option>
+                                        <option value="Female" >Female</option>
+                                    </select>
+                                </label>
+
+                                <label>
+                                    Civil Status
+                                    <input
+                                        type="text"
+                                        name="civil_status"
+                                        value=""
+                                        placeholder="Optional"
+                                    >
+                                </label>
+
+                                <label>
+                                    Nationality
+                                    <input
+                                        type="text"
+                                        name="nationality"
+                                        value=""
+                                        placeholder="Optional"
+                                    >
+                                </label>
+
+                                <label>
+                                    Religion
+                                    <input
+                                        type="text"
+                                        name="religion"
+                                        value=""
+                                        placeholder="Optional"
+                                    >
+                                </label>
+
+                                <label>
+                                    Occupation
+                                    <input
+                                        type="text"
+                                        name="occupation"
+                                        value=""
+                                        placeholder="Optional"
+                                    >
+                                </label>
+
+                                <label>
+                                    Mobile Number
+                                    <input
+                                        type="text"
+                                        name="contact_number"
+                                        value=""
+                                    >
+                                </label>
+
+                                <label>
+                                    Telephone
+                                    <input
+                                        type="text"
+                                        name="telephone"
+                                        value=""
+                                        placeholder="Optional"
+                                    >
+                                </label>
+
+                                <label class="span-2">
+                                    Email Address
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value=""
+                                    >
+                                </label>
+
+                                <label class="span-4">
+                                    Complete Address
+                                    <input
+                                        type="text"
+                                        name="address"
+                                        value=""
+                                    >
+                                </label>
+
+                            </div>
+
+                            <div class="form-actions">
+
+                                <button type="reset" class="cancel-button">
+                                    Cancel
+                                </button>
+
+                                <button type="submit" class="save-button">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    Save Information
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-content" id="tab-health">
+
+                    <div class="health-profile-content">
+
+                        <div class="health-profile-header">
+
+                            <div>
+
+                                <h3>
+                                    Health Profile
+                                </h3>
+
+                                <p>
+                                    Medical and health information for this patient.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <form method="POST" class="health-profile-form">
+
+                            <input type="hidden" name="save_patient" value="1">
+
+                            <input type="hidden" name="user_id" value="1">
+
+                            <input type="hidden" name="first_name" value="">
+
+                            <input type="hidden" name="middle_name" value="">
+
+                            <input type="hidden" name="last_name" value="">
+
+                            <input type="hidden" name="suffix" value="">
+
+                            <input type="hidden" name="birth_date" value="">
+
+                            <input type="hidden" name="sex" value="">
+
+                            <input type="hidden" name="civil_status" value="">
+
+                            <input type="hidden" name="nationality" value="">
+
+                            <input type="hidden" name="religion" value="">
+
+                            <input type="hidden" name="occupation" value="">
+
+                            <input type="hidden" name="contact_number" value="">
+
+                            <input type="hidden" name="telephone" value="">
+
+                            <input type="hidden" name="email" value="">
+
+                            <input type="hidden" name="address" value="">
+
+                            <div class="health-grid">
+
+                                <label>
+                                    Blood Type
+                                    <select name="blood_type">
+
+                                        <option value="">Select Blood Type</option>
+
+                                        
+
+                                            <option
+                                                value=""
+                                                
+                                            >
+                                                
+                                            </option>
+
+                                        
+
+                                    </select>
+                                </label>
+
+                                <label>
+                                    Height
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        name="height"
+                                        value=""
+                                        placeholder="cm"
+                                    >
+                                </label>
+
+                                <label>
+                                    Weight
+                                    <input
+                                        type="number"
+                                        step="0.01"
+                                        name="weight"
+                                        value=""
+                                        placeholder="kg"
+                                    >
+                                </label>
+
+                                <label class="wide-health-field">
+                                    Allergies
+                                    <textarea
+                                        name="allergies"
+                                        placeholder="No known allergies"
+                                    ></textarea>
+                                </label>
+
+                                <label class="wide-health-field">
+                                    Chronic Conditions
+                                    <textarea
+                                        name="medical_conditions"
+                                        placeholder="No chronic conditions recorded"
+                                    ></textarea>
+                                </label>
+
+                            </div>
+
+                            <div class="form-actions">
+
+                                <span></span>
+
+                                <button type="submit" class="save-button">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    Save Health Profile
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-content" id="tab-history">
+
+                    <div class="placeholder-tab">
+
+                        <i class="fa-solid fa-file-medical"></i>
+
+                        <h3>
+                            Medical History
+                        </h3>
+
+                        <p>
+                            Consultation history will appear here once the consultation records are connected.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-content" id="tab-records">
+
+                    <div class="record-summary-section">
+
+                        <h3>
+                            Record Summary
+                        </h3>
+
+                        <div class="record-summary-grid">
+
+                            <div class="record-summary-card">
+
+                                <span>
+                                    Total Consultations
+                                </span>
+
+                                <strong>
+                                    5
+                                </strong>
+
+                            </div>
+
+                            <div class="record-summary-card">
+
+                                <span>
+                                    Laboratory Results
+                                </span>
+
+                                <strong>
+                                    2
+                                </strong>
+
+                            </div>
+
+                            <div class="record-summary-card">
+
+                                <span>
+                                    Documents
+                                </span>
+
+                                <strong>
+                                    3
+                                </strong>
+
+                            </div>
+
+                            <div class="record-summary-card">
+
+                                <span>
+                                    Prescriptions
+                                </span>
+
+                                <strong>
+                                    4
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-content" id="tab-appointment">
+
+                    <div class="placeholder-tab">
+
+                        <i class="fa-solid fa-calendar-days"></i>
+
+                        <h3>
+                            Appointment
+                        </h3>
+
+                        <p>
+
+                            
+
+                                Next appointment:
+                                
+
+                            
+
+                                No upcoming appointment recorded.
+
+                            
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="tab-content" id="tab-documents">
+
+                    <div class="placeholder-tab">
+
+                        <i class="fa-solid fa-file-lines"></i>
+
+                        <h3>
+                            Documents
+                        </h3>
+
+                        <p>
+                            3 document record(s) found for this patient.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="quick-record-area">
+
+                    <aside class="quick-summary">
+
+                        <h3>
+                            Quick Summary
+                        </h3>
+
+                        <div class="summary-section">
+
+                            <strong>
+                                <img src="icons/last consultation.png" alt="">
+                                Last Consultation
+                            </strong>
+
+                            
+
+                                <p>
+                                    
+                                </p>
+
+                                <p>
+                                    
+                                </p>
+
+                            
+
+                                <p>
+                                    No consultation recorded.
+                                </p>
+
+                            
+
+                        </div>
+
+                        <div class="summary-section">
+
+                            <strong>
+                                <img src="icons/appointment.png" alt="">
+                                Next Appointment
+                            </strong>
+
+                            
+
+                                <p>
+
+                                    
+
+                                    
+
+                                        •
+                                        
+
+                                    
+
+                                </p>
+
+                                <p>
+                                    
+                                </p>
+
+                            
+
+                                <p>
+                                    No upcoming appointment.
+                                </p>
+
+                            
+
+                        </div>
+
+                        <div class="summary-section">
+
+                            <strong>
+                                <img src="icons/health programs.png" alt="">
+                                Active Health Programs
+                            </strong>
+
+                            
+
+                                <ul>
+
+                                    
+
+                                        <li>
+                                            
+                                        </li>
+
+                                    
+
+                                </ul>
+
+                            
+
+                                <p>
+                                    None recorded.
+                                </p>
+
+                            
+
+                        </div>
+
+                        <div class="summary-section">
+
+                            <strong>
+                                <img src="icons/allergies.png" alt="">
+                                Allergies
+                            </strong>
+
+                            <p>
+                                
+                            </p>
+
+                        </div>
+
+                        <div class="summary-section">
+
+                            <strong>
+                                <i class="fa-solid fa-heart-pulse"></i>
+                                Chronic Conditions
+                            </strong>
+
+                            <p>
+                                
+                            </p>
+
+                        </div>
+
+                    </aside>
+
+                </div>
+
+            
+
+                <div class="no-selected-patient">
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    <h2>
+                        No Patient Selected
+                    </h2>
+
+                    <p>
+                        Register a patient or select a patient from the list.
+                    </p>
+
+                    <a href="patient-registration.html?new_patient=1">
+                        Add New Patient
+                    </a>
+
+                </div>
+
+            
+
+        </section>
+
+    </section>
+
+</main>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    tabButtons.forEach(function (button) {
+
+        button.addEventListener("click", function () {
+
+            const tabName = button.getAttribute("data-tab");
+
+            tabButtons.forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+
+            tabContents.forEach(function (content) {
+                content.classList.remove("active");
+            });
+
+            button.classList.add("active");
+
+            const target = document.getElementById("tab-" + tabName);
+
+            if (target) {
+                target.classList.add("active");
+            }
+
+        });
+
+    });
+
+});
+
+function focusPersonalForm() {
+
+    const personalTab = document.querySelector('[data-tab="personal"]');
+    const form = document.getElementById("personalForm");
+
+    if (personalTab) {
+        personalTab.click();
+    }
+
+    if (form) {
+
+        form.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+        const firstInput = form.querySelector('input[name="first_name"]');
+
+        if (firstInput) {
+
+            setTimeout(function () {
+                firstInput.focus();
+            }, 400);
+
+        }
+
+    }
+
+}
+
+</script>
+
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const patientForm = document.getElementById("patientForm") || document.querySelector("form");
+        if (patientForm) {
+            patientForm.addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const fd = new FormData(patientForm);
+                const isNew = fd.has("save_new_patient");
+                const endpoint = isNew ? "api/patients.php?action=create" : "api/patients.php?action=update";
+                try {
+                    const res = await fetch(endpoint, { method: "POST", body: fd });
+                    const d = await res.json();
+                    if (d.success) {
+                        alert(d.message || "Patient saved successfully!");
+                        window.location.reload();
+                    } else {
+                        alert(d.error || "Failed to save patient.");
+                    }
+                } catch(err) {
+                    alert("Error saving patient information.");
+                }
+            });
+        }
+    });
+    </script>
+    <script src="sidebar.js"></script>
+    <script src="auth-guard.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Maternal Health</title>
+    <link rel="stylesheet" href="maternal-health.css">
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="darkmode.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h1>Maternal Health</h1>
+                <p>Manage and monitor maternal health records, prenatal care, and postnatal follow-up.</p>
+            </div>
+            <div class="header-right">
+                <div class="admin-profile">
+                    <div class="admin-text"><small>You are logged in
+                            as</small><strong>ADMINISTRATOR</strong>
+                    </div>
+                    <div class="admin-photo"><img src="icons/admin.png" alt="Admin"></div>
+                </div><button class="ask-ai" onclick="location.href='ai-moto.html'"><i
+                        class="fa-solid fa-wand-magic-sparkles"></i> Ask AI Moto</button>
+            </div>
+        </header>
+        
+        <section class="summary-grid">
+            
+        <div class="stat-card purple">
+            <i class="fa-solid fa-person-pregnant stat-icon"></i>
+            <div>
+                <h3>REGISTERED PREGNANT</h3>
+                <strong id="maternalTotal">187</strong>
+                <small>Total this year</small>
+            </div>
+        </div>
+        <div class="stat-card green">
+            <i class="fa-solid fa-circle-check stat-icon"></i>
+            <div>
+                <h3>ANC COMPLETE (4+ VISITS)</h3>
+                <strong>142</strong>
+                <small>76% of registered</small>
+            </div>
+        </div>
+        <div class="stat-card orange">
+            <i class="fa-solid fa-calendar-days stat-icon"></i>
+            <div>
+                <h3>DUE THIS MONTH</h3>
+                <strong>23</strong>
+                <small>Check-ups / Follow-ups</small>
+            </div>
+        </div>
+        <div class="stat-card red">
+            <i class="fa-solid fa-heart-pulse stat-icon"></i>
+            <div>
+                <h3>HIGH RISK CASES</h3>
+                <strong>12</strong>
+                <small>Requiring close monitoring</small>
+            </div>
+        </div>
+        <div class="stat-card blue">
+            <i class="fa-solid fa-baby stat-icon"></i>
+            <div>
+                <h3>DELIVERIES THIS YEAR</h3>
+                <strong>48</strong>
+                <small>Total deliveries recorded</small>
+            </div>
+        </div>
+    
+        </section>
+        <nav class="record-tabs"><button class="record-tab active" data-tab="pregnant">Pregnant Women</button><button
+                class="record-tab" data-tab="anc">Antenatal Care (ANC)</button><button class="record-tab"
+                data-tab="pnc">Postnatal Care (PNC)</button><button class="record-tab" data-tab="birth">Birth
+                Records</button><button class="record-tab" data-tab="report">Report</button></nav>
+        <section class="tab-content active" id="pregnant">
+            <div class="maternal-layout">
+                <aside class="patient-list card">
+                    <form class="patient-search"><input name="search" value=""
+                            placeholder="Search by name or ID..."><button><i
+                                class="fa-solid fa-magnifying-glass"></i></button></form><button class="filter-btn"><i
+                            class="fa-solid fa-filter"></i> Filter</button>
+                    <div class="patients-scroll">
+                        
+        <div class="maternal-patient-item selected" onclick="selectMaternalPatient(1)">
+            <strong>Maria Clara Santos</strong>
+            <span>MAT-2026-0001 • 26 yrs • EDD: Aug 15, 2026</span>
+            <small class="badge low-risk">Low Risk</small>
+        </div>
+    
+
+        <div class="maternal-patient-item " onclick="selectMaternalPatient(2)">
+            <strong>Juana Dela Rosa</strong>
+            <span>MAT-2026-0002 • 31 yrs • EDD: Sep 20, 2026</span>
+            <small class="badge high-risk">High Risk</small>
+        </div>
+    
+
+        <div class="maternal-patient-item " onclick="selectMaternalPatient(3)">
+            <strong>Elena Ramos</strong>
+            <span>MAT-2026-0003 • 24 yrs • EDD: Oct 10, 2026</span>
+            <small class="badge low-risk">Low Risk</small>
+        </div>
+    
+                    </div><button class="add-patient-btn" onclick="openModal('patientModal')"><i
+                            class="fa-solid fa-plus"></i> Add New Patient</button>
+                </aside>
+                <section class="center-column">
+                    <div class="patient-profile card">
+                        <div class="profile-main">
+                            <div class="large-patient-icon"><img src="icons/maternal-patient.png" alt=""><i
+                                    class="fa-solid fa-person-pregnant fallback"></i></div>
+                            <div class="profile-info">
+                                <div class="name-row">
+                                    <h2>Maria Clara Santos</h2><span
+                                        class="active-badge">Active</span>
+                                </div>
+                                <p>Patient ID: <b>MAT-2026-0001</b> &nbsp; | &nbsp;
+                                    26 yrs &nbsp; | &nbsp;
+                                    G2P1</p>
+                                <p>Contact: 0918 234 5678 &nbsp; | &nbsp; Address:
+                                    Centro St., Talimundoc, Orani, Bataan</p>
+                                <p>EDD: Aug 15, 2026 &nbsp; | &nbsp;
+                                    26</p>
+                            </div>
+                            <div class="profile-actions"><button><i class="fa-solid fa-pen"></i> Edit
+                                    Profile</button><button onclick="window.print()"><i class="fa-solid fa-print"></i>
+                                    Print Record</button></div>
+                        </div>
+                        <div class="profile-strip">
+                            <div><small>Blood Type</small><b>O+</b></div>
+                            <div><small>Allergies</small><b>None</b></div>
+                            <div><small>Last Menstrual Period</small><b>Nov 10, 2025</b></div>
+                            <div><small>PhilHealth</small><b>12-345678901-2</b></div>
+                            <div><small>Civil Status</small><b>Active</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card anc-card">
+                        <h2>Antenatal Care (ANC) Visits</h2>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Visit No.</th>
+                                        <th>Date</th>
+                                        <th>Gestational Age</th>
+                                        <th>Weight (kg)</th>
+                                        <th>BP (mmHg)</th>
+                                        <th>Fetal Age</th>
+                                        <th>Next Visit</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+        <tr>
+            <td><strong>ANC-4</strong></td>
+            <td>Apr 28, 2026</td>
+            <td>22 wks</td>
+            <td>58 kg</td>
+            <td>110/70</td>
+            <td>145 bpm</td>
+            <td>May 28, 2026</td>
+        </tr>
+    
+
+        <tr>
+            <td><strong>ANC-3</strong></td>
+            <td>Mar 30, 2026</td>
+            <td>18 wks</td>
+            <td>56 kg</td>
+            <td>110/70</td>
+            <td>150 bpm</td>
+            <td>Apr 28, 2026</td>
+        </tr>
+    
+
+        <tr>
+            <td><strong>ANC-2</strong></td>
+            <td>Feb 28, 2026</td>
+            <td>14 wks</td>
+            <td>54 kg</td>
+            <td>120/80</td>
+            <td>155 bpm</td>
+            <td>Mar 30, 2026</td>
+        </tr>
+    
+
+        <tr>
+            <td><strong>ANC-1</strong></td>
+            <td>Jan 25, 2026</td>
+            <td>10 wks</td>
+            <td>52 kg</td>
+            <td>120/80</td>
+            <td>—</td>
+            <td>Feb 28, 2026</td>
+        </tr>
+    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card notes">
+                        <h2>Notes</h2>
+                        <div>
+                            <p>Patient is experiencing mild morning sickness. Prescribed prenatal vitamins.</p><small>Last updated by:
+                                BHW/Admin<br>Oct 10, 2026</small>
+                        </div>
+                    </div>
+                </section>
+                <aside class="right-column">
+                    <div class="card side-card">
+                        <div class="side-title">
+                            <h2>Upcoming Appointment</h2><a href="appointment.html">View Calendar</a>
+                        </div>
+        <div class="appointment-card-item">
+            <strong>ANC Visit 5</strong>
+            <span>May 28, 2026 at 09:00 AM</span>
+            <small class="status-scheduled">Scheduled</small>
+        </div>
+    
+
+        <div class="appointment-card-item">
+            <strong>Ultrasound Follow-up</strong>
+            <span>Jun 15, 2026 at 10:30 AM</span>
+            <small class="status-scheduled">Scheduled</small>
+        </div>
+    
+                    </div>
+                    <div class="card side-card">
+                        <h2>Pregnancy Overview</h2>
+                        <div class="pregnancy">
+                            <div class="ring">
+                                <strong>26</strong><small>weeks</small>
+                            </div>
+                            <div class="preg-data">
+                                <p><span>Trimester</span><b>2nd Trimester</b></p>
+                                <p><span>EDD</span><b>Aug 15, 2026</b></p>
+                                <p><span>Days to go</span><b>61 days</b></p>
+                                <p><span>Gravida / Para</span><b>G2P1 /
+                                        P1</b></p>
+                                <p><span>Risk level</span><b
+                                        class="low-risk">Low Risk</b></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card side-card">
+                        <div class="side-title">
+                            <h2>Health Reminders</h2><a href="#">View all</a>
+                        </div>
+                        <div class="reminder"><i class="fa-solid fa-circle-check"></i>Take iron supplements
+                            daily<b>✓</b></div>
+                        <div class="reminder"><i class="fa-solid fa-circle-check"></i>Eat nutritious food<b>✓</b></div>
+                        <div class="reminder"><i class="fa-solid fa-circle-check"></i>Get enough rest and avoid heavy
+                            lifting<b>✓</b></div>
+                        <div class="reminder warning"><i class="fa-solid fa-circle-exclamation"></i>Attend scheduled ANC
+                            visit<b>!</b></div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+        
+        <button class="program-tab active" data-tab="anc">Antenatal Care (ANC)</button>
+        <button class="program-tab" data-tab="pnc">Postnatal Care (PNC)</button>
+        <button class="program-tab" data-tab="birth">Birth Records</button>
+        <button class="program-tab" data-tab="report">Maternal Health Report</button>
+    
+        <div class="disclaimer"><i class="fa-solid fa-circle-info"></i>Maternal health services should follow applicable
+            DOH maternal health guidelines.</div>
+    </main>
+    <div class="modal" id="patientModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2>Add New Maternal Patient</h2><button onclick="closeModal('patientModal')">&times;</button>
+            </div>
+            <form method="POST"><input type="hidden" name="action" value="patient">
+                <div class="form-grid"><label>Patient Name<input name="patient_name" required></label><label>Patient
+                        ID<input name="patient_id" placeholder="PT-MAT-2026-0001" required></label><label>Age<input
+                            type="number" name="age" required></label><label>Gravida<input name="gravida"
+                            placeholder="G1P0"></label><label>Para<input name="para"
+                            placeholder="P0"></label><label>EDD<input type="date" name="edd"></label><label>Gestational
+                        Age<input name="gestational_age" placeholder="20 weeks, 2 days"></label><label>Contact<input
+                            name="contact"></label><label class="full">Address<input name="address"></label><label>Blood
+                        Type<select name="blood_type">
+                            <option>O+</option>
+                            <option>O-</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                        </select></label><label>Allergies<input name="allergies" value="None known"></label><label>Risk
+                        Level<select name="risk_level">
+                            <option>Low Risk</option>
+                            <option>High Risk</option>
+                        </select></label></div>
+                <div class="modal-actions"><button type="button"
+                        onclick="closeModal('patientModal')">Cancel</button><button class="save">Save Patient</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="visitModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2>Add ANC Visit</h2><button onclick="closeModal('visitModal')">&times;</button>
+            </div>
+            <form method="POST"><input type="hidden" name="action" value="visit"><input type="hidden" name="maternal_id"
+                    value="1">
+                <div class="form-grid"><label>Visit No.<input name="visit_no" placeholder="1st Visit"
+                            required></label><label>Date<input type="date" name="visit_date" value="Oct 10, 2026"
+                            required></label><label>Gestational Age<input name="gestational_age"></label><label>Weight
+                        (kg)<input name="weight"></label><label>BP (mmHg)<input name="bp"
+                            placeholder="120/80"></label><label>Fetal Age<input name="fetal_age"></label><label>Next
+                        Visit<input type="date" name="next_visit"></label></div>
+                <div class="modal-actions"><button type="button"
+                        onclick="closeModal('visitModal')">Cancel</button><button class="save">Save Visit</button></div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="appointmentModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2>Schedule Appointment</h2><button onclick="closeModal('appointmentModal')">&times;</button>
+            </div>
+            <form method="POST"><input type="hidden" name="action" value="appointment"><input type="hidden"
+                    name="maternal_id" value="1">
+                <div class="form-grid"><label>Date<input type="date" name="appointment_date"
+                            required></label><label>Time<input type="time" name="appointment_time"
+                            required></label><label class="full">Type<select name="appointment_type">
+                            <option>ANC Visit</option>
+                            <option>Follow-up</option>
+                            <option>Laboratory Check-up</option>
+                            <option>Postnatal Follow-up</option>
+                        </select></label></div>
+                <div class="modal-actions"><button type="button"
+                        onclick="closeModal('appointmentModal')">Cancel</button><button class="save">Schedule</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>function openModal(id) { document.getElementById(id).classList.add('show') } function closeModal(id) { document.getElementById(id).classList.remove('show') } document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show') })); document.querySelectorAll('.record-tab').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.record-tab').forEach(x => x.classList.remove('active')); document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active')); b.classList.add('active'); document.getElementById(b.dataset.tab).classList.add('active') }));</script>
+
+    <script>
+    function selectMaternalPatient(id) {
+        document.querySelectorAll('.maternal-patient-item').forEach(el => el.classList.remove('selected'));
+        if (event && event.currentTarget) event.currentTarget.classList.add('selected');
+    }
+    </script>
+    <script src="sidebar.js"></script>
+    <script src="auth-guard.js"></script>
+    
+</body>
+
+</html>

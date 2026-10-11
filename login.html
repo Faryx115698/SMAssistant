@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Smart Assistant</title>
+    <link rel="stylesheet" href="login.css">
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="darkmode.js"></script>
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <a href="home.html" class="brand">
+            <img src="logo.png" alt="Barangay Talimundoc Logo">
+            <span>SMART ASSISTANT</span>
+        </a>
+
+        <nav>
+            <a href="home.html">Home</a>
+            <a href="home.html#about">About</a>
+            <a href="home.html#services">Services</a>
+            <a href="login.html" class="active">Login</a>
+            <a href="signup.html" class="register-btn">Register</a>
+        </nav>
+
+    </header>
+
+    <main class="login-page">
+
+        <div class="decor decor-top"></div>
+        <div class="decor decor-bottom"></div>
+
+        <section class="intro">
+
+            <div class="intro-small">
+                BARANGAY TALIMUNDOC HEALTH CENTER
+            </div>
+
+            <h1>
+                <span>Join</span> SMART<br>ASSISTANT
+            </h1>
+
+        </section>
+
+        <section class="login-container">
+
+            <div class="login-card">
+
+                <p class="terms">
+                    By clicking ‘Log in’, you agree to our
+                    <a href="#">terms of service</a> and acknowledge you have
+                    read our <a href="#">privacy policy</a>
+                </p>
+
+                <div class="line"></div>
+
+                <form id="loginForm">
+
+                    <div class="input-group">
+                        <input
+                            type="text"
+                            name="email"
+                            id="email"
+                            placeholder="Username or Email"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <input
+                            type="password"
+                            name="password"
+                            id="password"
+                            placeholder="Password"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <div id="loginMessage" class="message error" style="display: none;"></div>
+
+                    <button type="submit" class="login-button" id="loginBtn">
+                        Login
+                    </button>
+
+                </form>
+
+                <p class="signup-text">
+                    Don’t have an account?
+                    <a href="signup.html">Sign up here</a>
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="login.js"></script>
+
+</body>
+
+</html>

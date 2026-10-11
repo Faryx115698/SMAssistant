@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TB-DOTS Program - Barangay Talimundoc Health Center</title>
+    <link rel="stylesheet" href="tb-dots.css">
+    <link rel="stylesheet" href="darkmode.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth-guard.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="darkmode.js"></script>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h1>TB-DOTS Program</h1>
+                <p>Directly Observed Treatment, Short-Course for Tuberculosis screening, adherence, and medication tracking.</p>
+            </div>
+            <div class="header-right">
+                <div class="admin-profile">
+                    <div class="admin-text">
+                        <small>You are logged in as</small>
+                        <strong class="admin-name">ADMINISTRATOR</strong>
+                    </div>
+                    <div class="admin-photo">
+                        <img src="icons/admin.png" alt="Admin" onerror="this.src='logo.png'">
+                    </div>
+                </div>
+                <button class="ask-ai" onclick="location.href='ai-moto.html'">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Ask AI Moto
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Grid -->
+        <section class="summary-grid">
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fa-solid fa-lungs"></i></div>
+                <div>
+                    <h3>Active TB Cases</h3>
+                    <strong id="statActive">16</strong>
+                    <small>Currently on treatment</small>
+                </div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon"><i class="fa-solid fa-pills"></i></div>
+                <div>
+                    <h3>Intensive Phase</h3>
+                    <strong id="statIntensive">9</strong>
+                    <small>Daily HRZE Regimen</small>
+                </div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                <div>
+                    <h3>Continuation Phase</h3>
+                    <strong id="statContinuation">7</strong>
+                    <small>Daily HR Regimen</small>
+                </div>
+            </div>
+            <div class="stat-card red">
+                <div class="stat-icon"><i class="fa-solid fa-vial"></i></div>
+                <div>
+                    <h3>Sputum Tests Due</h3>
+                    <strong id="statSputum">4</strong>
+                    <small>Follow-up smears</small>
+                </div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <div>
+                    <h3>Treatment Success</h3>
+                    <strong id="statSuccess">94%</strong>
+                    <small>Cured &amp; Completed</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="record-tabs">
+            <button class="record-tab active" data-tab="registry">TB Patient Registry</button>
+            <button class="record-tab" data-tab="intake">Daily DOTS Intake</button>
+            <button class="record-tab" data-tab="lab">Sputum &amp; GeneXpert Lab</button>
+            <button class="record-tab" data-tab="contacts">Contact Tracing</button>
+            <button class="record-tab" data-tab="drugs">Medication Inventory</button>
+        </nav>
+
+        <!-- TAB 1: TB Patient Registry -->
+        <section class="tab-content active" id="registry">
+            <div class="tb-layout">
+                <aside class="card">
+                    <div class="card-header">
+                        <h2>Enrolled Patients</h2>
+                        <button class="btn-primary" onclick="openEnrollModal()">
+                            <i class="fa-solid fa-plus"></i> Enroll
+                        </button>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="patientSearchInput" placeholder="Search by name or TB ID..." oninput="filterPatients()">
+                    </div>
+                    <div class="tb-patient-list" id="patientListContainer">
+                        <!-- Populated dynamically via tb-dots.js -->
+                    </div>
+                </aside>
+
+                <div class="card" id="patientDetailsCard">
+                    <div class="patient-profile-header">
+                        <div>
+                            <h2 id="detailName" style="font-size:20px; color:var(--navy);">Select a Patient</h2>
+                            <p id="detailCode" style="color:var(--muted); font-size:12px; margin-top:2px;">TB-2026-0000</p>
+                        </div>
+                        <div>
+                            <span class="badge active" id="detailStatus">Active</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-meta">
+                        <div><small>Category &amp; Type</small><b id="detailCat">Category I (New)</b></div>
+                        <div><small>Age &amp; Sex</small><b id="detailDemog">42 yrs • Male</b></div>
+                        <div><small>Treatment Start</small><b id="detailStart">Feb 10, 2026</b></div>
+                        <div><small>Weight</small><b id="detailWeight">58 kg</b></div>
+                        <div><small>Treatment Partner (BHW)</small><b id="detailBhw">BHW Elena Ramos</b></div>
+                        <div><small>Contact / Purok</small><b id="detailContact">0917-889-1234 (Purok 3)</b></div>
+                    </div>
+
+                    <div class="dots-progress">
+                        <div class="dots-progress-header">
+                            <span>DOTS Treatment Adherence Progress</span>
+                            <span id="detailProgressText">Month 3 of 6 (68% Complete)</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" id="detailProgressBar" style="width: 68%;"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h3 style="font-size:14px; color:var(--navy);">Recent Directly Observed Intakes</h3>
+                        <button class="btn-primary" onclick="openIntakeModal()" style="padding:6px 12px; font-size:11px;">
+                            <i class="fa-solid fa-check"></i> Log Today's Intake
+                        </button>
+                    </div>
+
+                    <div class="data-table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Regimen</th>
+                                    <th>Dose</th>
+                                    <th>Observed By</th>
+                                    <th>Adverse Reactions</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailIntakeTable">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: Daily DOTS Intake -->
+        <section class="tab-content" id="intake">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Daily DOTS Observation Log (Today: <span id="currentDateStr"></span>)</h2>
+                    <button class="btn-primary" onclick="openIntakeModal()">
+                        <i class="fa-solid fa-plus"></i> Record Patient Intake
+                    </button>
+                </div>
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>TB Code</th>
+                                <th>Patient Name</th>
+                                <th>Phase</th>
+                                <th>Medicine Form</th>
+                                <th>Time Taken</th>
+                                <th>Supervisor / BHW</th>
+                                <th>Adherence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dailyIntakeMasterTable">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: Sputum & GeneXpert Lab -->
+        <section class="tab-content" id="lab">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Diagnostic Laboratory Monitoring (Smear &amp; GeneXpert MTB/RIF)</h2>
+                    <button class="btn-primary" onclick="openLabModal()">
+                        <i class="fa-solid fa-plus"></i> Add Lab Result
+                    </button>
+                </div>
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date Collected</th>
+                                <th>Patient Name</th>
+                                <th>Test Type</th>
+                                <th>Timing</th>
+                                <th>Smear Microscopy</th>
+                                <th>GeneXpert MTB</th>
+                                <th>Rifampicin Resistance</th>
+                                <th>Action Taken</th>
+                            </tr>
+                        </thead>
+                        <tbody id="labTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: Contact Tracing -->
+        <section class="tab-content" id="contacts">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Household &amp; Close Contact Tracing</h2>
+                    <button class="btn-primary" onclick="alert('Contact screening logged.')">
+                        <i class="fa-solid fa-user-plus"></i> Screen New Contact
+                    </button>
+                </div>
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Index TB Patient</th>
+                                <th>Contact Name</th>
+                                <th>Relation</th>
+                                <th>Age</th>
+                                <th>Symptoms (Cough/Fever)</th>
+                                <th>Chest X-Ray / TST</th>
+                                <th>TPT (Preventive Therapy)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contactsTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: Medication Inventory -->
+        <section class="tab-content" id="drugs">
+            <div class="card">
+                <div class="card-header">
+                    <h2>National Tuberculosis Program (NTP) Drug Stock</h2>
+                    <button class="btn-outline" onclick="location.href='inventory.html'">
+                        <i class="fa-solid fa-box"></i> Open Pharmacy Inventory
+                    </button>
+                </div>
+                <div class="data-table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Regimen Kit</th>
+                                <th>Drug Composition</th>
+                                <th>Target Group</th>
+                                <th>Available Kits</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><b>Cat I Fixed-Dose Combination (FDC-4)</b></td>
+                                <td>Rifampicin (150mg) + Isoniazid (75mg) + Pyrazinamide (400mg) + Ethambutol (275mg)</td>
+                                <td>New Adult Patients (Intensive Phase)</td>
+                                <td><b>240 blister strips</b></td>
+                                <td><span class="badge active">Adequate</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>Cat I Continuation FDC-2</b></td>
+                                <td>Rifampicin (150mg) + Isoniazid (75mg)</td>
+                                <td>Adult Patients (Months 3-6)</td>
+                                <td><b>410 blister strips</b></td>
+                                <td><span class="badge active">Adequate</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>Pediatric FDC Kit</b></td>
+                                <td>Dispersible RHZ (50/75/150mg)</td>
+                                <td>Children under 15 years</td>
+                                <td><b>85 kits</b></td>
+                                <td><span class="badge active">Adequate</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>Isoniazid Preventive Therapy (IPT)</b></td>
+                                <td>Isoniazid (300mg)</td>
+                                <td>High-risk asymptomatic contacts</td>
+                                <td><b>190 tablets</b></td>
+                                <td><span class="badge active">Adequate</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Enroll Patient -->
+    <div class="modal-overlay" id="enrollModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Enroll New TB-DOTS Patient</h3>
+                <button class="modal-close" onclick="closeEnrollModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="enrollForm" onsubmit="handleEnroll(event)">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="tbName" required placeholder="e.g. Rolando Rivera">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Age *</label>
+                        <input type="number" id="tbAge" required value="35">
+                    </div>
+                    <div class="form-group">
+                        <label>Sex *</label>
+                        <select id="tbSex">
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="tbCat">
+                            <option>Category I (New Case)</option>
+                            <option>Category II (Retreatment / Relapse)</option>
+                            <option>Pediatric TB</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Weight (kg) *</label>
+                        <input type="number" id="tbWeight" required value="55">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Assigned BHW Supervisor *</label>
+                    <input type="text" id="tbBhw" required value="BHW Elena Ramos">
+                </div>
+                <div class="form-group">
+                    <label>Address / Purok</label>
+                    <input type="text" id="tbAddress" value="Purok 2, Talimundoc, Orani">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeEnrollModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Enroll Patient</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Log Intake -->
+    <div class="modal-overlay" id="intakeModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Record Daily Observed Intake</h3>
+                <button class="modal-close" onclick="closeIntakeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="intakeForm" onsubmit="handleIntake(event)">
+                <div class="form-group">
+                    <label>Patient</label>
+                    <input type="text" id="intakePatientName" readonly style="background:#e2e8f0;">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="intakeDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Observed</label>
+                        <input type="time" id="intakeTime" required value="08:30">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Medicine Dispensed</label>
+                    <select id="intakeRegimen">
+                        <option>FDC-4 (4 tablets HRZE)</option>
+                        <option>FDC-2 (2 tablets HR)</option>
+                        <option>Pediatric Dispersible (3 tablets)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Direct Observation Supervisor</label>
+                    <input type="text" id="intakeSupervisor" required value="BHW Elena Ramos">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeIntakeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Log Medication Taken</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="tb-dots.js"></script>
+</body>
+</html>

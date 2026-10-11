@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Immunization and Vaccination</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="immunization.css">
+        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="darkmode.js"></script>
+</head>
+
+<body>
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+
+        <header class="page-header">
+            <div>
+                <h1>Immunization and Vaccination</h1>
+                <p>Track, manage, and monitor immunization records and vaccination schedules.</p>
+            </div>
+
+            <div class="header-right">
+                <div class="admin-profile">
+                    <div class="admin-text">
+                        <small>You are logged in as</small>
+                        <strong><span class="admin-name">ADMIN</span></strong>
+                    </div>
+
+                    <div class="admin-photo">
+                        <img src="icons/admin.png" alt="Admin Icon"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <i class="fa-solid fa-user" style="display:none;"></i>
+                    </div>
+                </div>
+
+                <button class="ask-ai" type="button" onclick="window.location.href='ai-moto.html'">
+                    <i class="fa-solid fa-plus"></i> Ask AI Moto
+                </button>
+            </div>
+        </header>
+
+        
+
+        <section class="summary-cards">
+
+            <div class="summary-card card-blue">
+                <div class="summary-icon">
+                    <img src="icons/immunization-patients.png" alt="Patients"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fa-solid fa-syringe" style="display:none;"></i>
+                </div>
+                <div>
+                    <span>Total Patients</span>
+                    <strong>423</strong>
+                    <small>Registered in program</small>
+                </div>
+            </div>
+
+            <div class="summary-card card-green">
+                <div class="summary-icon">
+                    <img src="icons/fully-immunized.png" alt="Fully Immunized"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fa-solid fa-shield-heart" style="display:none;"></i>
+                </div>
+                <div>
+                    <span>Fully Immunized</span>
+                    <strong>4</strong>
+                    <small>57%% of total patients</small>
+                </div>
+            </div>
+
+            <div class="summary-card card-orange">
+                <div class="summary-icon">
+                    <img src="icons/due-this-month.png" alt="Due This Month"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fa-solid fa-calendar-days" style="display:none;"></i>
+                </div>
+                <div>
+                    <span>Due This Month</span>
+                    <strong>2</strong>
+                    <small>Upcoming vaccines</small>
+                </div>
+            </div>
+
+            <div class="summary-card card-red">
+                <div class="summary-icon">
+                    <img src="icons/overdue-vaccines.png" alt="Overdue"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fa-solid fa-triangle-exclamation" style="display:none;"></i>
+                </div>
+                <div>
+                    <span>Overdue</span>
+                    <strong>1</strong>
+                    <small>Missed vaccines</small>
+                </div>
+            </div>
+
+            <div class="summary-card card-purple">
+                <div class="summary-icon">
+                    <img src="icons/vaccines-today.png" alt="Vaccines Today"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <i class="fa-solid fa-syringe" style="display:none;"></i>
+                </div>
+                <div>
+                    <span>Vaccines Today</span>
+                    <strong>18</strong>
+                    <small>Scheduled for today</small>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="record-card card">
+
+            <div class="record-tabs">
+                <button class="record-tab active" type="button" data-tab="records">Patient Immunization Record</button>
+                <button class="record-tab" type="button" data-tab="schedule">Vaccination Schedule</button>
+                <button class="record-tab" type="button" data-tab="inventory">Vaccine Inventory</button>
+                <button class="record-tab" type="button" data-tab="reports">Reports</button>
+            </div>
+
+            <div class="record-body">
+
+                <div class="tab-panel active" id="records">
+
+                    <div class="record-main">
+
+                        <div class="filters">
+                            <div class="search-field">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                                <input type="text" id="vaccineSearch" placeholder="Search vaccine name...">
+                            </div>
+
+                            <select id="ageFilter">
+                                <option value="">All Age Groups</option>
+                                <option value="child">Children</option>
+                                <option value="adult">Adults</option>
+                            </select>
+
+                            <select id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Scheduled">Scheduled</option>
+                                <option value="Due Soon">Due Soon</option>
+                                <option value="Overdue">Overdue</option>
+                            </select>
+
+                            <button class="filter-button" type="button" onclick="applyFilters()">
+                                <i class="fa-solid fa-filter"></i> Filter
+                            </button>
+                        </div>
+
+                        <div class="patient-strip">
+                            <div class="patient-avatar">
+                                <img src="icons/patient.png" alt="Patient Icon"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <i class="fa-solid fa-user" style="display:none;"></i>
+                            </div>
+
+                            <div class="patient-info">
+                                <h2>Juan D. Dela Cruz</h2>
+                                <div class="patient-meta">
+                                    <span>Patient ID: PT-0001</span>
+                                    <span>|</span>
+                                    <span>34 yrs</span>
+                                    <span>|</span>
+                                    <span>May 12, 1990</span>
+                                </div>
+                                <div class="patient-contact">
+                                    <span><i
+                                            class="fa-solid fa-phone"></i>0917 123 4567</span>
+                                    <span><i
+                                            class="fa-solid fa-location-dot"></i>Labin Street, Talimundoc, Orani, Bataan</span>
+                                </div>
+                            </div>
+
+                            <div class="patient-actions">
+                                <a class="view-profile" href="patient-registration.html">
+                                    View Profile
+                                </a>
+                                <button class="add-button" type="button" onclick="openModal()">
+                                    <i class="fa-solid fa-plus"></i> Add Vaccination
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-title">Vaccination History</div>
+
+                        <div class="table-wrap">
+                            <table class="vaccination-table">
+                                <thead>
+                                    <tr>
+                                        <th>Vaccine</th>
+                                        <th>Dose</th>
+                                        <th>Date Given</th>
+                                        <th>Age at Dose</th>
+                                        <th>Batch No.</th>
+                                        <th>Given By</th>
+                                        <th>Next Dose</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vaccinationBody">
+                                    
+        <tr data-vaccine="bcg" data-status="completed" data-age="3 days">
+            <td><strong>BCG</strong></td>
+            <td>1 of 1</td>
+            <td>Jan 05, 2026</td>
+            <td>3 days</td>
+            <td><code>BCG9234</code></td>
+            <td>BHW Alex</td>
+            <td>—</td>
+            <td><span class="status-badge status-completed">Completed</span></td>
+            <td>
+                <button class="btn-icon" title="Edit">✎</button>
+                <button class="btn-icon" title="Print">⎙</button>
+            </td>
+        </tr>
+    
+
+        <tr data-vaccine="hepatitis b" data-status="completed" data-age="6 months">
+            <td><strong>Hepatitis B</strong></td>
+            <td>3 of 3</td>
+            <td>Feb 11, 2026</td>
+            <td>6 months</td>
+            <td><code>HEP1128</code></td>
+            <td>BHW Alex</td>
+            <td>—</td>
+            <td><span class="status-badge status-completed">Completed</span></td>
+            <td>
+                <button class="btn-icon" title="Edit">✎</button>
+                <button class="btn-icon" title="Print">⎙</button>
+            </td>
+        </tr>
+    
+
+        <tr data-vaccine="dpt pentavalent" data-status="completed" data-age="1 year">
+            <td><strong>DPT Pentavalent</strong></td>
+            <td>3 of 3</td>
+            <td>Mar 08, 2026</td>
+            <td>1 year</td>
+            <td><code>DPT7321</code></td>
+            <td>BHW Alex</td>
+            <td>—</td>
+            <td><span class="status-badge status-completed">Completed</span></td>
+            <td>
+                <button class="btn-icon" title="Edit">✎</button>
+                <button class="btn-icon" title="Print">⎙</button>
+            </td>
+        </tr>
+    
+
+        <tr data-vaccine="polio (opv/ipv)" data-status="completed" data-age="1 year">
+            <td><strong>Polio (OPV/IPV)</strong></td>
+            <td>4 of 4</td>
+            <td>Apr 12, 2026</td>
+            <td>1 year</td>
+            <td><code>OPV9084</code></td>
+            <td>BHW Alex</td>
+            <td>—</td>
+            <td><span class="status-badge status-completed">Completed</span></td>
+            <td>
+                <button class="btn-icon" title="Edit">✎</button>
+                <button class="btn-icon" title="Print">⎙</button>
+            </td>
+        </tr>
+    
+
+        <tr data-vaccine="measles (mmr)" data-status="scheduled" data-age="2 years">
+            <td><strong>Measles (MMR)</strong></td>
+            <td>1 of 2</td>
+            <td>May 02, 2026</td>
+            <td>2 years</td>
+            <td><code>MMR5624</code></td>
+            <td>BHW Alex</td>
+            <td>Nov 02, 2026</td>
+            <td><span class="status-badge status-scheduled">Scheduled</span></td>
+            <td>
+                <button class="btn-icon" title="Edit">✎</button>
+                <button class="btn-icon" title="Print">⎙</button>
+            </td>
+        </tr>
+    
+
+        <tr data-vaccine="tetanus toxoid (tt)" data-status="due soon" data-age="34 years">
+            <td><strong>Tetanus Toxoid (TT)</strong></td>
+            <td>2 of 5</td>
+            <td>Jun 04, 2026</td>
+            <td>34 years</td>
+            <td><code>TT7635</code></td>
+            <td>BHW Alex</td>
+            <td>Nov 04, 2026</td>
+            <td><span class="status-badge status-due">Due Soon</span></td>
+            <td>
+                <button class="btn-icon" title="Edit">✎</button>
+                <button class="btn-icon" title="Print">⎙</button>
+            </td>
+        </tr>
+    
+
+        <tr data-vaccine="influenza vaccine" data-status="overdue" data-age="-">
+            <td><strong>Influenza Vaccine</strong></td>
+            <td>3 of 1</td>
+            <td>—</td>
+            <td>-</td>
+            <td><code>—</code></td>
+            <td>—</td>
+            <td>Dec 05, 2026</td>
+            <td><span class="status-badge status-overdue">Overdue</span></td>
+            <td>
+                <button class="btn-icon" title="Edit">✎</button>
+                <button class="btn-icon" title="Print">⎙</button>
+            </td>
+        </tr>
+    
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="legend">
+                            <span><i class="dot status-completed"></i> Completed</span>
+                            <span><i class="dot status-scheduled"></i> Scheduled</span>
+                            <span><i class="dot status-due"></i> Due Soon</span>
+                            <span><i class="dot status-overdue"></i> Overdue</span>
+                        </div>
+
+                        <div class="notice">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>Ensure all vaccines are given according to the National Immunization Program (NIP)
+                                schedule. Click the eye icon to view detailed record of each vaccine.</span>
+                        </div>
+
+                    </div>
+
+                    <aside class="right-column">
+
+                        <div class="side-card card">
+                            <div class="side-heading">
+                                <h3>Upcoming Vaccinations</h3>
+                                <a href="#">View All</a>
+                            </div>
+
+                            
+        <div class="schedule-item">
+            <div class="schedule-dot status-scheduled"></div>
+            <div class="schedule-details">
+                <strong>Measles (MMR) (1 of 2)</strong>
+                <span>Next Due: Nov 02, 2026</span>
+            </div>
+            <span class="status-badge status-scheduled">Scheduled</span>
+        </div>
+    
+
+        <div class="schedule-item">
+            <div class="schedule-dot status-due"></div>
+            <div class="schedule-details">
+                <strong>Tetanus Toxoid (TT) (2 of 5)</strong>
+                <span>Next Due: Nov 04, 2026</span>
+            </div>
+            <span class="status-badge status-due">Due Soon</span>
+        </div>
+    
+
+        <div class="schedule-item">
+            <div class="schedule-dot status-overdue"></div>
+            <div class="schedule-details">
+                <strong>Influenza Vaccine (3 of 1)</strong>
+                <span>Next Due: Dec 05, 2026</span>
+            </div>
+            <span class="status-badge status-overdue">Overdue</span>
+        </div>
+    
+
+                            <a class="view-schedule" href="#">View full schedule <i
+                                    class="fa-solid fa-arrow-right"></i></a>
+                        </div>
+
+                        <div class="side-card card coverage-card">
+                            <div class="side-heading">
+                                <h3>Immunization Coverage (This Year)</h3>
+                            </div>
+
+                            <div class="coverage-content">
+                                <div class="donut" style="--coverage: 57%%;">
+                                    <div>
+                                        <strong>57%%</strong>
+                                        <span>Fully Immunized</span>
+                                    </div>
+                                </div>
+
+                                <div class="coverage-legend">
+                                    <div><i class="green"></i><span>Fully
+                                            Immunized</span><strong>4</strong></div>
+                                    <div><i class="orange"></i><span>Partially
+                                            Immunized</span><strong>1</strong></div>
+                                    <div><i class="red"></i><span>Not
+                                            Immunized</span><strong>1</strong></div>
+                                    <b>Total Registered: 7</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="side-card card">
+                            <div class="side-heading">
+                                <h3>Alerts &amp; Reminders</h3>
+                            </div>
+
+                            <div class="alert-row warning">
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+                                <span>1 patients with overdue vaccines</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+
+                            <div class="alert-row info">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span>2 patients with vaccines due this month</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+
+                            <div class="alert-row success">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span>Vaccine inventory is up to date</span>
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </div>
+                        </div>
+
+                    </aside>
+
+                </div>
+
+                <div class="tab-panel" id="schedule">
+                    <div class="placeholder-panel">
+                        <div class="placeholder-icon">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                        <h2>Vaccination Schedule</h2>
+                        <p>Use this section to manage upcoming vaccination schedules and due dates.</p>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="inventory">
+                    <div class="placeholder-panel">
+                        <div class="placeholder-icon">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </div>
+                        <h2>Vaccine Inventory</h2>
+                        <p>Use this section to monitor vaccine stock and availability.</p>
+                    </div>
+                </div>
+
+                <div class="tab-panel" id="reports">
+                    <div class="placeholder-panel">
+                        <div class="placeholder-icon">
+                            <i class="fa-solid fa-chart-column"></i>
+                        </div>
+                        <h2>Immunization Reports</h2>
+                        <p>Use this section for immunization summaries and reports.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <div class="modal" id="vaccinationModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Add Vaccination Record</h2>
+                <button type="button" onclick="closeModal()">&times;</button>
+            </div>
+
+            <form method="POST">
+                <input type="hidden" name="action" value="add_vaccination">
+                <input type="hidden" name="user_id" value="1">
+
+                <div class="form-grid">
+                    <label>
+                        Vaccine
+                        <input type="text" name="vaccine" required placeholder="e.g. MMR">
+                    </label>
+
+                    <label>
+                        Dose
+                        <input type="text" name="dose" required placeholder="e.g. 1 of 2">
+                    </label>
+
+                    <label>
+                        Date Given
+                        <input type="date" name="date_given">
+                    </label>
+
+                    <label>
+                        Age at Dose
+                        <input type="text" name="age_at_dose" placeholder="e.g. 2 years">
+                    </label>
+
+                    <label>
+                        Batch No.
+                        <input type="text" name="batch_no" placeholder="e.g. MMR1234">
+                    </label>
+
+                    <label>
+                        Given By
+                        <input type="text" name="given_by" placeholder="e.g. BHW Alex">
+                    </label>
+
+                    <label>
+                        Next Dose
+                        <input type="date" name="next_dose">
+                    </label>
+
+                    <label>
+                        Status
+                        <select name="status">
+                            <option value="Completed">Completed</option>
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Due Soon">Due Soon</option>
+                            <option value="Overdue">Overdue</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="cancel-button" type="button" onclick="closeModal()">Cancel</button>
+                    <button class="save-button" type="submit">Save Vaccination</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById("vaccinationModal").classList.add("show");
+        }
+
+        function closeModal() {
+            document.getElementById("vaccinationModal").classList.remove("show");
+        }
+
+        document.getElementById("vaccinationModal").addEventListener("click", function (e) {
+            if (e.target === this) closeModal();
+        });
+
+        function applyFilters() {
+            const search = document.getElementById("vaccineSearch").value.toLowerCase().trim();
+            const status = document.getElementById("statusFilter").value.toLowerCase();
+            const age = document.getElementById("ageFilter").value.toLowerCase();
+
+            document.querySelectorAll("#vaccinationBody tr").forEach(function (row) {
+                const vaccine = row.dataset.vaccine || "";
+                const rowStatus = (row.dataset.status || "").toLowerCase();
+                const rowAge = (row.dataset.age || "").toLowerCase();
+
+                const matchesSearch = !search || vaccine.includes(search);
+                const matchesStatus = !status || rowStatus === status;
+
+                let matchesAge = true;
+                if (age === "child") {
+                    matchesAge = /day|month|year/.test(rowAge) && !/3[0-9]|4[0-9]|5[0-9]|6[0-9]/.test(rowAge);
+                } else if (age === "adult") {
+                    matchesAge = /3[0-9]|4[0-9]|5[0-9]|6[0-9]|adult/.test(rowAge);
+                }
+
+                row.style.display = matchesSearch && matchesStatus && matchesAge ? "" : "none";
+            });
+        }
+
+        document.getElementById("vaccineSearch").addEventListener("input", applyFilters);
+        document.getElementById("statusFilter").addEventListener("change", applyFilters);
+        document.getElementById("ageFilter").addEventListener("change", applyFilters);
+
+        document.querySelectorAll(".record-tab").forEach(function (tab) {
+            tab.addEventListener("click", function () {
+                document.querySelectorAll(".record-tab").forEach(function (item) {
+                    item.classList.remove("active");
+                });
+
+                document.querySelectorAll(".tab-panel").forEach(function (panel) {
+                    panel.classList.remove("active");
+                });
+
+                this.classList.add("active");
+                document.getElementById(this.dataset.tab).classList.add("active");
+            });
+        });
+
+        function viewRecord(button) {
+            const row = button.closest("tr");
+            const cells = row.querySelectorAll("td");
+
+            alert(
+                "Vaccine: " + cells[0].innerText.trim() +
+                "\nDose: " + cells[1].innerText.trim() +
+                "\nDate Given: " + cells[2].innerText.trim() +
+                "\nAge at Dose: " + cells[3].innerText.trim() +
+                "\nBatch No.: " + cells[4].innerText.trim() +
+                "\nGiven By: " + cells[5].innerText.trim() +
+                "\nNext Dose: " + cells[6].innerText.trim() +
+                "\nStatus: " + cells[7].innerText.trim()
+            );
+        }
+    </script>
+
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const form = document.getElementById("vaccinationForm");
+        if (form) {
+            form.addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const fd = new FormData(form);
+                fd.append("action", "add_vaccination");
+                try {
+                    const res = await fetch("api/immunization.php?action=add_vaccination", {
+                        method: "POST",
+                        body: fd
+                    });
+                    const d = await res.json();
+                    if (d.success) {
+                        alert("Vaccination record saved successfully!");
+                        window.location.reload();
+                    } else {
+                        alert(d.error || "Failed to save record.");
+                    }
+                } catch(err) {
+                    alert("Network error saving vaccination.");
+                }
+            });
+        }
+    });
+    </script>
+    <script src="sidebar.js"></script>
+    <script src="auth-guard.js"></script>
+    
+</body>
+
+</html>

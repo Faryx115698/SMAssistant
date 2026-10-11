@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback &amp; Messages - Barangay Talimundoc Health Center</title>
+    <link rel="stylesheet" href="feedback.css">
+    <link rel="stylesheet" href="darkmode.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth-guard.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="darkmode.js"></script>
+</head>
+<body>
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <h1>Feedback &amp; Resident Messages</h1>
+                <p>Monitor patient inquiries, satisfaction feedback, suggestions, and community responses.</p>
+            </div>
+            <div class="header-right">
+                <div class="admin-profile">
+                    <div class="admin-text">
+                        <small>You are logged in as</small>
+                        <strong class="admin-name">ADMINISTRATOR</strong>
+                    </div>
+                    <div class="admin-photo">
+                        <img src="icons/admin.png" alt="Admin" onerror="this.src='logo.png'">
+                    </div>
+                </div>
+                <button class="ask-ai" onclick="location.href='ai-moto.html'">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Ask AI Moto
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Grid -->
+        <section class="summary-grid">
+            <div class="stat-card blue">
+                <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
+                <div>
+                    <h3>Total Inquiries</h3>
+                    <strong id="statTotalInquiries">48</strong>
+                    <small>Received this month</small>
+                </div>
+            </div>
+            <div class="stat-card orange">
+                <div class="stat-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                <div>
+                    <h3>Unread Messages</h3>
+                    <strong id="statUnread">4</strong>
+                    <small>Requires reply</small>
+                </div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon"><i class="fa-solid fa-check-double"></i></div>
+                <div>
+                    <h3>Resolved Concerns</h3>
+                    <strong>44</strong>
+                    <small>92% resolution rate</small>
+                </div>
+            </div>
+            <div class="stat-card teal">
+                <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
+                <div>
+                    <h3>Patient Satisfaction</h3>
+                    <strong>4.8 / 5.0</strong>
+                    <small>Average survey score</small>
+                </div>
+            </div>
+            <div class="stat-card purple">
+                <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                <div>
+                    <h3>Avg Response Time</h3>
+                    <strong>&lt; 2 hours</strong>
+                    <small>BHW &amp; Admin dispatch</small>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation Tabs -->
+        <nav class="record-tabs">
+            <button class="record-tab active" data-tab="messages">Resident Inquiries &amp; SMS</button>
+            <button class="record-tab" data-tab="surveys">Patient Satisfaction Surveys</button>
+            <button class="record-tab" data-tab="suggestions">Suggestion Box</button>
+            <button class="record-tab" data-tab="submit">Log Walk-in Feedback</button>
+        </nav>
+
+        <!-- TAB 1: Resident Inquiries -->
+        <section class="tab-content active" id="messages">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Community Messages &amp; Resident Inquiries</h2>
+                    <button class="btn-primary" onclick="openReplyModal('New Message', '', '')">
+                        <i class="fa-solid fa-paper-plane"></i> Send Outbound SMS / Notice
+                    </button>
+                </div>
+                <div class="message-list" id="messageList">
+                    <!-- Populated dynamically via feedback.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: Patient Satisfaction Surveys -->
+        <section class="tab-content" id="surveys">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Recent Patient Satisfaction Ratings (CSAT)</h2>
+                    <button class="btn-outline" onclick="alert('Exporting satisfaction report as PDF/Excel.')">
+                        <i class="fa-solid fa-download"></i> Export Ratings
+                    </button>
+                </div>
+                <div id="surveyList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: Suggestion Box -->
+        <section class="tab-content" id="suggestions">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Community Suggestions &amp; Ideas</h2>
+                    <button class="btn-primary" onclick="alert('Suggestion recorded.')">
+                        <i class="fa-solid fa-plus"></i> Add Suggestion
+                    </button>
+                </div>
+                <div class="message-list" id="suggestionList">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: Log Walk-in Feedback -->
+        <section class="tab-content" id="submit">
+            <div class="card" style="max-width: 680px;">
+                <div class="card-header">
+                    <h2>Record Resident Feedback / Walk-in Concern</h2>
+                </div>
+                <form id="feedbackForm" onsubmit="handleFeedbackSubmit(event)">
+                    <div class="form-group">
+                        <label>Resident / Patient Name (or Anonymous) *</label>
+                        <input type="text" id="fbName" required placeholder="e.g. Maria Del Rosario (or Anonymous)">
+                    </div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <div class="form-group">
+                            <label>Contact Number</label>
+                            <input type="text" id="fbContact" placeholder="09XX-XXX-XXXX">
+                        </div>
+                        <div class="form-group">
+                            <label>Purok / Address</label>
+                            <input type="text" id="fbPurok" placeholder="Purok 1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Category *</label>
+                        <select id="fbCategory">
+                            <option>Consultation &amp; Care Quality</option>
+                            <option>Medicine &amp; Supply Availability</option>
+                            <option>Staff Courtesy &amp; Helpfulness</option>
+                            <option>Facility &amp; Waiting Area</option>
+                            <option>Appointment Scheduling</option>
+                            <option>General Inquiries</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Rating (1 to 5 Stars)</label>
+                        <select id="fbRating">
+                            <option value="5">⭐⭐⭐⭐⭐ Excellent (5 Stars)</option>
+                            <option value="4">⭐⭐⭐⭐ Very Good (4 Stars)</option>
+                            <option value="3">⭐⭐⭐ Neutral / Fair (3 Stars)</option>
+                            <option value="2">⭐⭐ Needs Improvement (2 Stars)</option>
+                            <option value="1">⭐ Poor (1 Star)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Feedback Message / Specific Details *</label>
+                        <textarea id="fbDetails" rows="4" required placeholder="Describe the resident's feedback, complaint, or recommendation..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Save Feedback Record</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal: Reply to Message -->
+    <div class="modal-overlay" id="replyModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Reply to Resident</h3>
+                <button class="modal-close" onclick="closeReplyModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="replyForm" onsubmit="handleSendReply(event)">
+                <div class="form-group">
+                    <label>Recipient Name</label>
+                    <input type="text" id="replyRecipient" readonly style="background:#e2e8f0;">
+                </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="text" id="replyContact" readonly style="background:#e2e8f0;">
+                </div>
+                <div class="form-group">
+                    <label>Resident's Message</label>
+                    <p id="replyOriginalMsg" style="background:#f8fafc; padding:8px 12px; border-radius:6px; font-size:12px; color:var(--muted);"></p>
+                </div>
+                <div class="form-group">
+                    <label>Your Response (will be sent via SMS / Portal) *</label>
+                    <textarea id="replyText" rows="4" required placeholder="Type your official health center response..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeReplyModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Send Response</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="feedback.js"></script>
+</body>
+</html>
