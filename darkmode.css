@@ -406,3 +406,113 @@ html.dark-mode ::-webkit-scrollbar-thumb {
 html.dark-mode ::-webkit-scrollbar-thumb:hover {
     background: #4b5563;
 }
+
+/* Patient List Card Dark Mode */
+html.dark-mode .patient-list-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html.dark-mode .patient-list-header {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+html.dark-mode .patient-list-header h2 {
+    color: #38bdf8 !important;
+}
+
+html.dark-mode .patient-search {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+html.dark-mode .patient-search input {
+    color: #f1f5f9 !important;
+}
+
+html.dark-mode .patient-search input::placeholder {
+    color: #64748b !important;
+}
+
+html.dark-mode .patient-search button {
+    color: #38bdf8 !important;
+}
+
+html.dark-mode .patient-list {
+    background: #0f172a !important;
+}
+
+html.dark-mode .patient-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+html.dark-mode .patient-card:hover {
+    background: #243248 !important;
+    border-color: #475569 !important;
+}
+
+html.dark-mode .patient-card.selected {
+    background: #1e3a5f !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 1px #38bdf8, 0 3px 8px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark-mode .patient-card.selected::before {
+    background: #38bdf8 !important;
+}
+
+html.dark-mode .patient-card-avatar {
+    background: #334155 !important;
+    color: #38bdf8 !important;
+    border-color: #475569 !important;
+}
+
+html.dark-mode .patient-card.selected .patient-card-avatar {
+    background: #38bdf8 !important;
+    color: #0f172a !important;
+    border-color: #38bdf8 !important;
+}
+
+html.dark-mode .patient-card-header strong {
+    color: #f8fafc !important;
+}
+
+html.dark-mode .patient-card.selected .patient-card-header strong {
+    color: #38bdf8 !important;
+}
+
+html.dark-mode .patient-card-id {
+    background: #334155 !important;
+    color: #94a3b8 !important;
+    border-color: #475569 !important;
+}
+
+html.dark-mode .patient-card.selected .patient-card-id {
+    background: #0369a1 !important;
+    color: #e0f2fe !important;
+    border-color: #0284c7 !important;
+}
+
+html.dark-mode .patient-card-details > span:first-child {
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .patient-list-footer {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .stat-card.active-filter {
+    background: #1e3a5f !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 2px #38bdf8 !important;
+}
+
+html.dark-mode .stat-card.active-filter::after {
+    background: #0369a1 !important;
+    color: #e0f2fe !important;
+}

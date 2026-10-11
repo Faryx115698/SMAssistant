@@ -10,6 +10,7 @@
     <title>Patient Registration and Record</title>
 
     <link rel="stylesheet" href="patient-registration.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
@@ -73,7 +74,7 @@
 
     <section class="stats-grid">
 
-        <div class="stat-card">
+        <div class="stat-card" id="cardTotalPatients" data-filter="all" title="Click to view all patients">
 
             <div class="stat-icon blue">
                 <img src="icons/total registered patients.png" alt="Total Patients">
@@ -81,13 +82,13 @@
 
             <div>
                 <span>Total Patients</span>
-                <strong>423</strong>
+                <strong id="statTotalPatients">--</strong>
                 <small>Registered in system</small>
             </div>
 
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card" id="cardNewThisMonth" data-filter="new_month" title="Click to filter new patients this month">
 
             <div class="stat-icon green">
                 <img src="icons/new this months.png" alt="New Patients">
@@ -95,13 +96,13 @@
 
             <div>
                 <span>New This Month</span>
-                <strong>28</strong>
+                <strong id="statNewThisMonth">--</strong>
                 <small>Newly registered</small>
             </div>
 
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card" id="cardActivePatients" data-filter="active" title="Click to filter active patients">
 
             <div class="stat-icon purple">
                 <img src="icons/active patient.png" alt="Active Patients">
@@ -109,13 +110,13 @@
 
             <div>
                 <span>Active Patients</span>
-                <strong>395</strong>
+                <strong id="statActivePatients">--</strong>
                 <small>Currently active</small>
             </div>
 
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card" id="cardArchiveRecords" data-filter="archived" title="Click to filter archived records">
 
             <div class="stat-icon orange">
                 <img src="icons/archive records.png" alt="Archive Records">
@@ -123,13 +124,13 @@
 
             <div>
                 <span>Archive Records</span>
-                <strong>14</strong>
+                <strong id="statArchiveRecords">--</strong>
                 <small>Inactive / Archive</small>
             </div>
 
         </div>
 
-        <div class="stat-card">
+        <div class="stat-card" id="cardPendingProfiles" data-filter="pending" title="Click to filter pending profiles">
 
             <div class="stat-icon navy">
                 <img src="icons/pending profiles.png" alt="Pending Profiles">
@@ -137,7 +138,7 @@
 
             <div>
                 <span>Pending Profiles</span>
-                <strong>14</strong>
+                <strong id="statPendingProfiles">--</strong>
                 <small>For verification</small>
             </div>
 
@@ -172,7 +173,7 @@
 
                 </form>
 
-                <a href="patient-registration.html?new_patient=1" class="new-patient-btn">
+                <a href="#" class="new-patient-btn" id="newPatientBtnTop">
 
                     <i class="fa-solid fa-plus"></i>
 
@@ -183,42 +184,45 @@
             </div>
 
             <div class="patient-list">
-
-                
-        <a class="patient-card selected" href="patient-registration.html?patient_id=1">
-            <div class="patient-card-header">
-                <strong>Juan D. Dela Cruz</strong>
-                <span class="patient-card-id">PR-2026-0001</span>
-            </div>
-            <div class="patient-card-details">
-                <span>34 yrs old • Male</span>
-                <span class="status-badge status-active">Active</span>
-            </div>
-        </a>
-        <a class="patient-card" href="patient-registration.html?patient_id=2">
-            <div class="patient-card-header">
-                <strong>Maria Clara Santos</strong>
-                <span class="patient-card-id">PR-2026-0002</span>
-            </div>
-            <div class="patient-card-details">
-                <span>28 yrs old • Female</span>
-                <span class="status-badge status-active">Active</span>
-            </div>
-        </a>
-        <a class="patient-card" href="patient-registration.html?patient_id=3">
-            <div class="patient-card-header">
-                <strong>Pedro O. Penduko</strong>
-                <span class="patient-card-id">PR-2026-0003</span>
-            </div>
-            <div class="patient-card-details">
-                <span>41 yrs old • Male</span>
-                <span class="status-badge status-active">Active</span>
-            </div>
-        </a>
-    
-
-                
-
+                <a class="patient-card selected" href="patient-registration.html?patient_id=1" data-patient-id="1">
+                    <div class="patient-card-avatar">JD</div>
+                    <div class="patient-card-body">
+                        <div class="patient-card-header">
+                            <strong title="Juan D. Dela Cruz">Juan D. Dela Cruz</strong>
+                            <span class="patient-card-id">PR-2026-0001</span>
+                        </div>
+                        <div class="patient-card-details">
+                            <span>34 yrs old • Male</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                    </div>
+                </a>
+                <a class="patient-card" href="patient-registration.html?patient_id=2" data-patient-id="2">
+                    <div class="patient-card-avatar">MS</div>
+                    <div class="patient-card-body">
+                        <div class="patient-card-header">
+                            <strong title="Maria Clara Santos">Maria Clara Santos</strong>
+                            <span class="patient-card-id">PR-2026-0002</span>
+                        </div>
+                        <div class="patient-card-details">
+                            <span>28 yrs old • Female</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                    </div>
+                </a>
+                <a class="patient-card" href="patient-registration.html?patient_id=3" data-patient-id="3">
+                    <div class="patient-card-avatar">PP</div>
+                    <div class="patient-card-body">
+                        <div class="patient-card-header">
+                            <strong title="Pedro O. Penduko">Pedro O. Penduko</strong>
+                            <span class="patient-card-id">PR-2026-0003</span>
+                        </div>
+                        <div class="patient-card-details">
+                            <span>41 yrs old • Male</span>
+                            <span class="status-badge status-active">Active</span>
+                        </div>
+                    </div>
+                </a>
             </div>
 
             <div class="patient-list-footer">
@@ -235,7 +239,8 @@
 
             
 
-                <div class="new-patient-header">
+                <div id="newPatientView" style="display: none; grid-column: 1 / -1;">
+<div class="new-patient-header">
 
                     <div>
 
@@ -249,13 +254,13 @@
 
                     </div>
 
-                    <a href="patient-registration.html" class="cancel-new-patient">
+                    <button type="button" class="cancel-new-patient" id="cancelNewPatientBtnTop">
                         Cancel
                     </a>
 
                 </div>
 
-                <form method="POST" class="new-patient-form">
+                <form method="POST" class="new-patient-form" id="newPatientForm">
 
                     <input type="hidden" name="save_new_patient" value="1">
 
@@ -474,7 +479,7 @@
 
                     <div class="new-patient-actions">
 
-                        <a href="patient-registration.html" class="cancel-button">
+                        <button type="button" class="cancel-button" id="cancelNewPatientBtnBottom">
                             Cancel
                         </a>
 
@@ -492,7 +497,10 @@
 
             
 
-                <div class="record-header">
+                </div>
+
+<div id="selectedPatientView" style="display: contents;">
+<div class="record-header">
 
                     <div class="record-person">
 
@@ -500,13 +508,9 @@
 
                             <div class="record-name-row">
 
-                                <h2>
-                                    Juan D. Dela Cruz
-                                </h2>
+                                <h2 id="headerPatientName">Juan D. Dela Cruz</h2>
 
-                                <span class="status active">
-                                    
-                                </span>
+                                <span class="status active" id="headerStatusBadge">Active</span>
 
                             </div>
 
@@ -514,43 +518,23 @@
 
                                 Patient ID:
 
-                                <strong>
-                                    PT-2026-0001
-                                </strong>
+                                <strong id="headerPatientId">PT-2026-0001</strong>
 
                             </p>
 
                             <div class="patient-meta">
 
-                                <span>
-                                    <i class="fa-regular fa-calendar"></i>
-                                    
-                                </span>
+                                <span id="headerDobMeta"><i class="fa-regular fa-calendar"></i> May 12, 1990</span>
 
-                                <span>
-                                    <i class="fa-solid fa-cake-candles"></i>
-                                    34 years old
-                                </span>
+                                <span id="headerAgeMeta"><i class="fa-solid fa-cake-candles"></i> 34 years old</span>
 
-                                <span>
-                                    <i class="fa-solid fa-venus-mars"></i>
-                                    
-                                </span>
+                                <span id="headerSexMeta"><i class="fa-solid fa-venus-mars"></i> Male</span>
 
-                                <span>
-                                    <i class="fa-solid fa-phone"></i>
-                                    
-                                </span>
+                                <span id="headerPhoneMeta"><i class="fa-solid fa-phone"></i> 0917 123 4567</span>
 
                             </div>
 
-                            <div class="patient-address">
-
-                                <i class="fa-solid fa-location-dot"></i>
-
-                                
-
-                            </div>
+                            <div class="patient-address" id="headerAddressMeta"><i class="fa-solid fa-location-dot"></i> Labin St., Talimundoc, Orani, Bataan</div>
 
                         </div>
 
@@ -605,180 +589,96 @@
                     <div class="record-main">
 
                         <form method="POST" class="personal-form" id="personalForm">
-
                             <input type="hidden" name="save_patient" value="1">
+                            <input type="hidden" name="user_id" value="1">
 
-                            <input
-                                type="hidden"
-                                name="user_id"
-                                value="1"
-                            >
-
-                            <h3>
-                                Personal Information
-                            </h3>
+                            <h3>Personal Information</h3>
 
                             <div class="form-grid">
-
                                 <label>
                                     First Name
-                                    <input
-                                        type="text"
-                                        name="first_name"
-                                        value=""
-                                        required
-                                    >
+                                    <input type="text" name="first_name" id="pFirstName" value="Juan" required>
                                 </label>
 
                                 <label>
                                     Middle Name
-                                    <input
-                                        type="text"
-                                        name="middle_name"
-                                        value=""
-                                        placeholder="Optional"
-                                    >
+                                    <input type="text" name="middle_name" id="pMiddleName" value="D." placeholder="Optional">
                                 </label>
 
                                 <label>
                                     Last Name
-                                    <input
-                                        type="text"
-                                        name="last_name"
-                                        value=""
-                                        required
-                                    >
+                                    <input type="text" name="last_name" id="pLastName" value="Dela Cruz" required>
                                 </label>
 
                                 <label>
                                     Suffix
-                                    <input
-                                        type="text"
-                                        name="suffix"
-                                        value=""
-                                        placeholder="Optional"
-                                    >
+                                    <input type="text" name="suffix" id="pSuffix" value="" placeholder="Optional">
                                 </label>
 
                                 <label>
                                     Date of Birth
-                                    <input
-                                        type="date"
-                                        name="birth_date"
-                                        value=""
-                                    >
+                                    <input type="date" name="birth_date" id="pBirthDate" value="1992-05-12">
                                 </label>
 
                                 <label>
                                     Age
-                                    <input
-                                        type="text"
-                                        value=""
-                                        readonly
-                                    >
+                                    <input type="text" name="age" id="pAge" value="34" readonly>
                                 </label>
 
                                 <label>
                                     Sex
-                                    <select name="sex">
+                                    <select name="sex" id="pSex">
                                         <option value="">Select Sex</option>
-                                        <option value="Male" >Male</option>
-                                        <option value="Female" >Female</option>
+                                        <option value="Male" selected>Male</option>
+                                        <option value="Female">Female</option>
                                     </select>
                                 </label>
 
                                 <label>
                                     Civil Status
-                                    <input
-                                        type="text"
-                                        name="civil_status"
-                                        value=""
-                                        placeholder="Optional"
-                                    >
+                                    <input type="text" name="civil_status" id="pCivilStatus" value="Single" placeholder="Optional">
                                 </label>
 
                                 <label>
                                     Nationality
-                                    <input
-                                        type="text"
-                                        name="nationality"
-                                        value=""
-                                        placeholder="Optional"
-                                    >
+                                    <input type="text" name="nationality" id="pNationality" value="Filipino" placeholder="Optional">
                                 </label>
 
                                 <label>
                                     Religion
-                                    <input
-                                        type="text"
-                                        name="religion"
-                                        value=""
-                                        placeholder="Optional"
-                                    >
+                                    <input type="text" name="religion" id="pReligion" value="Catholic" placeholder="Optional">
                                 </label>
 
                                 <label>
                                     Occupation
-                                    <input
-                                        type="text"
-                                        name="occupation"
-                                        value=""
-                                        placeholder="Optional"
-                                    >
+                                    <input type="text" name="occupation" id="pOccupation" value="Self-Employed" placeholder="Optional">
                                 </label>
 
                                 <label>
                                     Mobile Number
-                                    <input
-                                        type="text"
-                                        name="contact_number"
-                                        value=""
-                                    >
+                                    <input type="text" name="contact_number" id="pMobile" value="0917 123 4567">
                                 </label>
 
                                 <label>
                                     Telephone
-                                    <input
-                                        type="text"
-                                        name="telephone"
-                                        value=""
-                                        placeholder="Optional"
-                                    >
+                                    <input type="text" name="telephone" id="pTelephone" value="(047) 237-1234" placeholder="Optional">
                                 </label>
 
                                 <label class="span-2">
                                     Email Address
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value=""
-                                    >
+                                    <input type="email" name="email" id="pEmail" value="juan@example.com">
                                 </label>
 
                                 <label class="span-4">
                                     Complete Address
-                                    <input
-                                        type="text"
-                                        name="address"
-                                        value=""
-                                    >
+                                    <input type="text" name="address" id="pAddress" value="Labin St., Talimundoc, Orani, Bataan">
                                 </label>
-
                             </div>
 
                             <div class="form-actions">
-
-                                <button type="reset" class="cancel-button">
-                                    Cancel
-                                </button>
-
-                                <button type="submit" class="save-button">
-                                    <i class="fa-solid fa-floppy-disk"></i>
-                                    Save Information
-                                </button>
-
+                                <button type="button" class="cancel-button" id="cancelPersonalEditBtn">Cancel</button>
+                                <button type="submit" class="save-button"><i class="fa-solid fa-floppy-disk"></i> Save Information</button>
                             </div>
-
                         </form>
 
                     </div>
@@ -1050,156 +950,69 @@
                 <div class="quick-record-area">
 
                     <aside class="quick-summary">
-
-                        <h3>
-                            Quick Summary
-                        </h3>
+                        <h3>Quick Summary</h3>
 
                         <div class="summary-section">
-
                             <strong>
-                                <img src="icons/last consultation.png" alt="">
+                                <img src="icons/last consultation.png" alt="" onerror="this.style.display='none'">
                                 Last Consultation
                             </strong>
-
-                            
-
-                                <p>
-                                    
-                                </p>
-
-                                <p>
-                                    
-                                </p>
-
-                            
-
-                                <p>
-                                    No consultation recorded.
-                                </p>
-
-                            
-
+                            <p id="summaryLastConsultDate" style="margin: 3px 0 0; font-size: 11px; font-weight: 600; color: #17233d;">May 10, 2026</p>
+                            <p id="summaryLastConsultType" style="margin: 2px 0 0; font-size: 10px; color: #64748b;">General Consultation</p>
+                            <p id="summaryNoConsultation" style="display:none; margin: 3px 0 0; font-size: 10px; color: #64748b;">No consultation recorded.</p>
                         </div>
 
                         <div class="summary-section">
-
                             <strong>
-                                <img src="icons/appointment.png" alt="">
-                                Next Appointment
+                                <img src="icons/appointment.png" alt="" onerror="this.style.display='none'">
+                                <i class="fa-regular fa-calendar"></i> Next Appointment
                             </strong>
-
-                            
-
-                                <p>
-
-                                    
-
-                                    
-
-                                        •
-                                        
-
-                                    
-
-                                </p>
-
-                                <p>
-                                    
-                                </p>
-
-                            
-
-                                <p>
-                                    No upcoming appointment.
-                                </p>
-
-                            
-
+                            <p id="summaryNextAppt" style="margin: 3px 0 0; font-size: 10px; color: #64748b;">No upcoming appointment.</p>
                         </div>
 
                         <div class="summary-section">
-
                             <strong>
-                                <img src="icons/health programs.png" alt="">
+                                <img src="icons/health programs.png" alt="" onerror="this.style.display='none'">
                                 Active Health Programs
                             </strong>
-
-                            
-
-                                <ul>
-
-                                    
-
-                                        <li>
-                                            
-                                        </li>
-
-                                    
-
-                                </ul>
-
-                            
-
-                                <p>
-                                    None recorded.
-                                </p>
-
-                            
-
+                            <div id="summaryPrograms" style="margin: 3px 0 0; font-size: 10px; color: #64748b;">
+                                <p>None recorded.</p>
+                            </div>
                         </div>
 
                         <div class="summary-section">
-
                             <strong>
-                                <img src="icons/allergies.png" alt="">
+                                <img src="icons/allergies.png" alt="" onerror="this.style.display='none'">
                                 Allergies
                             </strong>
-
-                            <p>
-                                
-                            </p>
-
+                            <p id="summaryAllergies" style="margin: 3px 0 0; font-size: 10px; color: #64748b;">None recorded.</p>
                         </div>
 
                         <div class="summary-section">
-
                             <strong>
                                 <i class="fa-solid fa-heart-pulse"></i>
                                 Chronic Conditions
                             </strong>
-
-                            <p>
-                                
-                            </p>
-
+                            <p id="summaryConditions" style="margin: 3px 0 0; font-size: 10px; color: #64748b;">None recorded.</p>
                         </div>
-
                     </aside>
 
                 </div>
 
             
 
-                <div class="no-selected-patient">
-
-                    <i class="fa-solid fa-user-plus"></i>
-
-                    <h2>
-                        No Patient Selected
-                    </h2>
-
-                    <p>
-                        Register a patient or select a patient from the list.
-                    </p>
-
-                    <a href="patient-registration.html?new_patient=1">
-                        Add New Patient
-                    </a>
-
                 </div>
 
-            
+<div id="noPatientView" style="display: none; grid-column: 1 / -1;">
+                    <div class="no-selected-patient">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <h2>No Patient Selected</h2>
+                        <p>Register a patient or select a patient from the list.</p>
+                        <a href="#" class="new-patient-btn" id="addPatientFromEmptyBtn">
+                            <i class="fa-solid fa-plus"></i> Add New Patient
+                        </a>
+                    </div>
+                </div>
 
         </section>
 
@@ -1207,101 +1020,8 @@
 
 </main>
 
-<script>
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const tabButtons = document.querySelectorAll(".tab-button");
-    const tabContents = document.querySelectorAll(".tab-content");
-
-    tabButtons.forEach(function (button) {
-
-        button.addEventListener("click", function () {
-
-            const tabName = button.getAttribute("data-tab");
-
-            tabButtons.forEach(function (btn) {
-                btn.classList.remove("active");
-            });
-
-            tabContents.forEach(function (content) {
-                content.classList.remove("active");
-            });
-
-            button.classList.add("active");
-
-            const target = document.getElementById("tab-" + tabName);
-
-            if (target) {
-                target.classList.add("active");
-            }
-
-        });
-
-    });
-
-});
-
-function focusPersonalForm() {
-
-    const personalTab = document.querySelector('[data-tab="personal"]');
-    const form = document.getElementById("personalForm");
-
-    if (personalTab) {
-        personalTab.click();
-    }
-
-    if (form) {
-
-        form.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-
-        const firstInput = form.querySelector('input[name="first_name"]');
-
-        if (firstInput) {
-
-            setTimeout(function () {
-                firstInput.focus();
-            }, 400);
-
-        }
-
-    }
-
-}
-
-</script>
-
-
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const patientForm = document.getElementById("patientForm") || document.querySelector("form");
-        if (patientForm) {
-            patientForm.addEventListener("submit", async function(e) {
-                e.preventDefault();
-                const fd = new FormData(patientForm);
-                const isNew = fd.has("save_new_patient");
-                const endpoint = isNew ? "api/patients.php?action=create" : "api/patients.php?action=update";
-                try {
-                    const res = await fetch(endpoint, { method: "POST", body: fd });
-                    const d = await res.json();
-                    if (d.success) {
-                        alert(d.message || "Patient saved successfully!");
-                        window.location.reload();
-                    } else {
-                        alert(d.error || "Failed to save patient.");
-                    }
-                } catch(err) {
-                    alert("Error saving patient information.");
-                }
-            });
-        }
-    });
-    </script>
     <script src="sidebar.js"></script>
     <script src="auth-guard.js"></script>
-    
+    <script src="patient-registration.js"></script>
 </body>
 </html>
