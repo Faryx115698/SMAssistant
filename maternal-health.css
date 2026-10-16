@@ -103,13 +103,22 @@ a {
 }
 
 .ask-ai {
-    background: #fff;
-    color: #0754a8;
-    border: 1px solid #bdc9d7;
-    border-radius: 6px;
-    padding: 7px 12px;
-    font-size: 10px;
-    font-weight: 700
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ask-ai:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
 }
 
 .message {
