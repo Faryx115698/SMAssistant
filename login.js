@@ -34,14 +34,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 if (!error && data.session) {
+                    const userRole = data.session.user?.user_metadata?.role || "Administrator";
+                    const isPatient = userRole.toLowerCase() === "patient" || userRole.toLowerCase() === "resident";
                     showMessage("Login successful! Redirecting...", "success");
                     setTimeout(() => {
-                        window.location.href = "dashboard.html";
+                        window.location.href = isPatient ? "patient-portal.html" : "dashboard.html";
                     }, 500);
                     return;
                 }
 
-                // If user not in Supabase yet, allow local admin preview
+                // If user not in Supabase yet, allow local admin & resident preview
+                const isPatientLogin = (emailVal.toLowerCase() === "patient" || emailVal.toLowerCase() === "resident" || emailVal.toLowerCase() === "juan");
+                if (isPatientLogin && (passwordVal === "patient123" || passwordVal === "resident123" || passwordVal === "patient" || passwordVal === "resident" || passwordVal === "123456" || passwordVal === "admin")) {
+                    localStorage.setItem("sm_user_session", JSON.stringify({
+                        name: "Juan D. Dela Cruz",
+                        role: "Patient",
+                        email: "juandelacruz@example.com",
+                        residentId: "PT-2026-0001"
+                    }));
+                    showMessage("Resident login successful! Redirecting to Resident Portal...", "success");
+                    setTimeout(() => {
+                        window.location.href = "patient-portal.html";
+                    }, 500);
+                    return;
+                }
+
                 if (emailVal === "admin" && (passwordVal === "admin123" || passwordVal === "admin")) {
                     localStorage.setItem("sm_user_session", JSON.stringify({
                         name: "Admin Cyron",
@@ -67,6 +84,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // 2. Local Fallback
+        const isPatientLocal = (emailVal.toLowerCase() === "patient" || emailVal.toLowerCase() === "resident" || emailVal.toLowerCase() === "juan");
+        if (isPatientLocal && (passwordVal === "patient123" || passwordVal === "resident123" || passwordVal === "patient" || passwordVal === "resident" || passwordVal === "123456" || passwordVal === "admin")) {
+            localStorage.setItem("sm_user_session", JSON.stringify({
+                name: "Juan D. Dela Cruz",
+                role: "Patient",
+                email: "juandelacruz@example.com",
+                residentId: "PT-2026-0001"
+            }));
+            showMessage("Resident login successful! Redirecting to Resident Portal...", "success");
+            setTimeout(() => {
+                window.location.href = "patient-portal.html";
+            }, 500);
+            return;
+        }
+
         if (emailVal === "admin" && (passwordVal === "admin123" || passwordVal === "admin")) {
             localStorage.setItem("sm_user_session", JSON.stringify({
                 name: "Admin Cyron",
@@ -92,5 +124,23 @@ document.addEventListener("DOMContentLoaded", function () {
         messageEl.textContent = msg;
         messageEl.className = "message " + type;
         messageEl.style.display = "block";
+    }
+
+    const demoPatientBtn = document.getElementById("demoPatientBtn");
+    if (demoPatientBtn) {
+        demoPatientBtn.addEventListener("click", function () {
+            email.value = "patient";
+            password.value = "patient123";
+            form.dispatchEvent(new Event("submit"));
+        });
+    }
+
+    const demoAdminBtn = document.getElementById("demoAdminBtn");
+    if (demoAdminBtn) {
+        demoAdminBtn.addEventListener("click", function () {
+            email.value = "admin";
+            password.value = "admin123";
+            form.dispatchEvent(new Event("submit"));
+        });
     }
 });
