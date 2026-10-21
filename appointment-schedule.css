@@ -36,7 +36,6 @@ button {
 }
 
 .main-content {
-    margin-left: 260px;
     width: calc(100% - 260px);
     min-height: 100vh;
     padding: 24px 28px 18px;
