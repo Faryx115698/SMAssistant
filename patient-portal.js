@@ -296,6 +296,49 @@ function initDarkMode() {
    5. Form Handlers & Live State
    -------------------------------------------------------------------------- */
 function initFormHandlers() {
+    // AI Moto resident chat
+    const residentAiMotoForm = document.getElementById("residentAiMotoForm");
+    if (residentAiMotoForm) {
+        residentAiMotoForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const input = document.getElementById("residentAiInput");
+            const chat = document.getElementById("residentAiChat");
+            if (!input || !chat) return;
+
+            const text = input.value.trim();
+            if (!text) {
+                showToast("Type a question first.", "info");
+                return;
+            }
+
+            const userBubble = document.createElement("div");
+            userBubble.className = "user-message";
+            userBubble.textContent = text;
+            chat.appendChild(userBubble);
+
+            input.value = "";
+
+            const reply = document.createElement("div");
+            reply.className = "ai-message";
+
+            const lower = text.toLowerCase();
+            if (lower.includes("medicine") || lower.includes("medication") || lower.includes("drug")) {
+                reply.textContent = "Follow the dose and timing in your prescription. Do not stop medication suddenly without checking with your doctor or nurse, and tell your provider about any side effects.";
+            } else if (lower.includes("blood pressure") || lower.includes("bp")) {
+                reply.textContent = "Keep blood pressure under control by taking medicines as scheduled, limiting salty foods, staying active, and monitoring your readings consistently with your care team.";
+            } else if (lower.includes("symptom") || lower.includes("pain") || lower.includes("fever")) {
+                reply.textContent = "If symptoms are severe, persistent, or worsening, contact the health center promptly. For urgent symptoms like difficulty breathing, chest pain, or confusion, seek immediate help.";
+            } else {
+                reply.textContent = "I recommend checking your care plan, keeping follow-up appointments, and contacting the health center if the issue continues or worsens.";
+            }
+
+            setTimeout(() => {
+                chat.appendChild(reply);
+                chat.scrollTop = chat.scrollHeight;
+            }, 300);
+        });
+    }
+
     // 1. Submit Health Certificate Request Form
     const certForm = document.getElementById("certificateRequestForm");
     const btnSubmitCert = document.getElementById("btnSubmitCert");

@@ -181,54 +181,11 @@
 
                 </div>
 
-                <div class="patient-list">
-                    <a class="patient-card selected" href="patient-registration.html?patient_id=1" data-patient-id="1">
-                        <div class="patient-card-avatar">JD</div>
-                        <div class="patient-card-body">
-                            <div class="patient-card-header">
-                                <strong title="Juan D. Dela Cruz">Juan D. Dela Cruz</strong>
-                                <span class="patient-card-id">PR-2026-0001</span>
-                            </div>
-                            <div class="patient-card-details">
-                                <span>34 yrs old • Male</span>
-                                <span class="status-badge status-active">Active</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="patient-card" href="patient-registration.html?patient_id=2" data-patient-id="2">
-                        <div class="patient-card-avatar">MS</div>
-                        <div class="patient-card-body">
-                            <div class="patient-card-header">
-                                <strong title="Maria Clara Santos">Maria Clara Santos</strong>
-                                <span class="patient-card-id">PR-2026-0002</span>
-                            </div>
-                            <div class="patient-card-details">
-                                <span>28 yrs old • Female</span>
-                                <span class="status-badge status-active">Active</span>
-                            </div>
-                        </div>
-                    </a>
-                    <a class="patient-card" href="patient-registration.html?patient_id=3" data-patient-id="3">
-                        <div class="patient-card-avatar">PP</div>
-                        <div class="patient-card-body">
-                            <div class="patient-card-header">
-                                <strong title="Pedro O. Penduko">Pedro O. Penduko</strong>
-                                <span class="patient-card-id">PR-2026-0003</span>
-                            </div>
-                            <div class="patient-card-details">
-                                <span>41 yrs old • Male</span>
-                                <span class="status-badge status-active">Active</span>
-                            </div>
-                        </div>
-                    </a>
+                <div class="patient-list" id="patientList">
                 </div>
 
-                <div class="patient-list-footer">
-
-                    Showing
-                    423
-                    patients
-
+                <div class="patient-list-footer" id="patientListFooter">
+                    Showing 0 patients
                 </div>
 
             </aside>
@@ -364,13 +321,16 @@
 
                                 <label>
                                     Blood Type
-                                    <select name="blood_type">
+                                    <select name="blood_type" id="newPatientBloodType">
                                         <option value="">Select Blood Type</option>
-
-                                        <option value="">
-
-                                        </option>
-
+                                        <option value="O+">O+</option>
+                                        <option value="O-">O-</option>
+                                        <option value="A+">A+</option>
+                                        <option value="A-">A-</option>
+                                        <option value="B+">B+</option>
+                                        <option value="B-">B-</option>
+                                        <option value="AB+">AB+</option>
+                                        <option value="AB-">AB-</option>
                                     </select>
                                 </label>
 
@@ -421,7 +381,7 @@
 
                 </div>
 
-                <div id="selectedPatientView" style="display: contents;">
+                <div id="selectedPatientView" style="display: none;">
                     <div class="record-header">
 
                         <div class="record-person">
@@ -466,9 +426,9 @@
 
                         <div class="record-actions">
 
-                            <button type="button" onclick="focusPersonalForm()">
+                            <button type="button" id="editPatientBtn" class="edit-patient-btn" title="Click to edit patient information">
                                 <i class="fa-solid fa-pen"></i>
-                                Edit
+                                <span id="editBtnText">Edit</span>
                             </button>
 
                             <button type="button" onclick="window.print()">
@@ -491,7 +451,7 @@
                         </button>
 
                         <button class="tab-button" data-tab="history">
-                            Medical History
+                            History
                         </button>
 
                         <button class="tab-button" data-tab="records">
@@ -512,47 +472,44 @@
 
                         <div class="record-main">
 
-                            <form method="POST" class="personal-form" id="personalForm">
+                            <form method="POST" class="personal-form view-mode" id="personalForm">
                                 <input type="hidden" name="save_patient" value="1">
                                 <input type="hidden" name="user_id" value="1">
 
-                                <h3>Personal Information</h3>
+                                <div class="form-section-title-row">
+                                    <h3>Personal Information <span class="mode-pill" id="personalModePill"><i class="fa-solid fa-lock"></i> View Only</span></h3>
+                                </div>
 
                                 <div class="form-grid">
                                     <label>
                                         First Name
-                                        <input type="text" name="first_name" id="pFirstName" value="Juan" required>
+                                        <input type="text" name="first_name" id="pFirstName" value="Juan" required readonly>
                                     </label>
 
                                     <label>
                                         Middle Name
                                         <input type="text" name="middle_name" id="pMiddleName" value="D."
-                                            placeholder="Optional">
+                                            placeholder="Optional" readonly>
                                     </label>
 
                                     <label>
                                         Last Name
-                                        <input type="text" name="last_name" id="pLastName" value="Dela Cruz" required>
+                                        <input type="text" name="last_name" id="pLastName" value="Dela Cruz" required readonly>
                                     </label>
 
                                     <label>
                                         Suffix
-                                        <input type="text" name="suffix" id="pSuffix" value="" placeholder="Optional">
+                                        <input type="text" name="suffix" id="pSuffix" value="" placeholder="Optional" readonly>
                                     </label>
 
                                     <label>
                                         Date of Birth
-                                        <input type="date" name="birth_date" id="pBirthDate" value="1992-05-12">
-                                    </label>
-
-                                    <label>
-                                        Age
-                                        <input type="text" name="age" id="pAge" value="34" readonly>
+                                        <input type="date" name="birth_date" id="pBirthDate" value="1992-05-12" readonly disabled>
                                     </label>
 
                                     <label>
                                         Sex
-                                        <select name="sex" id="pSex">
+                                        <select name="sex" id="pSex" disabled>
                                             <option value="">Select Sex</option>
                                             <option value="Male" selected>Male</option>
                                             <option value="Female">Female</option>
@@ -562,51 +519,51 @@
                                     <label>
                                         Civil Status
                                         <input type="text" name="civil_status" id="pCivilStatus" value="Single"
-                                            placeholder="Optional">
+                                            placeholder="Optional" readonly>
                                     </label>
 
                                     <label>
                                         Nationality
                                         <input type="text" name="nationality" id="pNationality" value="Filipino"
-                                            placeholder="Optional">
+                                            placeholder="Optional" readonly>
                                     </label>
 
                                     <label>
                                         Religion
                                         <input type="text" name="religion" id="pReligion" value="Catholic"
-                                            placeholder="Optional">
+                                            placeholder="Optional" readonly>
                                     </label>
 
                                     <label>
                                         Occupation
                                         <input type="text" name="occupation" id="pOccupation" value="Self-Employed"
-                                            placeholder="Optional">
+                                            placeholder="Optional" readonly>
                                     </label>
 
                                     <label>
                                         Mobile Number
-                                        <input type="text" name="contact_number" id="pMobile" value="0917 123 4567">
+                                        <input type="text" name="contact_number" id="pMobile" value="0917 123 4567" readonly>
                                     </label>
 
                                     <label>
                                         Telephone
                                         <input type="text" name="telephone" id="pTelephone" value="(047) 237-1234"
-                                            placeholder="Optional">
+                                            placeholder="Optional" readonly>
                                     </label>
 
                                     <label class="span-2">
                                         Email Address
-                                        <input type="email" name="email" id="pEmail" value="juan@example.com">
+                                        <input type="email" name="email" id="pEmail" value="juan@example.com" readonly>
                                     </label>
 
                                     <label class="span-4">
                                         Complete Address
                                         <input type="text" name="address" id="pAddress"
-                                            value="Labin St., Talimundoc, Orani, Bataan">
+                                            value="Labin St., Talimundoc, Orani, Bataan" readonly>
                                     </label>
                                 </div>
 
-                                <div class="form-actions">
+                                <div class="form-actions" id="personalFormActions" style="display: none;">
                                     <button type="button" class="cancel-button"
                                         id="cancelPersonalEditBtn">Cancel</button>
                                     <button type="submit" class="save-button"><i class="fa-solid fa-floppy-disk"></i>
@@ -627,7 +584,7 @@
                                 <div>
 
                                     <h3>
-                                        Health Profile
+                                        Health Profile <span class="mode-pill" id="healthModePill"><i class="fa-solid fa-lock"></i> View Only</span>
                                     </h3>
 
                                     <p>
@@ -638,85 +595,55 @@
 
                             </div>
 
-                            <form method="POST" class="health-profile-form">
+                            <form method="POST" class="health-profile-form view-mode" id="healthProfileForm">
 
                                 <input type="hidden" name="save_patient" value="1">
 
                                 <input type="hidden" name="user_id" value="1">
 
-                                <input type="hidden" name="first_name" value="">
-
-                                <input type="hidden" name="middle_name" value="">
-
-                                <input type="hidden" name="last_name" value="">
-
-                                <input type="hidden" name="suffix" value="">
-
-                                <input type="hidden" name="birth_date" value="">
-
-                                <input type="hidden" name="sex" value="">
-
-                                <input type="hidden" name="civil_status" value="">
-
-                                <input type="hidden" name="nationality" value="">
-
-                                <input type="hidden" name="religion" value="">
-
-                                <input type="hidden" name="occupation" value="">
-
-                                <input type="hidden" name="contact_number" value="">
-
-                                <input type="hidden" name="telephone" value="">
-
-                                <input type="hidden" name="email" value="">
-
-                                <input type="hidden" name="address" value="">
-
                                 <div class="health-grid">
 
                                     <label>
                                         Blood Type
-                                        <select name="blood_type">
-
+                                        <select name="blood_type" id="hBloodType" disabled>
                                             <option value="">Select Blood Type</option>
-
-
-
-                                            <option value="">
-
-                                            </option>
-
-
-
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
                                         </select>
                                     </label>
 
                                     <label>
                                         Height
-                                        <input type="number" step="0.01" name="height" value="" placeholder="cm">
+                                        <input type="number" step="0.01" name="height" id="hHeight" value="" placeholder="cm" readonly>
                                     </label>
 
                                     <label>
                                         Weight
-                                        <input type="number" step="0.01" name="weight" value="" placeholder="kg">
+                                        <input type="number" step="0.01" name="weight" id="hWeight" value="" placeholder="kg" readonly>
                                     </label>
 
                                     <label class="wide-health-field">
                                         Allergies
-                                        <textarea name="allergies" placeholder="No known allergies"></textarea>
+                                        <textarea name="allergies" id="hAllergies" placeholder="No known allergies" readonly></textarea>
                                     </label>
 
                                     <label class="wide-health-field">
                                         Chronic Conditions
-                                        <textarea name="medical_conditions"
-                                            placeholder="No chronic conditions recorded"></textarea>
+                                        <textarea name="medical_conditions" id="hConditions"
+                                            placeholder="No chronic conditions recorded" readonly></textarea>
                                     </label>
 
                                 </div>
 
-                                <div class="form-actions">
+                                <div class="form-actions" id="healthFormActions" style="display: none;">
 
-                                    <span></span>
+                                    <button type="button" class="cancel-button" id="cancelHealthEditBtn">Cancel</button>
 
                                     <button type="submit" class="save-button">
                                         <i class="fa-solid fa-floppy-disk"></i>
@@ -733,17 +660,140 @@
 
                     <div class="tab-content" id="tab-history">
 
-                        <div class="placeholder-tab">
+                        <div class="history-tab-layout">
 
-                            <i class="fa-solid fa-file-medical"></i>
+                            <section class="history-sidebar card">
 
-                            <h3>
-                                Medical History
-                            </h3>
+                                <h2 class="panel-title">CONSULTATION HISTORY</h2>
 
-                            <p>
-                                Consultation history will appear here once the consultation records are connected.
-                            </p>
+                                <div class="search-box">
+                                    <input type="text" id="historyTabSearch" placeholder="Search consultation...">
+                                    <button type="button">
+                                        <i class="fa-solid fa-filter"></i>
+                                        Filter
+                                    </button>
+                                </div>
+
+                                <div class="history-filter-chips">
+                                    <button class="chip active" data-hfilter="all">All</button>
+                                    <button class="chip" data-hfilter="general">General Consultation</button>
+                                    <button class="chip" data-hfilter="followup">Follow-up Consultation</button>
+                                </div>
+
+                                <div class="history-list" id="historyTabList">
+                                    <div class="patient-list-empty">
+                                        <i class="fa-solid fa-file-medical"></i>
+                                        <p>No consultations yet</p>
+                                        <small>Create a new consultation to get started</small>
+                                    </div>
+                                </div>
+
+                                <button class="new-consultation" type="button" id="historyNewConsultBtn">
+                                    <i class="fa-solid fa-plus"></i>
+                                    New Consultation
+                                </button>
+
+                            </section>
+
+                            <section class="history-detail card">
+
+                                <div class="section-heading">
+                                    <h2 id="historyDetailTitle">HISTORY DETAILS</h2>
+                                    <div class="section-actions">
+                                        <button type="button" id="historyEditBtn">
+                                            <i class="fa-solid fa-pen"></i>
+                                            Edit
+                                        </button>
+                                        <button type="button" id="historyPrintBtn">
+                                            <i class="fa-solid fa-print"></i>
+                                            Print
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <h3 class="history-section-title">
+                                    <i class="fa-solid fa-heart-pulse"></i>
+                                    VITAL SIGNS
+                                </h3>
+
+                                <div class="history-vitals-grid">
+                                    <div class="history-vital-card">
+                                        <label>Temperature</label>
+                                        <div class="vital-value" id="hVitalTemp">—</div>
+                                        <small>°C</small>
+                                    </div>
+
+                                    <div class="history-vital-card">
+                                        <label>Respiratory Rate</label>
+                                        <div class="vital-value" id="hVitalRR">—</div>
+                                        <small>breaths/min</small>
+                                    </div>
+
+                                    <div class="history-vital-card">
+                                        <label>Blood Pressure</label>
+                                        <div class="vital-value" id="hVitalBP">—</div>
+                                        <small>mmHg</small>
+                                    </div>
+
+                                    <div class="history-vital-card">
+                                        <label>Oxygen Saturation</label>
+                                        <div class="vital-value" id="hVitalO2">—</div>
+                                        <small>SpO₂ %</small>
+                                    </div>
+
+                                    <div class="history-vital-card">
+                                        <label>Heart Rate</label>
+                                        <div class="vital-value" id="hVitalHR">—</div>
+                                        <small>bpm</small>
+                                    </div>
+
+                                    <div class="history-vital-card">
+                                        <label>Height</label>
+                                        <div class="vital-value" id="hVitalHeight">—</div>
+                                        <small>cm</small>
+                                    </div>
+
+                                    <div class="history-vital-card">
+                                        <label>Weight</label>
+                                        <div class="vital-value" id="hVitalWeight">—</div>
+                                        <small>kg</small>
+                                    </div>
+                                </div>
+
+                                <div class="history-divider"></div>
+
+                                <h3 class="history-section-title">
+                                    <i class="fa-solid fa-stethoscope"></i>
+                                    PHYSICAL EXAMINATION
+                                </h3>
+
+                                <div class="history-text-box" id="hPhysicalExam">—</div>
+
+                                <div class="history-divider"></div>
+
+                                <h3 class="history-section-title">
+                                    <i class="fa-solid fa-notes-medical"></i>
+                                    ASSESSMENT
+                                </h3>
+
+                                <div class="history-text-box" id="hAssessment">—</div>
+
+                                <div class="history-divider"></div>
+
+                                <h3 class="history-section-title">
+                                    <i class="fa-solid fa-clipboard-list"></i>
+                                    PLAN / TREATMENT
+                                </h3>
+
+                                <div class="history-text-box" id="hPlanTreatment">—</div>
+
+                                <div class="history-empty-state" id="historyEmptyState">
+                                    <i class="fa-solid fa-file-medical"></i>
+                                    <h3>Select a consultation</h3>
+                                    <p>Choose a record from the list on the left to view its details.</p>
+                                </div>
+
+                            </section>
 
                         </div>
 
@@ -914,7 +964,7 @@
 
                 </div>
 
-                <div id="noPatientView" style="display: none; grid-column: 1 / -1;">
+                <div id="noPatientView" style="display: block; grid-column: 1 / -1;">
                     <div class="no-selected-patient">
                         <i class="fa-solid fa-user-plus"></i>
                         <h2>No Patient Selected</h2>
