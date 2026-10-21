@@ -832,11 +832,34 @@ textarea {
     font-size: 9px;
     font-weight: 600;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .record-actions button:hover {
     background: #f2f7fc;
     border-color: #0755a5;
+}
+
+.record-actions button.edit-patient-btn.active-editing {
+    background: #0755a5;
+    color: #ffffff;
+    border-color: #0755a5;
+    box-shadow: 0 2px 6px rgba(7, 85, 165, 0.25);
+}
+
+.record-actions button.edit-patient-btn.active-editing:hover {
+    background: #064484;
+    border-color: #064484;
+}
+
+@keyframes editBtnPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(7, 85, 165, 0.4); }
+    50% { transform: scale(1.08); box-shadow: 0 0 0 6px rgba(7, 85, 165, 0.2); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(7, 85, 165, 0); }
+}
+
+.record-actions button.edit-patient-btn.pulse-hint {
+    animation: editBtnPulse 0.5s ease-in-out;
 }
 
 .record-tabs {
@@ -957,9 +980,109 @@ textarea {
     box-shadow: 0 0 0 2px rgba(7, 87, 173, 0.08);
 }
 
-.form-grid input[readonly] {
-    background: #f6f8fb;
-    color: #566174;
+/* Title Row & Mode Pill */
+.form-section-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.form-section-title-row h3 {
+    margin: 0;
+}
+
+.mode-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2.5px 9px;
+    border-radius: 9999px;
+    margin-left: 8px;
+    vertical-align: middle;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    letter-spacing: 0.2px;
+    transition: all 0.2s ease;
+}
+
+.mode-pill i {
+    font-size: 9px;
+}
+
+.mode-pill.editing {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.12);
+}
+
+/* View Mode Styles (Default: Locked) */
+.personal-form.view-mode .form-grid input,
+.personal-form.view-mode .form-grid select,
+.health-profile-form.view-mode .health-grid input,
+.health-profile-form.view-mode .health-grid select,
+.health-profile-form.view-mode .health-grid textarea {
+    background-color: #f8fafc;
+    border-color: #e2e8f0;
+    color: #1e293b;
+    cursor: default;
+    user-select: text;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.personal-form.view-mode select,
+.health-profile-form.view-mode select {
+    pointer-events: none;
+    background-color: #f8fafc;
+    opacity: 0.95;
+}
+
+.personal-form.view-mode input:focus,
+.personal-form.view-mode select:focus,
+.health-profile-form.view-mode input:focus,
+.health-profile-form.view-mode select:focus,
+.health-profile-form.view-mode textarea:focus {
+    border-color: #e2e8f0;
+    box-shadow: none;
+    outline: none;
+}
+
+/* Editing Mode Input Styles */
+.personal-form.editing-mode .form-grid input:not(#pAge),
+.personal-form.editing-mode .form-grid select,
+.health-profile-form.editing-mode .health-grid input,
+.health-profile-form.editing-mode .health-grid select,
+.health-profile-form.editing-mode .health-grid textarea {
+    background-color: #ffffff;
+    border-color: #93c5fd;
+    color: #0f172a;
+    cursor: text;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.personal-form.editing-mode select,
+.health-profile-form.editing-mode select {
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.personal-form.editing-mode .form-grid input:not(#pAge):focus,
+.personal-form.editing-mode .form-grid select:focus,
+.health-profile-form.editing-mode .health-grid input:focus,
+.health-profile-form.editing-mode .health-grid select:focus,
+.health-profile-form.editing-mode .health-grid textarea:focus {
+    border-color: #0755a5;
+    box-shadow: 0 0 0 2px rgba(7, 85, 165, 0.15);
+}
+
+#pAge[readonly] {
+    background-color: #f1f5f9 !important;
+    color: #64748b !important;
+    cursor: not-allowed !important;
 }
 
 .form-grid input::placeholder,
@@ -980,8 +1103,20 @@ textarea {
     margin-top: 22px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 10px;
+    animation: fadeInFormActions 0.25s ease-out;
+}
+
+@keyframes fadeInFormActions {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .cancel-button,
@@ -1074,6 +1209,285 @@ textarea {
     color: #687286;
     font-size: 10px;
     line-height: 1.6;
+}
+
+.history-tab-layout {
+    display: grid;
+    grid-template-columns: minmax(260px, 330px) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.history-sidebar,
+.history-detail {
+    background: #fff;
+    border: 1px solid #dfe6f0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    padding: 16px;
+}
+
+.history-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.panel-title {
+    margin: 0;
+    color: #1f2937;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-box input {
+    flex: 1;
+    min-height: 34px;
+    padding: 0 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background: #fff;
+    color: #1e293b;
+    font-size: 10px;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: #0757ad;
+    box-shadow: 0 0 0 2px rgba(7, 87, 173, 0.08);
+}
+
+.search-box button {
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background: #fff;
+    color: #0757ad;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 8px 9px;
+    cursor: pointer;
+}
+
+.history-filter-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.chip {
+    border: 1px solid #d1d9e3;
+    border-radius: 999px;
+    background: #f8fafc;
+    color: #465269;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.chip.active {
+    background: #eaf3ff;
+    border-color: #94b9e8;
+    color: #0f4d9a;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 120px;
+}
+
+.patient-list-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 150px;
+    border: 1px dashed #d0dae6;
+    border-radius: 6px;
+    background: #f8fbff;
+    color: #5b697d;
+    text-align: center;
+    padding: 16px;
+}
+
+.patient-list-empty i {
+    font-size: 28px;
+    color: #0757ad;
+    margin-bottom: 8px;
+}
+
+.patient-list-empty p {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.patient-list-empty small {
+    margin-top: 3px;
+    font-size: 9px;
+    color: #64748b;
+}
+
+.new-consultation {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 36px;
+    border: 1px solid #0757ad;
+    border-radius: 5px;
+    background: #0757ad;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.history-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 12px;
+    color: #1f2937;
+    letter-spacing: 0.4px;
+}
+
+.section-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-actions button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background: #fff;
+    color: #1f2937;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 7px 9px;
+    cursor: pointer;
+}
+
+.history-section-title {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1d3f6f;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.history-vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.history-vital-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 100px;
+    border: 1px solid #dfe7f0;
+    border-radius: 7px;
+    background: linear-gradient(180deg, #fafdff 0%, #f3f7ff 100%);
+    padding: 10px;
+}
+
+.history-vital-card label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.vital-value {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0e1729;
+}
+
+.history-vital-card small {
+    font-size: 8px;
+    color: #64748b;
+}
+
+.history-divider {
+    border-top: 1px solid #e2e8f0;
+    margin: 4px 0;
+}
+
+.history-text-box {
+    min-height: 72px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: #f8fafc;
+    color: #334155;
+    font-size: 10px;
+    line-height: 1.6;
+    padding: 10px 11px;
+}
+
+.history-empty-state {
+    display: none;
+    min-height: 200px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 7px;
+    background: #fafcff;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    color: #5b697d;
+    padding: 24px;
+}
+
+.history-empty-state i {
+    font-size: 32px;
+    color: #0757ad;
+    margin-bottom: 10px;
+}
+
+.history-empty-state h3 {
+    margin: 0 0 6px;
+    color: #1f2937;
+    font-size: 15px;
+}
+
+.history-empty-state p {
+    margin: 0;
+    font-size: 10px;
+    line-height: 1.5;
+    max-width: 260px;
 }
 
 .record-summary-section {
@@ -1823,4 +2237,43 @@ textarea {
         font-size: 12px;
     }
 
+}
+
+/* Dark Mode Overrides for View/Edit Modes */
+html.dark-mode .personal-form.view-mode .form-grid input,
+html.dark-mode .personal-form.view-mode .form-grid select,
+html.dark-mode .health-profile-form.view-mode .health-grid input,
+html.dark-mode .health-profile-form.view-mode .health-grid select,
+html.dark-mode .health-profile-form.view-mode .health-grid textarea {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .personal-form.editing-mode .form-grid input:not(#pAge),
+html.dark-mode .personal-form.editing-mode .form-grid select,
+html.dark-mode .health-profile-form.editing-mode .health-grid input,
+html.dark-mode .health-profile-form.editing-mode .health-grid select,
+html.dark-mode .health-profile-form.editing-mode .health-grid textarea {
+    background-color: #0f172a !important;
+    border-color: #3b82f6 !important;
+    color: #f8fafc !important;
+}
+
+html.dark-mode #pAge[readonly] {
+    background-color: #111827 !important;
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .mode-pill {
+    background: #1f2937 !important;
+    color: #94a3b8 !important;
+    border-color: #374151 !important;
+}
+
+html.dark-mode .mode-pill.editing {
+    background: #1e3a8a !important;
+    color: #93c5fd !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25) !important;
 }

@@ -1,165 +1,10 @@
 // patient-registration.js - Client-Side Controller for Patient Registration & Records
 
-let patientsList = [
-    {
-        id: 1,
-        patient_code: "PT-2026-0001",
-        first_name: "Juan",
-        middle_name: "D.",
-        last_name: "Dela Cruz",
-        suffix: "",
-        birth_date: "1992-05-12",
-        age: 34,
-        sex: "Male",
-        civil_status: "Single",
-        nationality: "Filipino",
-        religion: "Catholic",
-        occupation: "Self-Employed",
-        contact_number: "0917 123 4567",
-        telephone: "(047) 237-1234",
-        email: "juan@example.com",
-        address: "Labin St., Talimundoc, Orani, Bataan",
-        status: "Active",
-        lastConsultationDate: "May 10, 2026",
-        lastConsultationType: "General Consultation",
-        nextApptDate: "May 25, 2026",
-        nextApptTime: "09:00 AM",
-        programs: ["Hypertension Management"],
-        allergies: "Penicillin",
-        conditions: "Hypertension Stage 1",
-        blood_type: "O+",
-        height: "170",
-        weight: "68",
-        created_at: "2026-10-10T13:30:55.528899+00:00"
-    },
-    {
-        id: 2,
-        patient_code: "PR-2026-0002",
-        first_name: "Maria",
-        middle_name: "Clara",
-        last_name: "Santos",
-        suffix: "",
-        birth_date: "1998-08-20",
-        age: 28,
-        sex: "Female",
-        civil_status: "Single",
-        nationality: "Filipino",
-        religion: "Catholic",
-        occupation: "Teacher",
-        contact_number: "0918 234 5678",
-        telephone: "",
-        email: "maria@example.com",
-        address: "Centro St., Talimundoc, Orani, Bataan",
-        status: "Active",
-        lastConsultationDate: "Jun 02, 2026",
-        lastConsultationType: "Prenatal Check-up",
-        nextApptDate: "Jul 15, 2026",
-        nextApptTime: "10:30 AM",
-        programs: ["Maternal Health Program"],
-        allergies: "None",
-        conditions: "None",
-        blood_type: "A+",
-        height: "160",
-        weight: "54",
-        created_at: "2026-10-10T13:30:55.528899+00:00"
-    },
-    {
-        id: 3,
-        patient_code: "PR-2026-0003",
-        first_name: "Pedro",
-        middle_name: "O.",
-        last_name: "Penduko",
-        suffix: "",
-        birth_date: "1985-03-15",
-        age: 41,
-        sex: "Male",
-        civil_status: "Married",
-        nationality: "Filipino",
-        religion: "Catholic",
-        occupation: "Farmer",
-        contact_number: "0919 345 6789",
-        telephone: "",
-        email: "pedro@example.com",
-        address: "Poblacion, Orani, Bataan",
-        status: "Active",
-        lastConsultationDate: "Apr 18, 2026",
-        lastConsultationType: "Routine Physical Exam",
-        nextApptDate: "",
-        nextApptTime: "",
-        programs: [],
-        allergies: "None",
-        conditions: "None",
-        blood_type: "B+",
-        height: "168",
-        weight: "65",
-        created_at: "2026-09-15T10:00:00.000000+00:00"
-    },
-    {
-        id: 4,
-        patient_code: "PR-2026-0004",
-        first_name: "Ana Marie",
-        middle_name: "T.",
-        last_name: "Reyes",
-        suffix: "",
-        birth_date: "2002-01-14",
-        age: 24,
-        sex: "Female",
-        civil_status: "Single",
-        nationality: "Filipino",
-        religion: "Catholic",
-        occupation: "Student",
-        contact_number: "0920 456 7890",
-        telephone: "",
-        email: "ana.reyes@example.com",
-        address: "Sitio Silangan, Orani, Bataan",
-        status: "Pending",
-        lastConsultationDate: "",
-        lastConsultationType: "",
-        nextApptDate: "",
-        nextApptTime: "",
-        programs: [],
-        allergies: "None",
-        conditions: "None",
-        blood_type: "O+",
-        height: "155",
-        weight: "48",
-        created_at: "2026-10-11T08:30:00.000000+00:00"
-    },
-    {
-        id: 5,
-        patient_code: "PR-2026-0005",
-        first_name: "Roberto",
-        middle_name: "G.",
-        last_name: "Gonzales",
-        suffix: "Sr.",
-        birth_date: "1964-07-22",
-        age: 62,
-        sex: "Male",
-        civil_status: "Married",
-        nationality: "Filipino",
-        religion: "Catholic",
-        occupation: "Retired",
-        contact_number: "0921 567 8901",
-        telephone: "",
-        email: "roberto@example.com",
-        address: "Barangay Parang, Orani, Bataan",
-        status: "Inactive",
-        lastConsultationDate: "Feb 14, 2026",
-        lastConsultationType: "Annual Health Assessment",
-        nextApptDate: "",
-        nextApptTime: "",
-        programs: ["Senior Citizen Wellness"],
-        allergies: "Aspirin",
-        conditions: "Arthritis",
-        blood_type: "A+",
-        height: "165",
-        weight: "70",
-        created_at: "2026-08-01T14:15:00.000000+00:00"
-    }
-];
+let patientsList = [];
 
-let selectedPatientId = 1;
+let selectedPatientId = null;
 let currentFilter = "all";
+let isEditingPatient = false;
 
 document.addEventListener("DOMContentLoaded", function () {
     initTabs();
@@ -170,11 +15,21 @@ document.addEventListener("DOMContentLoaded", function () {
     // Check URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get("new_patient") === "1") {
+        clearActivePatientFromStorage();
         showNewPatientView();
+    } else if (urlParams.has("patient_id")) {
+        const reqId = parseInt(urlParams.get("patient_id"), 10);
+        if (!isNaN(reqId) && patientsList.some(p => p.id === reqId)) {
+            showSelectedPatientView(reqId);
+        } else {
+            clearActivePatientFromStorage();
+            showNoPatientView();
+        }
     } else {
-        const reqId = parseInt(urlParams.get("patient_id") || "1", 10);
-        showSelectedPatientView(reqId);
+        clearActivePatientFromStorage();
+        showNoPatientView();
     }
+    setPatientEditMode(false);
 });
 
 // Fetch live patients from Supabase if configured
@@ -239,6 +94,7 @@ function showNewPatientView() {
     const newView = document.getElementById("newPatientView");
     const noPatientView = document.getElementById("noPatientView");
 
+    setPatientEditMode(false);
     if (selectedView) selectedView.style.display = "none";
     if (noPatientView) noPatientView.style.display = "none";
     if (newView) {
@@ -255,6 +111,7 @@ function showSelectedPatientView(patientId) {
     const newView = document.getElementById("newPatientView");
     const noPatientView = document.getElementById("noPatientView");
 
+    setPatientEditMode(false);
     if (newView) newView.style.display = "none";
     if (noPatientView) noPatientView.style.display = "none";
     if (selectedView) selectedView.style.display = "contents";
@@ -263,23 +120,33 @@ function showSelectedPatientView(patientId) {
 }
 
 function showNoPatientView() {
+    selectedPatientId = null;
+    clearActivePatientFromStorage();
     const selectedView = document.getElementById("selectedPatientView");
     const newView = document.getElementById("newPatientView");
     const noPatientView = document.getElementById("noPatientView");
 
+    setPatientEditMode(false);
     if (newView) newView.style.display = "none";
     if (selectedView) selectedView.style.display = "none";
     if (noPatientView) noPatientView.style.display = "block";
+
+    // Unselect patient cards in sidebar
+    document.querySelectorAll(".patient-card").forEach(c => c.classList.remove("selected"));
 }
 
 // Select a patient and fill in all fields
 function selectPatient(patientId) {
     selectedPatientId = patientId;
-    const patient = patientsList.find(p => p.id === patientId) || patientsList[0];
+    const patient = patientsList.find(p => p.id === patientId);
     if (!patient) {
+        clearActivePatientFromStorage();
         showNoPatientView();
         return;
     }
+
+    // Persist selected patient so other pages can read it
+    saveActivePatientToStorage(patient);
 
     // Update list selection highlight
     document.querySelectorAll(".patient-card").forEach(c => {
@@ -297,6 +164,26 @@ function selectPatient(patientId) {
     const personalTabBtn = document.querySelector('.tab-button[data-tab="personal"]');
     if (personalTabBtn && !personalTabBtn.classList.contains("active")) {
         personalTabBtn.click();
+    }
+}
+
+// Persist the currently-active patient to localStorage so other pages can read it
+function clearActivePatientFromStorage() {
+    try {
+        localStorage.removeItem("sm_active_patient_id");
+        localStorage.removeItem("sm_active_patient");
+    } catch (e) {
+        console.warn("Could not clear active patient from localStorage:", e);
+    }
+}
+
+function saveActivePatientToStorage(patient) {
+    if (!patient) return;
+    try {
+        localStorage.setItem("sm_active_patient_id", String(patient.id));
+        localStorage.setItem("sm_active_patient", JSON.stringify(patient));
+    } catch (e) {
+        console.warn("Could not save active patient to localStorage:", e);
     }
 }
 
@@ -340,7 +227,6 @@ function populatePatientData(patientId) {
     setVal("pLastName", patient.last_name);
     setVal("pSuffix", patient.suffix);
     setVal("pBirthDate", patient.birth_date);
-    setVal("pAge", patient.age || calculateAge(patient.birth_date));
     setVal("pSex", patient.sex);
     setVal("pCivilStatus", patient.civil_status);
     setVal("pNationality", patient.nationality || "Filipino");
@@ -351,7 +237,14 @@ function populatePatientData(patientId) {
     setVal("pEmail", patient.email);
     setVal("pAddress", patient.address);
 
-    // 3. Quick Summary Area
+    // 3. Health Profile Form Inputs
+    setVal("hBloodType", patient.blood_type || "");
+    setVal("hHeight", patient.height || "");
+    setVal("hWeight", patient.weight || "");
+    setVal("hAllergies", patient.allergies || "");
+    setVal("hConditions", patient.conditions || "");
+
+    // 4. Quick Summary Area
     const sLastDate = document.getElementById("summaryLastConsultDate");
     const sLastType = document.getElementById("summaryLastConsultType");
     if (sLastDate && sLastType) {
@@ -397,6 +290,11 @@ function populatePatientData(patientId) {
     if (sConditions) {
         sConditions.textContent = patient.conditions || "None recorded.";
     }
+
+    // Default to locked view mode on populate
+    if (!isEditingPatient) {
+        setPatientEditMode(false);
+    }
 }
 
 function setVal(id, val) {
@@ -422,17 +320,22 @@ function renderPatientList(list) {
     container.innerHTML = "";
 
     if (!list || list.length === 0) {
-        container.innerHTML = `
-            <div class="patient-list-empty">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <p>No patients found</p>
-                <small>Try a different name or ID</small>
-            </div>
-        `;
+        const searchInput = document.querySelector(".patient-search input");
+        const hasQuery = searchInput && searchInput.value.trim().length > 0;
+        const isFiltered = currentFilter !== "all";
+        const emptyMsg = (hasQuery || isFiltered)
+            ? `<i class="fa-solid fa-magnifying-glass"></i>
+               <p>No patients found</p>
+               <small>Try a different name, ID, or filter</small>`
+            : `<i class="fa-solid fa-user-plus"></i>
+               <p>No patients registered yet</p>
+               <small>Click <strong>+ New Patient</strong> to add the first patient</small>`;
+        container.innerHTML = `<div class="patient-list-empty">${emptyMsg}</div>`;
         const footer = document.querySelector(".patient-list-footer");
         if (footer) footer.textContent = "Showing 0 patients";
         return;
     }
+
 
     list.forEach(p => {
         const card = document.createElement("a");
@@ -489,16 +392,19 @@ function initEventListeners() {
     cancelNewBtns.forEach(btn => {
         btn.addEventListener("click", function (e) {
             e.preventDefault();
-            showSelectedPatientView(selectedPatientId || 1);
+            if (selectedPatientId) {
+                showSelectedPatientView(selectedPatientId);
+            } else {
+                showNoPatientView();
+            }
         });
     });
 
-    // 3. Date of birth changes -> auto-calculate age
+    // 3. Date of birth changes -> age is derived automatically, no manual age field
     const pDob = document.getElementById("pBirthDate");
     if (pDob) {
         pDob.addEventListener("change", function () {
-            const age = calculateAge(this.value);
-            setVal("pAge", age);
+            // Age is calculated from the birth date on save and display.
         });
     }
 
@@ -525,6 +431,64 @@ function initEventListeners() {
         cancelPersonalBtn.addEventListener("click", function (e) {
             e.preventDefault();
             populatePatientData(selectedPatientId);
+            setPatientEditMode(false);
+            showNotice("Editing cancelled. Information restored.", "info");
+        });
+    }
+
+    // 5b. Health Profile Form Save
+    const healthProfileForm = document.getElementById("healthProfileForm");
+    if (healthProfileForm) {
+        healthProfileForm.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            await handleSaveHealthProfileForm();
+        });
+    }
+
+    // 5c. Health Profile Form Cancel (Reset)
+    const cancelHealthBtn = document.getElementById("cancelHealthEditBtn");
+    if (cancelHealthBtn) {
+        cancelHealthBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            populatePatientData(selectedPatientId);
+            setPatientEditMode(false);
+            showNotice("Editing cancelled. Health profile restored.", "info");
+        });
+    }
+
+    // 5d. Header Edit Button Click
+    const editPatientBtn = document.getElementById("editPatientBtn");
+    if (editPatientBtn) {
+        editPatientBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleEditMode();
+        });
+    }
+
+    // 5e. Pulse Edit button when user clicks locked form fields in view mode
+    if (personalForm) {
+        personalForm.addEventListener("click", function (e) {
+            if (!isEditingPatient && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "LABEL")) {
+                const btn = document.getElementById("editPatientBtn");
+                if (btn) {
+                    btn.classList.remove("pulse-hint");
+                    void btn.offsetWidth;
+                    btn.classList.add("pulse-hint");
+                }
+            }
+        });
+    }
+    if (healthProfileForm) {
+        healthProfileForm.addEventListener("click", function (e) {
+            if (!isEditingPatient && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA" || e.target.tagName === "LABEL")) {
+                const btn = document.getElementById("editPatientBtn");
+                if (btn) {
+                    btn.classList.remove("pulse-hint");
+                    void btn.offsetWidth;
+                    btn.classList.add("pulse-hint");
+                }
+            }
         });
     }
 
@@ -689,7 +653,7 @@ async function handleSavePersonalForm() {
     patient.last_name = document.getElementById("pLastName").value;
     patient.suffix = document.getElementById("pSuffix").value;
     patient.birth_date = document.getElementById("pBirthDate").value;
-    patient.age = parseInt(document.getElementById("pAge").value || "0", 10) || calculateAge(patient.birth_date);
+    patient.age = calculateAge(patient.birth_date) || 0;
     patient.sex = document.getElementById("pSex").value;
     patient.civil_status = document.getElementById("pCivilStatus").value;
     patient.nationality = document.getElementById("pNationality").value;
@@ -725,9 +689,48 @@ async function handleSavePersonalForm() {
     }
 
     populatePatientData(patient.id);
+    saveActivePatientToStorage(patient);
     updateCounterCards();
     applyFilters();
+    setPatientEditMode(false);
     showNotice(`Personal Information for ${patient.first_name} ${patient.last_name} saved successfully!`);
+}
+
+// Handle Save Health Profile Form
+async function handleSaveHealthProfileForm() {
+    const patient = patientsList.find(p => p.id === selectedPatientId);
+    if (!patient) return;
+
+    const blood = document.getElementById("hBloodType") ? document.getElementById("hBloodType").value : (patient.blood_type || "");
+    const height = document.getElementById("hHeight") ? document.getElementById("hHeight").value.trim() : (patient.height || "");
+    const weight = document.getElementById("hWeight") ? document.getElementById("hWeight").value.trim() : (patient.weight || "");
+    const allergies = document.getElementById("hAllergies") ? document.getElementById("hAllergies").value.trim() : (patient.allergies || "");
+    const conditions = document.getElementById("hConditions") ? document.getElementById("hConditions").value.trim() : (patient.conditions || "");
+
+    patient.blood_type = blood;
+    patient.height = height;
+    patient.weight = weight;
+    patient.allergies = allergies;
+    patient.conditions = conditions;
+
+    if (window.sb && typeof isConfigured !== "undefined" && isConfigured) {
+        try {
+            await window.sb.from("patients").update({
+                blood_type: patient.blood_type,
+                height: patient.height,
+                weight: patient.weight,
+                allergies: patient.allergies,
+                conditions: patient.conditions
+            }).eq("id", patient.id);
+        } catch (err) {
+            console.warn("Supabase update error:", err);
+        }
+    }
+
+    populatePatientData(patient.id);
+    saveActivePatientToStorage(patient);
+    setPatientEditMode(false);
+    showNotice(`Health Profile for ${patient.first_name} ${patient.last_name} saved successfully!`);
 }
 
 // Handle Save New Patient Form
@@ -817,30 +820,189 @@ async function handleSaveNewPatientForm() {
 
     patientsList.unshift(newPatient);
     form.reset();
+    saveActivePatientToStorage(newPatient);
     updateCounterCards();
     applyFilters();
     showSelectedPatientView(newPatient.id);
     showNotice(`New patient ${firstName} ${lastName} (${newCode}) registered successfully!`);
 }
 
-function showNotice(msg) {
+function showNotice(msg, type = "success") {
     const alertBox = document.getElementById("alertMessage");
     if (alertBox) {
         alertBox.textContent = msg;
         alertBox.style.display = "block";
-        alertBox.style.background = "#dcfce7";
-        alertBox.style.color = "#166534";
-        alertBox.style.border = "1px solid #bbf7d0";
+        if (type === "info") {
+            alertBox.style.background = "#eff6ff";
+            alertBox.style.color = "#1e40af";
+            alertBox.style.border = "1px solid #bfdbfe";
+        } else if (type === "error") {
+            alertBox.style.background = "#fef2f2";
+            alertBox.style.color = "#991b1b";
+            alertBox.style.border = "1px solid #fecaca";
+        } else {
+            alertBox.style.background = "#dcfce7";
+            alertBox.style.color = "#166534";
+            alertBox.style.border = "1px solid #bbf7d0";
+        }
         alertBox.style.padding = "10px 16px";
         alertBox.style.borderRadius = "6px";
         alertBox.style.marginBottom = "14px";
+        alertBox.style.fontWeight = "500";
+        alertBox.style.fontSize = "13px";
+        alertBox.style.boxShadow = "0 2px 4px rgba(0,0,0,0.05)";
         setTimeout(() => {
             alertBox.style.display = "none";
-        }, 4000);
+        }, 3500);
     } else {
         alert(msg);
     }
 }
+
+// Toggle Patient Edit Mode (Personal Information & Health Profile)
+function setPatientEditMode(editable) {
+    isEditingPatient = !!editable;
+
+    const personalForm = document.getElementById("personalForm");
+    const healthForm = document.getElementById("healthProfileForm");
+    const editBtn = document.getElementById("editPatientBtn");
+    const pActions = document.getElementById("personalFormActions");
+    const hActions = document.getElementById("healthFormActions");
+    const pPill = document.getElementById("personalModePill");
+    const hPill = document.getElementById("healthModePill");
+
+    if (personalForm) {
+        personalForm.classList.toggle("editing-mode", isEditingPatient);
+        personalForm.classList.toggle("view-mode", !isEditingPatient);
+    }
+    if (healthForm) {
+        healthForm.classList.toggle("editing-mode", isEditingPatient);
+        healthForm.classList.toggle("view-mode", !isEditingPatient);
+    }
+
+    // Toggle readonly/disabled on Personal Information inputs
+    const personalTextInputs = [
+        "pFirstName", "pMiddleName", "pLastName", "pSuffix",
+        "pBirthDate", "pCivilStatus", "pNationality", "pReligion",
+        "pOccupation", "pMobile", "pTelephone", "pEmail", "pAddress"
+    ];
+    personalTextInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.readOnly = !isEditingPatient;
+            if (id === "pBirthDate") {
+                el.disabled = !isEditingPatient;
+            }
+        }
+    });
+
+    const sexEl = document.getElementById("pSex");
+    if (sexEl) sexEl.disabled = !isEditingPatient;
+
+    // Toggle readonly/disabled on Health Profile inputs
+    const healthTextInputs = ["hHeight", "hWeight", "hAllergies", "hConditions"];
+    healthTextInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.readOnly = !isEditingPatient;
+    });
+    const bloodEl = document.getElementById("hBloodType");
+    if (bloodEl) bloodEl.disabled = !isEditingPatient;
+
+    // Action buttons display
+    if (pActions) pActions.style.display = isEditingPatient ? "flex" : "none";
+    if (hActions) hActions.style.display = isEditingPatient ? "flex" : "none";
+
+    // Header Edit button state
+    if (editBtn) {
+        if (isEditingPatient) {
+            editBtn.classList.add("active-editing");
+            editBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> <span id="editBtnText">Cancel Edit</span>';
+            editBtn.setAttribute("title", "Click to cancel editing and discard unsaved changes");
+        } else {
+            editBtn.classList.remove("active-editing");
+            editBtn.innerHTML = '<i class="fa-solid fa-pen"></i> <span id="editBtnText">Edit</span>';
+            editBtn.setAttribute("title", "Click to edit patient information");
+        }
+    }
+
+    // Status Pills
+    if (pPill) {
+        pPill.className = "mode-pill" + (isEditingPatient ? " editing" : "");
+        pPill.innerHTML = isEditingPatient
+            ? '<i class="fa-solid fa-pen-to-square"></i> Editable'
+            : '<i class="fa-solid fa-lock"></i> View Only';
+    }
+    if (hPill) {
+        hPill.className = "mode-pill" + (isEditingPatient ? " editing" : "");
+        hPill.innerHTML = isEditingPatient
+            ? '<i class="fa-solid fa-pen-to-square"></i> Editable'
+            : '<i class="fa-solid fa-lock"></i> View Only';
+    }
+}
+
+let lastEditToggleTime = 0;
+
+function toggleEditMode(forceState) {
+    const now = Date.now();
+    if (now - lastEditToggleTime < 350) {
+        return;
+    }
+    lastEditToggleTime = now;
+
+    if (typeof forceState === "boolean") {
+        if (forceState) {
+            enableEditMode();
+        } else {
+            cancelEditMode();
+        }
+        return;
+    }
+
+    if (isEditingPatient) {
+        cancelEditMode();
+    } else {
+        enableEditMode();
+    }
+}
+
+function enableEditMode() {
+    setPatientEditMode(true);
+
+    // Switch to Personal tab if currently on an unrelated tab
+    const activeTab = document.querySelector(".tab-button.active");
+    const activeTabName = activeTab ? activeTab.getAttribute("data-tab") : "personal";
+    if (activeTabName !== "personal" && activeTabName !== "health") {
+        const personalTab = document.querySelector('.tab-button[data-tab="personal"]');
+        if (personalTab) personalTab.click();
+    }
+
+    setTimeout(() => {
+        const currentTab = document.querySelector(".tab-button.active");
+        if (currentTab && currentTab.getAttribute("data-tab") === "health") {
+            const hFocus = document.getElementById("hBloodType") || document.getElementById("hHeight");
+            if (hFocus) hFocus.focus();
+        } else {
+            const fName = document.getElementById("pFirstName");
+            if (fName) fName.focus();
+        }
+    }, 80);
+}
+
+function cancelEditMode() {
+    populatePatientData(selectedPatientId);
+    setPatientEditMode(false);
+    showNotice("Editing cancelled. Information restored.", "info");
+}
+
+function focusPersonalForm() {
+    enableEditMode();
+}
+
+window.toggleEditMode = toggleEditMode;
+window.enableEditMode = enableEditMode;
+window.cancelEditMode = cancelEditMode;
+window.focusPersonalForm = focusPersonalForm;
+window.setPatientEditMode = setPatientEditMode;
 
 // Tab Switching
 function initTabs() {

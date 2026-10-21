@@ -81,6 +81,11 @@
                     <span class="nav-badge" id="sidebarNotifBadge">3</span>
                 </button>
 
+                <button type="button" class="nav-item" data-tab="ai-moto">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI Moto</span>
+                </button>
+
                 <button type="button" class="nav-item" data-tab="profile">
                     <i class="fa-solid fa-user"></i>
                     <span>My Profile</span>
@@ -267,7 +272,40 @@
 
 
                 <!-- ----------------------------------------------------------
-                     TAB 3: ACCOUNT PREFERENCES / SETTINGS (#settings)
+                     TAB 3: AI MOTO (#ai-moto)
+                     ---------------------------------------------------------- -->
+                <section class="tab-pane" id="pane-ai-moto">
+                    <div class="page-header-box">
+                        <h2>AI Moto</h2>
+                        <p>Ask for health reminders, medicine guidance, or general wellness support using your resident portal assistant.</p>
+                    </div>
+
+                    <div class="ui-card ai-moto-card">
+                        <div class="ai-moto-header">
+                            <div>
+                                <span class="ai-moto-badge">Smart Assistant</span>
+                                <h3>Ask AI Moto</h3>
+                            </div>
+                            <button type="button" class="ai-moto-chip" onclick="window.location.href='ai-moto.html'">
+                                Open Full AI Assistant
+                            </button>
+                        </div>
+
+                        <div class="ai-moto-chat" id="residentAiChat">
+                            <div class="ai-message">Hi Juan! I can help with health reminders, medicine questions, and wellness guidance.</div>
+                            <div class="user-message">Can you remind me when to take my blood pressure medicine?</div>
+                            <div class="ai-message">Take it as prescribed by your doctor and follow the time given in your prescription. If you miss a dose, continue with your next scheduled dose and avoid taking two doses together unless advised by a clinician.</div>
+                        </div>
+
+                        <form class="ai-moto-form" id="residentAiMotoForm">
+                            <textarea id="residentAiInput" rows="3" placeholder="Ask AI Moto about your health or care questions..."></textarea>
+                            <button type="submit" class="btn-primary-submit ai-submit-btn">Send</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- ----------------------------------------------------------
+                     TAB 4: ACCOUNT PREFERENCES / SETTINGS (#settings)
                      ---------------------------------------------------------- -->
                 <section class="tab-pane" id="pane-settings">
                     <div class="page-header-box">

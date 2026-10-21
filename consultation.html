@@ -1,82 +1,124 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Consultation and Medical Record</title>
 
+
+
     <link rel="stylesheet" href="consultation.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
+
 </head>
+
+
 
 <body>
 <div id="sidebar-container"></div>
 
+
+
 <main class="main-content">
+
+
 
     <div class="page-header">
 
+
+
         <div>
+
             <h1>Consultation and Medical Record</h1>
+
             <p>Record, view and manage patient consultations and complete medical history.</p>
+
         </div>
+
+
 
         <div class="header-right">
 
+
+
             <div class="admin-text">
+
                 <small>You are logged in as</small>
+
                 <strong><span class="admin-name">ADMIN</span></strong>
+
             </div>
 
+
+
             <a href="ai-moto.html" class="ask-ai">
+
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
+
                 Ask AI Moto
+
             </a>
+
+
 
         </div>
 
+
+
     </div>
+
+
 
     <div id="alertMessage" style="display:none;" class="alert-box"></div>
 
+
+
     
 
-        <section class="patient-card">
 
-            <div class="patient-information">
 
-                <h2>
-                    
-                </h2>
+        <section class="patient-card" id="consultPatientCard">
+
+            <!-- No-patient state (shown when nothing is selected) -->
+            <div id="consultNoPatient" style="display:none; width:100%; padding: 0.5rem 0;">
+                <p style="margin:0; color:#6b7280;">
+                    <i class="fa-solid fa-circle-info" style="margin-right:6px;"></i>
+                    No patient selected. &nbsp;<a href="patient-registration.html" style="color:#3b82f6; font-weight:600;">Select a patient</a> from Patient Registration &amp; Record.
+                </p>
+            </div>
+
+            <div class="patient-information" id="consultPatientInfo">
+
+                <h2 id="consultPatientName">&nbsp;</h2>
 
                 <div class="patient-details">
 
                     <span>
                         <strong>Patient ID:</strong>
-                        PT-2026-0001
+                        <span id="consultPatientId">&#8212;</span>
                     </span>
 
                     <span>|</span>
 
-                    <span>
-                        Male
-                    </span>
+                    <span id="consultPatientSex">&#8212;</span>
 
                     <span>|</span>
 
-                    <span>
-                        May 12, 1990
-                        (34 yrs)
-                    </span>
+                    <span id="consultPatientDobAge">&#8212;</span>
 
                     <span>|</span>
 
-                    <span>
-                        
-                    </span>
+                    <span id="consultPatientStatus">&#8212;</span>
 
                 </div>
 
@@ -84,28 +126,26 @@
 
                     <span>
                         <i class="fa-solid fa-mobile-screen"></i>
-                        
+                        <span id="consultPatientContact">&#8212;</span>
                     </span>
 
                     <span>
                         <i class="fa-solid fa-location-dot"></i>
-                        
+                        <span id="consultPatientAddress">&#8212;</span>
                     </span>
 
                 </div>
 
             </div>
 
-            <div class="patient-stat-column">
+            <div class="patient-stat-column" id="consultStatCol1">
 
                 <div class="patient-stat">
                     <i class="fa-solid fa-droplet"></i>
 
                     <div>
                         <small>Blood Type</small>
-                        <strong>
-                            
-                        </strong>
+                        <strong id="consultPatientBlood">&#8212;</strong>
                     </div>
                 </div>
 
@@ -114,26 +154,20 @@
 
                     <div>
                         <small>Height / Weight</small>
-                        <strong>
-                            
-                            /
-                            
-                        </strong>
+                        <strong><span id="consultPatientHeight">&#8212;</span> / <span id="consultPatientWeight">&#8212;</span></strong>
                     </div>
                 </div>
 
             </div>
 
-            <div class="patient-stat-column">
+            <div class="patient-stat-column" id="consultStatCol2">
 
                 <div class="patient-stat">
                     <i class="fa-solid fa-triangle-exclamation"></i>
 
                     <div>
                         <small>Allergies</small>
-                        <strong>
-                            
-                        </strong>
+                        <strong id="consultPatientAllergies">&#8212;</strong>
                     </div>
                 </div>
 
@@ -142,666 +176,709 @@
 
                     <div>
                         <small>Chronic Conditions</small>
-                        <strong>
-                            
-                        </strong>
+                        <strong id="consultPatientConditions">&#8212;</strong>
                     </div>
                 </div>
 
             </div>
 
-            <a href="patient-registration.html?patient_id=1" class="profile-button">
+            <a href="patient-registration.html" id="consultViewRecordBtn" class="profile-button">
                 View Patient Record
                 <i class="fa-solid fa-arrow-right"></i>
             </a>
 
         </section>
 
+
+
         <div class="record-tabs">
 
+
+
             <button class="record-tab active" data-tab="consultation">
+
                 Consultation
+
             </button>
 
-            <button class="record-tab" data-tab="medical">
-                Medical History
+
+
+            <button class="record-tab" data-tab="history">
+                History
             </button>
 
-            <button class="record-tab" data-tab="laboratory">
-                Laboratory Result
-            </button>
 
-            <button class="record-tab" data-tab="vitals">
-                Vital Signs History
-            </button>
 
             <button class="record-tab" data-tab="documents">
+
                 Documents
+
             </button>
+
+
 
             <button class="record-tab" data-tab="immunization">
+
                 Immunization
+
             </button>
 
-            <button class="record-tab" data-tab="notes">
-                Notes
-            </button>
+
 
         </div>
+
+
 
         <div id="consultation" class="tab-content active">
 
+
+
             <div class="consultation-layout">
-
-                <section class="history-panel card">
-
-                    <h2 class="panel-title">
-                        CONSULTATION HISTORY
-                    </h2>
-
-                    <div class="search-box">
-
-                        <input
-                            type="text"
-                            id="historySearch"
-                            placeholder="Search consultation..."
-                        >
-
-                        <button type="button">
-                            <i class="fa-solid fa-filter"></i>
-                            Filter
-                        </button>
-
-                    </div>
-
-                    <div class="history-list" id="historyList">
-
-                        
-        <div class="consultation-card selected" onclick="selectConsultation(1)">
-            <strong>General Consultation</strong>
-            <span>May 10, 2026 • 09:30 AM</span>
-            <small>Dr. Cyron • <span class="status-completed">Completed</span></small>
-        </div>
-        <div class="consultation-card" onclick="selectConsultation(2)">
-            <strong>Follow-up Consultation</strong>
-            <span>Apr 12, 2026 • 10:00 AM</span>
-            <small>Dr. Cyron • <span class="status-completed">Completed</span></small>
-        </div>
-    
-
-                        
-
-                    </div>
-
-                    <button
-                        class="new-consultation"
-                        id="newConsultationButton"
-                        type="button"
-                    >
-                        <i class="fa-solid fa-plus"></i>
-                        New Consultation
-                    </button>
-
-                </section>
 
                 <section class="details-panel card">
 
+
+
                     
+
+
 
                         <div class="section-heading">
 
+
+
                             <h2>CONSULTATION DETAILS</h2>
+
+
 
                             <div class="section-actions">
 
-                                <button
-                                    type="button"
-                                    id="editButton"
-                                >
-                                    <i class="fa-solid fa-pen"></i>
-                                    Edit
-                                </button>
+
 
                                 <button
+
                                     type="button"
-                                    id="printButton"
+
+                                    id="editButton"
+
                                 >
-                                    <i class="fa-solid fa-print"></i>
-                                    Print
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                    Edit
+
                                 </button>
+
+
+
+                                <button
+
+                                    type="button"
+
+                                    id="printButton"
+
+                                >
+
+                                    <i class="fa-solid fa-print"></i>
+
+                                    Print
+
+                                </button>
+
+
 
                             </div>
 
+
+
                         </div>
+
+
 
                         <div class="consultation-summary">
 
+
+
                             <div>
+
                                 <i class="fa-regular fa-calendar-days"></i>
+
                                 <span>Date &amp; Time</span>
+
                                 <strong>
+
                                     May 10, 2026<br>
+
                                     09:30 AM
+
                                 </strong>
+
                             </div>
 
+
+
                             <div>
+
                                 <i class="fa-solid fa-user-doctor"></i>
+
                                 <span>Conducted By</span>
+
                                 <strong>
+
                                     
+
                                 </strong>
+
                             </div>
 
+
+
                             <div>
+
                                 <i class="fa-solid fa-stethoscope"></i>
+
                                 <span>Type of Visit</span>
+
                                 <strong>
+
                                     General Consultation
+
                                 </strong>
+
                             </div>
 
+
+
                             <div>
+
                                 <i class="fa-regular fa-circle-check"></i>
+
                                 <span>Status</span>
+
                                 <strong class="completed">
+
                                     Completed
+
                                 </strong>
+
                             </div>
+
+
 
                         </div>
 
+
+
                         <div class="two-column">
 
+
+
                             <div>
+
                                 <h3>CHIEF COMPLAINT</h3>
 
+
+
                                 <div class="info-box">
+
                                     
+
                                 </div>
+
                             </div>
 
+
+
                             <div>
+
                                 <h3>HISTORY OF PRESENT ILLNESS</h3>
 
+
+
                                 <div class="info-box">
+
                                     
+
                                 </div>
+
                             </div>
+
+
 
                         </div>
-
-                        <div class="divider"></div>
-
-                        <div class="two-column">
-
-                            <div>
-
-                                <h3>VITAL SIGNS</h3>
-
-                                <div class="vitals-grid">
-
-                                    <div>
-                                        <label>Temperature</label>
-                                        <input
-                                            value="36.5"
-                                            readonly
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <label>Respiratory Rate</label>
-                                        <input
-                                            value="18"
-                                            readonly
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <label>Blood Pressure</label>
-                                        <input
-                                            value="120/80"
-                                            readonly
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <label>Oxygen Saturation</label>
-                                        <input
-                                            value="98"
-                                            readonly
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <label>Heart Rate</label>
-                                        <input
-                                            value="72"
-                                            readonly
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <label>Height</label>
-                                        <input
-                                            value="170"
-                                            readonly
-                                        >
-                                    </div>
-
-                                    <div>
-                                        <label>Weight</label>
-                                        <input
-                                            value="65"
-                                            readonly
-                                        >
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <div>
-
-                                <h3>PHYSICAL EXAMINATION</h3>
-
-                                <div class="exam-text">
-                                    
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="divider"></div>
-
-                        <div class="assessment-grid">
-
-                            <div>
-
-                                <h3>ASSESSMENT</h3>
-
-                                <div class="assessment-box">
-
-                                    <strong>
-                                        
-                                    </strong>
-
-                                    
-                                        <small>
-                                            J06.9
-                                        </small>
-                                    
-
-                                    
-                                        <p>
-                                            None
-                                        </p>
-                                    
-
-                                </div>
-
-                            </div>
-
-                            <div>
-
-                                <h3>PLAN / TREATMENT</h3>
-
-                                <div class="assessment-box">
-                                    
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <div class="divider"></div>
-
-                        <div class="notes-section">
-
-                            <h3>NOTES</h3>
-
-                            <p>
-                                
-                            </p>
-
-                        </div>
-
-                    
-
                         <div class="empty-details">
+
                             <i class="fa-solid fa-file-medical"></i>
+
                             <h2>No Consultation Selected</h2>
+
                             <p>Create a new consultation or select one from the history.</p>
+
                         </div>
 
+
+
                     
+
+
 
                 </section>
 
+
+
                 <aside class="right-panel">
+
+
 
                     <div class="side-card card">
 
+
+
                         <div class="side-card-heading">
+
                             <h2>DIAGNOSIS</h2>
+
                             <i class="fa-solid fa-stethoscope"></i>
+
                         </div>
 
+
+
                         
 
+
+
                             <p>
+
                                 <strong>Primary Diagnosis</strong>
+
                             </p>
+
+
 
                             <div class="diagnosis-row">
 
+
+
                                 <span>
+
                                     
+
                                 </span>
+
+
 
                                 <small>
+
                                     
+
                                 </small>
 
+
+
                             </div>
+
+
 
                             <p>
+
                                 <strong>Secondary Diagnosis</strong>
+
                             </p>
 
+
+
                             <div class="diagnosis-row">
+
                                 <span>
+
                                     
+
                                 </span>
+
                             </div>
 
+
+
                         
+
+
 
                             <p>No diagnosis recorded.</p>
 
+
+
                         
+
+
 
                     </div>
 
+
+
                     <div class="side-card card">
 
+
+
                         <div class="side-card-heading">
+
                             <h2>PRESCRIPTIONS</h2>
+
                         </div>
 
+
+
                         
+
+
 
                             <table>
 
+
+
                                 <thead>
+
                                     <tr>
+
                                         <th>Medicine</th>
+
                                         <th>Dose</th>
+
                                         <th>Frequency</th>
+
                                         <th>Duration</th>
+
                                     </tr>
+
                                 </thead>
+
+
 
                                 <tbody>
 
+
+
                                     
+
+
 
                                         <tr>
 
-                                            <td>
-                                                
-                                            </td>
+
 
                                             <td>
+
                                                 
+
                                             </td>
 
-                                            <td>
-                                                
-                                            </td>
+
 
                                             <td>
+
                                                 
+
                                             </td>
+
+
+
+                                            <td>
+
+                                                
+
+                                            </td>
+
+
+
+                                            <td>
+
+                                                
+
+                                            </td>
+
+
 
                                         </tr>
 
+
+
                                     
+
+
 
                                 </tbody>
 
+
+
                             </table>
 
+
+
                         
+
+
 
                             <p>No prescriptions recorded.</p>
 
+
+
                         
+
+
 
                     </div>
 
+
+
                     <div class="side-card card">
 
+
+
                         <div class="side-card-heading">
+
                             <h2>FOLLOW-UP</h2>
+
                         </div>
 
+
+
                         
+
+
 
                             <div class="follow-up">
 
+
+
                                 <i class="fa-regular fa-calendar-days"></i>
 
+
+
                                 <strong>
+
                                     
+
                                 </strong>
 
+
+
                                 <span>
+
                                     
+
                                 </span>
+
+
 
                             </div>
 
+
+
                         
+
+
 
                             <p>No follow-up scheduled.</p>
 
+
+
                         
+
+
 
                     </div>
-
-                    <div class="side-card card">
-
-                        <div class="side-card-heading">
-                            <h2>ATTACHMENTS</h2>
-                        </div>
-
-                        
-
-                            
-
-                                <a
-                                    href=""
-                                    target="_blank"
-                                    class="attachment"
-                                >
-
-                                    <i class="fa-regular fa-file"></i>
-
-                                    <div>
-
-                                        <strong>
-                                            
-                                        </strong>
-
-                                        <small>
-                                            Uploaded 
-                                        </small>
-
-                                    </div>
-
-                                    <i class="fa-solid fa-download"></i>
-
-                                </a>
-
-                            
-
-                        
-
-                            <p>No documents uploaded.</p>
-
-                        
-
-                        
-
-                            <form
-                                method="POST"
-                                enctype="multipart/form-data"
-                                class="upload-form"
-                            >
-
-                                <input
-                                    type="hidden"
-                                    name="patient_id"
-                                    value="1"
-                                >
-
-                                <input
-                                    type="hidden"
-                                    name="consultation_id"
-                                    value="1"
-                                >
-
-                                <label class="upload-button">
-
-                                    <i class="fa-solid fa-upload"></i>
-                                    Upload Document
-
-                                    <input
-                                        type="file"
-                                        name="document"
-                                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                                        required
-                                        onchange="this.form.submit()"
-                                    >
-
-                                </label>
-
-                                <input
-                                    type="hidden"
-                                    name="upload_document"
-                                    value="1"
-                                >
-
-                            </form>
-
-                        
-
-                    </div>
-
                 </aside>
 
+
+
             </div>
+
+
 
         </div>
 
-        <div id="medical" class="tab-content placeholder-tab">
 
-            <div class="card placeholder-card">
 
-                <h2>Medical History</h2>
+        <div id="history" class="tab-content placeholder-tab">
 
-                
+        <div class="history-tab-layout">
 
-                    <div class="history-table">
+            <!-- LEFT: Consultation History sidebar -->
+            <section class="history-sidebar card">
+
+                <h2 class="panel-title">CONSULTATION HISTORY</h2>
+
+                <div class="search-box">
+                    <input type="text" id="historyTabSearch" placeholder="Search consultation...">
+                    <button type="button">
+                        <i class="fa-solid fa-filter"></i>
+                        Filter
+                    </button>
+                </div>
+
+                <div class="history-filter-chips">
+                    <button class="chip active" data-hfilter="all">All</button>
+                    <button class="chip" data-hfilter="general">General Consultation</button>
+                    <button class="chip" data-hfilter="followup">Follow-up Consultation</button>
+                </div>
+
+                <div class="history-list" id="historyTabList">
+                    <div class="patient-list-empty">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <p>No consultations yet</p>
+                        <small>Create a new consultation to get started</small>
+                    </div>
+                </div>
+
+                <button class="new-consultation" type="button" id="historyNewConsultBtn">
+                    <i class="fa-solid fa-plus"></i>
+                    New Consultation
+                </button>
+
+            </section>
+
+            <!-- RIGHT: History detail view -->
+            <section class="history-detail card">
+
+                <div class="section-heading">
+                    <h2 id="historyDetailTitle">HISTORY DETAILS</h2>
+                    <div class="section-actions">
+                        <button type="button" id="historyEditBtn">
+                            <i class="fa-solid fa-pen"></i>
+                            Edit
+                        </button>
+                        <button type="button" id="historyPrintBtn">
+                            <i class="fa-solid fa-print"></i>
+                            Print
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ── VITAL SIGNS ───────────────────────────────── -->
+                <h3 class="history-section-title">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    VITAL SIGNS
+                </h3>
+
+                <div class="history-vitals-grid">
+
+                    <div class="history-vital-card">
+                        <label>Temperature</label>
+                        <div class="vital-value" id="hVitalTemp">—</div>
+                        <small>°C</small>
+                    </div>
+
+                    <div class="history-vital-card">
+                        <label>Respiratory Rate</label>
+                        <div class="vital-value" id="hVitalRR">—</div>
+                        <small>breaths/min</small>
+                    </div>
+
+                    <div class="history-vital-card">
+                        <label>Blood Pressure</label>
+                        <div class="vital-value" id="hVitalBP">—</div>
+                        <small>mmHg</small>
+                    </div>
+
+                    <div class="history-vital-card">
+                        <label>Oxygen Saturation</label>
+                        <div class="vital-value" id="hVitalO2">—</div>
+                        <small>SpO₂ %</small>
+                    </div>
+
+                    <div class="history-vital-card">
+                        <label>Heart Rate</label>
+                        <div class="vital-value" id="hVitalHR">—</div>
+                        <small>bpm</small>
+                    </div>
+
+                    <div class="history-vital-card">
+                        <label>Height</label>
+                        <div class="vital-value" id="hVitalHeight">—</div>
+                        <small>cm</small>
+                    </div>
+
+                    <div class="history-vital-card">
+                        <label>Weight</label>
+                        <div class="vital-value" id="hVitalWeight">—</div>
+                        <small>kg</small>
+                    </div>
+
+                </div>
+
+                <div class="history-divider"></div>
+
+                <!-- ── PHYSICAL EXAMINATION ──────────────────────── -->
+                <h3 class="history-section-title">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    PHYSICAL EXAMINATION
+                </h3>
+
+                <div class="history-text-box" id="hPhysicalExam">—</div>
+
+                <div class="history-divider"></div>
+
+                <!-- ── ASSESSMENT ────────────────────────────────── -->
+                <h3 class="history-section-title">
+                    <i class="fa-solid fa-notes-medical"></i>
+                    ASSESSMENT
+                </h3>
+
+                <div class="history-text-box" id="hAssessment">—</div>
+
+                <div class="history-divider"></div>
+
+                <!-- ── PLAN / TREATMENT ──────────────────────────── -->
+                <h3 class="history-section-title">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                    PLAN / TREATMENT
+                </h3>
+
+                <div class="history-text-box" id="hPlanTreatment">—</div>
+
+                <div class="history-divider"></div>
+
+                <h3 class="history-section-title">
+                    <i class="fa-solid fa-note-sticky"></i>
+                    NOTES
+                </h3>
+
+                <div class="history-text-box" id="hNotes">—</div>
+
+                <!-- Empty state (shown when nothing selected) -->
+                <div class="history-empty-state" id="historyEmptyState">
+                    <i class="fa-solid fa-file-medical"></i>
+                    <h3>Select a consultation</h3>
+                    <p>Choose a record from the list on the left to view its details.</p>
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+
 
                         
 
-                            <div>
 
-                                <strong>
-                                    
-                                </strong>
-
-                                <span>
-                                    
-                                </span>
-
-                                <small>
-                                    
-                                </small>
-
-                            </div>
-
-                        
 
                     </div>
 
-                
 
-                    <p>No medical history recorded.</p>
 
                 
+
+
 
             </div>
 
-        </div>
 
-        <div id="laboratory" class="tab-content placeholder-tab">
-
-            <div class="card placeholder-card">
-                <h2>Laboratory Result</h2>
-                <p>Laboratory result management can be connected to the consultation record next.</p>
-            </div>
 
         </div>
 
-        <div id="vitals" class="tab-content placeholder-tab">
 
-            <div class="card placeholder-card">
-
-                <h2>Vital Signs History</h2>
-
-                
-
-                    <div class="history-table">
-
-                        
-
-                            
-
-                            <div>
-
-                                <strong>
-                                    
-                                </strong>
-
-                                <span>
-                                    BP:
-                                    
-                                </span>
-
-                                <small>
-                                    Temp:
-                                    
-                                </small>
-
-                            </div>
-
-                        
-
-                    </div>
-
-                
-
-                    <p>No vital signs recorded.</p>
-
-                
-
-            </div>
-
-        </div>
 
         <div id="documents" class="tab-content placeholder-tab">
 
@@ -809,829 +886,1507 @@
 
                 <h2>Documents</h2>
 
-                
+                <div class="side-card-heading" style="margin: 14px 0 10px;">
+                    <h2>ATTACHMENTS</h2>
+                </div>
 
-                    
+                <div class="history-table">
 
-                        <a
-                            href=""
-                            target="_blank"
-                            class="document-row"
-                        >
+                    <div class="attachment-item">
+                        <a href="" target="_blank" class="attachment">
                             <i class="fa-regular fa-file"></i>
-
-                            <span>
-                                
-                            </span>
-
+                            <div>
+                                <strong></strong>
+                                <small>Uploaded</small>
+                            </div>
                             <i class="fa-solid fa-download"></i>
                         </a>
+                    </div>
 
-                    
+                </div>
 
-                
+                <p>No documents uploaded for this consultation.</p>
 
-                    <p>No documents uploaded for this consultation.</p>
+                <form method="POST" enctype="multipart/form-data" class="upload-form">
+                    <input type="hidden" name="patient_id" value="1">
+                    <input type="hidden" name="consultation_id" value="1">
 
-                
+                    <label class="upload-button">
+                        <i class="fa-solid fa-upload"></i>
+                        Upload Document
+                        <input type="file" name="document" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required onchange="this.form.submit()">
+                    </label>
+
+                    <input type="hidden" name="upload_document" value="1">
+                </form>
 
             </div>
 
         </div>
+
+
 
         <div id="immunization" class="tab-content placeholder-tab">
 
+
+
             <div class="card placeholder-card">
+
+
 
                 <h2>Immunization</h2>
 
-                
+
 
                 
+
+
+
+                
+
+
 
                     <div class="history-table">
 
+
+
                         
+
+
 
                             <div>
 
+
+
                                 <strong>
+
                                     
+
                                 </strong>
 
+
+
                                 <span>
+
                                     
+
                                 </span>
 
+
+
                                 <small>
+
                                     
+
                                 </small>
+
+
 
                             </div>
 
+
+
                         
+
+
 
                     </div>
 
+
+
                 
+
+
 
                     <p>No immunization records found.</p>
 
+
+
                 
+
+
 
             </div>
 
+
+
         </div>
 
-        <div id="notes" class="tab-content placeholder-tab">
 
-            <div class="card placeholder-card">
 
-                <h2>Notes</h2>
 
-                
 
-                    <div class="history-table">
-
-                        
-
-                            
-
-                            <div>
-
-                                <strong>
-                                    
-                                </strong>
-
-                                <span>
-                                    
-                                </span>
-
-                                <small>
-                                    
-                                </small>
-
-                            </div>
-
-                        
-
-                    </div>
-
-                
-
-                    <p>No notes recorded.</p>
-
-                
 
             </div>
 
-        </div>
 
-        <div class="disclaimer">
-
-            <i class="fa-solid fa-circle-info"></i>
-
-            <span>
-                This record is for health center use only and is not a substitute for professional medical advice, diagnosis or treatment.
-            </span>
 
         </div>
+
+
+
+
+
 
     
+
+
 
         <section class="empty-patient">
 
+
+
             <i class="fa-solid fa-user-injured"></i>
+
+
 
             <h2>No Patient Selected</h2>
 
+
+
             <p>Select a patient from Patient Registration and Record before creating a consultation.</p>
 
+
+
             <a href="patient-registration.html">
+
                 Go to Patient Registration
+
             </a>
+
+
 
         </section>
 
+
+
     
+
+
 
 </main>
 
+
+
 <div class="modal" id="consultationModal">
+
+
 
     <div class="modal-box">
 
+
+
         <div class="modal-header">
 
+
+
             <h2>
+
                 
+
             </h2>
 
+
+
             <button type="button" id="closeModal">
+
                 <i class="fa-solid fa-xmark"></i>
+
             </button>
+
+
 
         </div>
 
+
+
         <form method="POST">
 
+
+
             <input
+
                 type="hidden"
+
                 name="save_consultation"
+
                 value="1"
+
             >
 
+
+
             <input
+
                 type="hidden"
+
                 name="patient_id"
+
                 value="1"
+
             >
 
+
+
             <input
+
                 type="hidden"
+
                 name="consultation_id"
+
                 id="modalConsultationId"
+
                 value=""
+
             >
+
+
 
             <div class="form-grid">
 
+
+
                 <div>
+
+
 
                     <label>Date</label>
 
+
+
                     <input
+
                         type="date"
+
                         name="consultation_date"
+
                         id="consultationDate"
+
                         value=""
+
                         required
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Time</label>
 
+
+
                     <input
+
                         type="time"
+
                         name="consultation_time"
+
                         id="consultationTime"
+
                         value=""
+
                         required
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Type of Visit</label>
 
+
+
                     <select name="visit_type" id="visitType">
-
-                        
-
-                        
-
-                            <option
-                                value=""
-                                
-                            >
-                                
-                            </option>
-
-                        
-
+                        <option value="">Select type of visit</option>
+                        <option value="General Consultation">General Consultation</option>
+                        <option value="Follow-up Consultation">Follow-up Consultation</option>
                     </select>
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Status</label>
 
+
+
                     <select name="status" id="consultationStatus">
-
-                        
-
-                        
-
-                            <option
-                                value=""
-                                
-                            >
-                                
-                            </option>
-
-                        
-
+                        <option value="">Select status</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
                     </select>
+
+
 
                 </div>
 
+
+
                 <div class="full">
+
+
 
                     <label>Chief Complaint</label>
 
+
+
                     <textarea
+
                         name="chief_complaint"
+
                         rows="3"
+
                     ></textarea>
+
+
 
                 </div>
 
+
+
                 <div class="full">
+
+
 
                     <label>History of Present Illness</label>
 
+
+
                     <textarea
+
                         name="history_present_illness"
+
                         rows="3"
+
                     ></textarea>
+
+
 
                 </div>
 
+
+
                 <div class="full">
+
+
 
                     <label>Physical Examination</label>
 
+
+
                     <textarea
+
                         name="physical_examination"
+
                         rows="3"
+
                     ></textarea>
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Temperature</label>
 
+
+
                     <input
+
                         type="number"
+
                         step="0.01"
+
                         name="temperature"
-                        value="36.5"
+
+                        value=""
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Respiratory Rate</label>
 
+
+
                     <input
+
                         type="number"
+
                         step="0.01"
+
                         name="respiratory_rate"
-                        value="18"
+
+                        value=""
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Blood Pressure</label>
 
+
+
                     <input
+
                         type="text"
+
                         name="blood_pressure"
-                        value="120/80"
+
+                        value=""
+
                         placeholder="120/80"
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Oxygen Saturation</label>
 
+
+
                     <input
+
                         type="number"
+
                         step="0.01"
+
                         name="oxygen_saturation"
-                        value="98"
+
+                        value=""
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Heart Rate</label>
 
+
+
                     <input
+
                         type="number"
+
                         step="0.01"
+
                         name="heart_rate"
-                        value="72"
+
+                        value=""
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Height</label>
 
+
+
                     <input
+
                         type="number"
+
                         step="0.01"
+
                         name="height"
-                        value="170"
+
+                        value=""
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Weight</label>
 
+
+
                     <input
+
                         type="number"
+
                         step="0.01"
+
                         name="weight"
-                        value="65"
+
+                        value=""
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Primary Diagnosis</label>
 
+
+
                     <input
+
                         type="text"
+
                         name="primary_diagnosis"
+
                         value=""
+
                     >
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Diagnosis Code</label>
 
+
+
                     <input
+
                         type="text"
+
                         name="diagnosis_code"
+
                         value=""
+
                     >
+
+
 
                 </div>
 
+
+
                 <div class="full">
+
+
 
                     <label>Secondary Diagnosis</label>
 
+
+
                     <input
+
                         type="text"
+
                         name="secondary_diagnosis"
+
                         value=""
+
                     >
+
+
 
                 </div>
 
+
+
                 <div class="full">
+
+
 
                     <label>Plan / Treatment</label>
 
+
+
                     <textarea
+
                         name="treatment_plan"
+
                         rows="3"
+
                     ></textarea>
 
+
+
                 </div>
+
+
 
                 <div class="full">
 
+
+
                     <label>Notes</label>
 
+
+
                     <textarea
+
                         name="notes"
+
                         rows="3"
+
                     ></textarea>
+
+
 
                 </div>
 
+
+
                 <div>
+
+
 
                     <label>Follow-up Date</label>
 
+
+
                     <input
+
                         type="date"
+
                         name="follow_up_date"
+
                         value=""
+
                     >
 
+
+
                 </div>
+
+
 
                 <div>
 
+
+
                     <label>Follow-up Time</label>
 
+
+
                     <input
+
                         type="time"
+
                         name="follow_up_time"
+
                         value=""
+
                     >
 
+
+
                 </div>
+
+
 
                 <div class="full prescription-section">
 
+
+
                     <div class="prescription-header">
+
+
 
                         <label>Prescriptions</label>
 
+
+
                         <button
+
                             type="button"
+
                             id="addPrescription"
+
                         >
+
                             <i class="fa-solid fa-plus"></i>
+
                             Add Medicine
+
                         </button>
 
+
+
                     </div>
+
+
 
                     <div id="prescriptionRows">
 
+
+
                         
 
+
+
                             
+
+
 
                                 <div class="prescription-row">
 
+
+
                                     <input
+
                                         type="text"
+
                                         name="medicine[]"
+
                                         placeholder="Medicine"
+
                                         value=""
+
                                     >
 
+
+
                                     <input
+
                                         type="text"
+
                                         name="dose[]"
+
                                         placeholder="Dose"
+
                                         value=""
+
                                     >
 
+
+
                                     <input
+
                                         type="text"
+
                                         name="frequency[]"
+
                                         placeholder="Frequency"
+
                                         value=""
+
                                     >
 
+
+
                                     <input
+
                                         type="text"
+
                                         name="duration[]"
+
                                         placeholder="Duration"
+
                                         value=""
+
                                     >
 
+
+
                                     <input
+
                                         type="text"
+
                                         name="instructions[]"
+
                                         placeholder="Instructions"
+
                                         value=""
+
                                     >
+
+
 
                                     <button
+
                                         type="button"
+
                                         class="remove-prescription"
+
                                     >
+
                                         <i class="fa-solid fa-trash"></i>
+
                                     </button>
+
+
 
                                 </div>
 
+
+
                             
 
+
+
                         
+
+
 
                             <div class="prescription-row">
 
+
+
                                 <input
+
                                     type="text"
+
                                     name="medicine[]"
+
                                     placeholder="Medicine"
+
                                 >
 
+
+
                                 <input
+
                                     type="text"
+
                                     name="dose[]"
+
                                     placeholder="Dose"
+
                                 >
 
+
+
                                 <input
+
                                     type="text"
+
                                     name="frequency[]"
+
                                     placeholder="Frequency"
+
                                 >
 
+
+
                                 <input
+
                                     type="text"
+
                                     name="duration[]"
+
                                     placeholder="Duration"
+
                                 >
 
+
+
                                 <input
+
                                     type="text"
+
                                     name="instructions[]"
+
                                     placeholder="Instructions"
+
                                 >
+
+
 
                                 <button
+
                                     type="button"
+
                                     class="remove-prescription"
+
                                 >
+
                                     <i class="fa-solid fa-trash"></i>
+
                                 </button>
+
+
 
                             </div>
 
+
+
                         
+
+
 
                     </div>
 
+
+
                 </div>
 
+
+
             </div>
+
+
 
             <div class="modal-actions">
 
-                <button
-                    type="button"
-                    class="cancel-button"
-                    id="cancelModal"
-                >
-                    Cancel
-                </button>
+
 
                 <button
-                    type="submit"
-                    class="save-button"
+
+                    type="button"
+
+                    class="cancel-button"
+
+                    id="cancelModal"
+
                 >
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Save Consultation
+
+                    Cancel
+
                 </button>
+
+
+
+                <button
+
+                    type="submit"
+
+                    class="save-button"
+
+                >
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Save Consultation
+
+                </button>
+
+
 
             </div>
 
+
+
         </form>
+
+
 
     </div>
 
+
+
 </div>
 
+
+
 <script>
+
 document.addEventListener("DOMContentLoaded", function () {
 
+
+
     const tabs = document.querySelectorAll(".record-tab");
+
     const contents = document.querySelectorAll(".tab-content");
+
+
 
     tabs.forEach(function (tab) {
 
+
+
         tab.addEventListener("click", function () {
+
+
 
             const target = tab.dataset.tab;
 
+
+
             tabs.forEach(function (item) {
+
                 item.classList.remove("active");
+
             });
 
+
+
             contents.forEach(function (content) {
+
                 content.classList.remove("active");
+
             });
+
+
 
             tab.classList.add("active");
 
+
+
             const targetContent = document.getElementById(target);
 
+
+
             if (targetContent) {
+
                 targetContent.classList.add("active");
+
             }
+
+
 
         });
 
+
+
     });
+
+
 
     const searchInput = document.getElementById("historySearch");
 
+
+
     if (searchInput) {
+
+
 
         searchInput.addEventListener("input", function () {
 
+
+
             const search = this.value.toLowerCase().trim();
+
+
 
             document.querySelectorAll(".history-item").forEach(function (item) {
 
+
+
                 const text = item.textContent.toLowerCase();
 
+
+
                 item.style.display =
+
                     text.includes(search)
+
                         ? "grid"
+
                         : "none";
+
+
 
             });
 
+
+
         });
+
+
 
     }
 
+
+
     const modal = document.getElementById("consultationModal");
+
     const newButton = document.getElementById("newConsultationButton");
+
     const closeButton = document.getElementById("closeModal");
+
     const cancelButton = document.getElementById("cancelModal");
+
     const editButton = document.getElementById("editButton");
+
+    const historyEditButton = document.getElementById("historyEditBtn");
+
     const printButton = document.getElementById("printButton");
+
+
 
     if (modal && newButton) {
 
+
+
         newButton.addEventListener("click", function () {
+
+
 
             const form = modal.querySelector("form");
 
+
+
             if (form) {
+
                 form.reset();
+
             }
+
+
 
             const consultationId =
+
                 document.getElementById("modalConsultationId");
 
+
+
             if (consultationId) {
+
                 consultationId.value = "0";
+
             }
 
+
+
             const dateInput =
+
                 document.getElementById("consultationDate");
 
+
+
             const timeInput =
+
                 document.getElementById("consultationTime");
+
+
 
             if (dateInput) {
 
+
+
                 const today =
+
                     new Date().toISOString().split("T")[0];
 
+
+
                 dateInput.value = today;
+
             }
+
+
 
             if (timeInput) {
 
+
+
                 const now = new Date();
 
+
+
                 const hours =
+
                     String(now.getHours()).padStart(2, "0");
 
+
+
                 const minutes =
+
                     String(now.getMinutes()).padStart(2, "0");
 
+
+
                 timeInput.value =
+
                     hours + ":" + minutes;
+
             }
+
+
 
             modal.classList.add("show");
 
+
+
         });
 
+
+
     }
+
+
 
     if (modal && editButton) {
 
+
+
         editButton.addEventListener("click", function () {
+
             modal.classList.add("show");
+
         });
 
+
+
     }
+
+
+
+    if (modal && historyEditButton) {
+
+
+
+        historyEditButton.addEventListener("click", function () {
+
+            modal.classList.add("show");
+
+        });
+
+
+
+    }
+
+
 
     if (modal && closeButton) {
 
+
+
         closeButton.addEventListener("click", function () {
+
             modal.classList.remove("show");
+
         });
 
+
+
     }
+
+
 
     if (modal && cancelButton) {
 
+
+
         cancelButton.addEventListener("click", function () {
+
             modal.classList.remove("show");
+
         });
 
+
+
     }
+
+
 
     if (modal) {
 
+
+
         modal.addEventListener("click", function (event) {
 
+
+
             if (event.target === modal) {
+
                 modal.classList.remove("show");
+
             }
+
+
 
         });
 
+
+
     }
+
+
 
     if (printButton) {
 
+
+
         printButton.addEventListener("click", function () {
+
             window.print();
+
         });
+
+
 
     }
 
+
+
     const addPrescription =
+
         document.getElementById("addPrescription");
 
+
+
     const prescriptionRows =
+
         document.getElementById("prescriptionRows");
+
+
 
     if (addPrescription && prescriptionRows) {
 
+
+
         addPrescription.addEventListener("click", function () {
 
+
+
             const row =
+
                 document.createElement("div");
+
+
 
             row.className = "prescription-row";
 
+
+
             row.innerHTML = `
+
                 <input type="text" name="medicine[]" placeholder="Medicine">
+
                 <input type="text" name="dose[]" placeholder="Dose">
+
                 <input type="text" name="frequency[]" placeholder="Frequency">
+
                 <input type="text" name="duration[]" placeholder="Duration">
+
                 <input type="text" name="instructions[]" placeholder="Instructions">
+
                 <button type="button" class="remove-prescription">
+
                     <i class="fa-solid fa-trash"></i>
+
                 </button>
+
             `;
+
+
 
             prescriptionRows.appendChild(row);
 
+
+
         });
+
+
 
     }
 
+
+
     document.addEventListener("click", function (event) {
 
+
+
         const button =
+
             event.target.closest(".remove-prescription");
 
+
+
         if (!button) {
+
             return;
+
         }
+
+
 
         const rows =
+
             document.querySelectorAll(".prescription-row");
 
+
+
         if (rows.length > 1) {
+
             button.closest(".prescription-row").remove();
+
         }
+
+
 
     });
 
+
+
 });
+
 </script>
+
+
 
 
     <script>
@@ -1661,5 +2416,99 @@ document.addEventListener("DOMContentLoaded", function () {
     <script src="sidebar.js"></script>
     <script src="auth-guard.js"></script>
     
+
+    <script>
+    // ── Active Patient Banner Loader ─────────────────────────────────────────────
+    (function loadActivePatient() {
+        function formatDate(str) {
+            if (!str) return '';
+            var d = new Date(str);
+            return isNaN(d) ? str : d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        }
+
+        function calculateAge(str) {
+            if (!str) return '';
+            var dob = new Date(str);
+            var diff = Date.now() - dob.getTime();
+            return Math.abs(new Date(diff).getUTCFullYear() - 1970);
+        }
+
+        var raw = localStorage.getItem('sm_active_patient');
+        var noPatientEl   = document.getElementById('consultNoPatient');
+        var patientInfoEl = document.getElementById('consultPatientInfo');
+        var col1El        = document.getElementById('consultStatCol1');
+        var col2El        = document.getElementById('consultStatCol2');
+        var viewBtn       = document.getElementById('consultViewRecordBtn');
+
+        if (!raw) {
+            if (noPatientEl)   noPatientEl.style.display   = 'block';
+            if (patientInfoEl) patientInfoEl.style.display = 'none';
+            if (col1El)        col1El.style.display        = 'none';
+            if (col2El)        col2El.style.display        = 'none';
+            if (viewBtn)       viewBtn.style.display       = 'none';
+            return;
+        }
+
+        var patient;
+        try { patient = JSON.parse(raw); } catch(e) {
+            localStorage.removeItem('sm_active_patient');
+            localStorage.removeItem('sm_active_patient_id');
+            if (noPatientEl)   noPatientEl.style.display   = 'block';
+            if (patientInfoEl) patientInfoEl.style.display = 'none';
+            if (col1El)        col1El.style.display        = 'none';
+            if (col2El)        col2El.style.display        = 'none';
+            if (viewBtn)       viewBtn.style.display       = 'none';
+            return;
+        }
+
+        if (!patient || !patient.id) {
+            localStorage.removeItem('sm_active_patient');
+            localStorage.removeItem('sm_active_patient_id');
+            if (noPatientEl)   noPatientEl.style.display   = 'block';
+            if (patientInfoEl) patientInfoEl.style.display = 'none';
+            if (col1El)        col1El.style.display        = 'none';
+            if (col2El)        col2El.style.display        = 'none';
+            if (viewBtn)       viewBtn.style.display       = 'none';
+            return;
+        }
+
+        // Show patient state
+        if (noPatientEl)   noPatientEl.style.display   = 'none';
+        if (patientInfoEl) patientInfoEl.style.display = '';
+        if (col1El)        col1El.style.display        = '';
+        if (col2El)        col2El.style.display        = '';
+        if (viewBtn)       viewBtn.style.display       = '';
+
+        var parts = [patient.first_name, patient.middle_name, patient.last_name, patient.suffix];
+        var fullName = parts.filter(Boolean).join(' ');
+
+        var age = patient.age || calculateAge(patient.birth_date) || '';
+        var dob = formatDate(patient.birth_date);
+
+        function set(id, val) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = val || '\u2014';
+        }
+
+        set('consultPatientName',       fullName);
+        set('consultPatientId',         patient.patient_code || ('PT-' + String(patient.id).padStart(4, '0')));
+        set('consultPatientSex',        patient.sex);
+        set('consultPatientDobAge',     dob && age ? dob + ' (' + age + ' yrs)' : (dob || ''));
+        set('consultPatientStatus',     patient.status || 'Active');
+        set('consultPatientContact',    patient.contact_number);
+        set('consultPatientAddress',    patient.address);
+        set('consultPatientBlood',      patient.blood_type);
+        set('consultPatientHeight',     patient.height);
+        set('consultPatientWeight',     patient.weight);
+        set('consultPatientAllergies',  patient.allergies);
+        set('consultPatientConditions', patient.conditions);
+
+        if (viewBtn) {
+            viewBtn.href = 'patient-registration.html?patient_id=' + patient.id;
+        }
+    })();
+    </script>
+
 </body>
+
 </html>
