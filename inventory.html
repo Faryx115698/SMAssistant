@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
+    <link rel="stylesheet" href="admin-profile.css">
 </head>
 
 <body>
@@ -44,8 +45,7 @@
                     </div>
 
                     <!-- REPLACE THIS WITH YOUR ADMIN ICON -->
-                    <img src="icons/admin-profile.png" alt="Admin" class="admin-photo"
-                        onerror="this.style.display='none'">
+                    <img src="logo.png" alt="Admin" class="admin-photo">
 
                 </div>
 
@@ -88,8 +88,8 @@
 
                 <div>
                     <span>Total Medicines</span>
-                    <strong>156</strong>
-                    <small>Active in inventory</small>
+                    <strong id="totalMedicines">—</strong>
+                    <small>Medicine records</small>
                 </div>
 
             </div>
@@ -104,7 +104,7 @@
 
                 <div>
                     <span>Total Stock</span>
-                    <strong>4,782</strong>
+                    <strong id="totalStock">—</strong>
                     <small>Units in stock</small>
                 </div>
 
@@ -120,7 +120,7 @@
 
                 <div>
                     <span>Low Stock Alerts</span>
-                    <strong>12</strong>
+                    <strong id="lowStockCount">—</strong>
                     <small>Medicines</small>
                 </div>
 
@@ -136,7 +136,7 @@
 
                 <div>
                     <span>Out of Stock</span>
-                    <strong>3</strong>
+                    <strong id="outOfStockCount">—</strong>
                     <small>Medicines</small>
                 </div>
 
@@ -152,7 +152,7 @@
 
                 <div>
                     <span>Issued This Month</span>
-                    <strong>356</strong>
+                    <strong id="issuedThisMonth">—</strong>
                     <small>Transactions</small>
                 </div>
 
@@ -160,23 +160,23 @@
 
         </section>
 
-
         <!-- INVENTORY AREA -->
 
         <section class="inventory-card card">
 
             <div class="inventory-tabs">
 
-                <button class="inventory-tab active">
+                <button class="inventory-tab active" type="button" data-panel="inventoryManagement">
                     Inventory Management
                 </button>
 
-                <button class="inventory-tab">
+                <button class="inventory-tab" type="button" data-panel="medicineIssuance">
                     Medicine Issuance
                 </button>
 
             </div>
 
+            <div class="inventory-tab-panel active" id="inventoryManagement">
 
             <div class="inventory-content">
 
@@ -189,29 +189,24 @@
 
                         <div class="search-input">
 
-                            <input type="text" id="medicineSearch" placeholder="Search medicine name..."
-                                onkeyup="searchMedicine()">
+                            <input type="text" id="medicineSearch" placeholder="Search medicine name...">
 
                             <span>⌕</span>
 
                         </div>
 
 
-                        <button class="filter-button">
-                            ⚑ Filter
+                        <button class="filter-button" id="clearInventoryFilters" type="button">
+                            Clear Filters
                         </button>
 
 
-                        <select>
+                        <select id="categoryFilter" aria-label="Filter by category">
                             <option>All Categories</option>
-                            <option>Analgesic</option>
-                            <option>Antibiotic</option>
-                            <option>Antihistamine</option>
-                            <option>Anti-hypertensive</option>
                         </select>
 
 
-                        <select>
+                        <select id="statusFilter" aria-label="Filter by stock status">
                             <option>All Status</option>
                             <option>Adequate</option>
                             <option>Low Stock</option>
@@ -234,13 +229,13 @@
 
                                 <tr>
 
-                                    <th>Medicine Name</th>
-                                    <th>Category</th>
-                                    <th>Unit</th>
-                                    <th>Current Stock</th>
-                                    <th>Reorder Level</th>
-                                    <th>Status</th>
-                                    <th>Expiry Date</th>
+                                    <th data-sort="name" tabindex="0" role="button">Medicine Name</th>
+                                    <th data-sort="category" tabindex="0" role="button">Category</th>
+                                    <th data-sort="unit" tabindex="0" role="button">Unit</th>
+                                    <th data-sort="stock" tabindex="0" role="button">Current Stock</th>
+                                    <th data-sort="reorder" tabindex="0" role="button">Reorder Level</th>
+                                    <th data-sort="status" tabindex="0" role="button">Status</th>
+                                    <th data-sort="expiry" tabindex="0" role="button">Expiry Date</th>
                                     <th>Actions</th>
 
                                 </tr>
@@ -248,159 +243,8 @@
                             </thead>
 
 
-                            <tbody>
-
-
-                                <tr>
-                                    <td><strong>Paracetamol 500mg tab</strong></td>
-                                    <td>Analgesic / Antipyretic</td>
-                                    <td>Tablet</td>
-                                    <td class="stock-number adequate">620</td>
-                                    <td>120</td>
-                                    <td><span class="stock-status adequate">Adequate</span></td>
-                                    <td>12/31/2027</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td><strong>Amoxicillin 500mg cap</strong></td>
-                                    <td>Antibiotic</td>
-                                    <td>Capsule</td>
-                                    <td class="stock-number low-stock">45</td>
-                                    <td>120</td>
-                                    <td><span class="stock-status low-stock">Low Stock</span></td>
-                                    <td>08/15/2028</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td><strong>Losartan 50mg tab</strong></td>
-                                    <td>Anti-hypertensive</td>
-                                    <td>Tablet</td>
-                                    <td class="stock-number adequate">148</td>
-                                    <td>120</td>
-                                    <td><span class="stock-status adequate">Adequate</span></td>
-                                    <td>02/20/2027</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td><strong>Omeprazole 20mg cap</strong></td>
-                                    <td>Gastrointestinal</td>
-                                    <td>Capsule</td>
-                                    <td class="stock-number low-stock">32</td>
-                                    <td>90</td>
-                                    <td><span class="stock-status low-stock">Low Stock</span></td>
-                                    <td>11/20/2026</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td><strong>Salbutamol 2mg tab</strong></td>
-                                    <td>Respiratory</td>
-                                    <td>Tablet</td>
-                                    <td class="stock-number adequate">156</td>
-                                    <td>90</td>
-                                    <td><span class="stock-status adequate">Adequate</span></td>
-                                    <td>05/20/2027</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td><strong>Cetirizine 10mg tab</strong></td>
-                                    <td>Antihistamine</td>
-                                    <td>Tablet</td>
-                                    <td class="stock-number low-stock">78</td>
-                                    <td>120</td>
-                                    <td><span class="stock-status low-stock">Low Stock</span></td>
-                                    <td>08/14/2026</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td><strong>Ferrous Sulfate 300mg tab</strong></td>
-                                    <td>Hematinic / Supplement</td>
-                                    <td>Tablet</td>
-                                    <td class="stock-number out-of-stock">8</td>
-                                    <td>90</td>
-                                    <td><span class="stock-status out-of-stock">Out of Stock</span></td>
-                                    <td>06/15/2027</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td><strong>Loratadine 10mg tab</strong></td>
-                                    <td>Antihistamine</td>
-                                    <td>Tablet</td>
-                                    <td class="stock-number adequate">213</td>
-                                    <td>120</td>
-                                    <td><span class="stock-status adequate">Adequate</span></td>
-                                    <td>06/12/2027</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td><strong>Metformin 500mg tab</strong></td>
-                                    <td>Anti-diabetic</td>
-                                    <td>Tablet</td>
-                                    <td class="stock-number low-stock">60</td>
-                                    <td>120</td>
-                                    <td><span class="stock-status low-stock">Low Stock</span></td>
-                                    <td>14/03/2027</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
-                                <tr>
-                                    <td><strong>Guaifenesin 100mg/5ml</strong></td>
-                                    <td>Expectorant</td>
-                                    <td>Syrup</td>
-                                    <td class="stock-number low-stock">65</td>
-                                    <td>120</td>
-                                    <td><span class="stock-status low-stock">Low Stock</span></td>
-                                    <td>09/05/2026</td>
-                                    <td>
-                                        <button class="action-btn edit-btn" title="Edit">✎</button>
-                                        <button class="action-btn delete-btn" title="Delete">🗑</button>
-                                    </td>
-                                </tr>
-
-
+                            <tbody id="medicineTableBody">
+                                <tr><td colspan="8">Loading inventory...</td></tr>
                             </tbody>
 
                         </table>
@@ -410,27 +254,7 @@
 
                     <div class="table-footer">
 
-                        <span>
-                            Showing 1 to 10 of 156 medicines
-                        </span>
-
-                        <div class="pagination">
-
-                            <button>‹</button>
-                            <button class="active">1</button>
-                            <button>2</button>
-                            <button>3</button>
-                            <button>...</button>
-                            <button>16</button>
-                            <button>›</button>
-
-                        </div>
-
-                        <select>
-                            <option>10</option>
-                            <option>25</option>
-                            <option>50</option>
-                        </select>
+                        <span id="inventoryResultCount">Loading inventory...</span>
 
                     </div>
 
@@ -439,153 +263,117 @@
 
                 <!-- RIGHT SIDE -->
 
-                <aside class="inventory-side">
+            </div>
+            </div>
 
-                    <div class="side-card">
+            <div class="inventory-tab-panel" id="medicineIssuance">
+                <div class="issuance-panel">
+                    <div class="issuance-header">
+                        <div>
+                            <span class="eyebrow">Dispense medicines</span>
+                            <h2>Medicine Issuance</h2>
+                        </div>
+                    </div>
+                    <div id="issuanceMessage" class="issuance-message" role="status" aria-live="polite"></div>
+                    <form id="issuanceForm" class="issuance-grid">
+                        <div class="issuance-form">
+                            <label>
+                                Recipient type
+                                <select id="recipientType" required>
+                                    <option value="patient">Registered patient</option>
+                                    <option value="non_patient">Non-patient</option>
+                                </select>
+                            </label>
+                            <label id="patientRecipientField">
+                                Select patient
+                                <span class="patient-combobox">
+                                    <span class="patient-combobox-control">
+                                        <input type="search" id="patientSearch" role="combobox"
+                                            aria-autocomplete="list" aria-haspopup="listbox"
+                                            aria-expanded="false" aria-controls="patientOptions"
+                                            placeholder="Search patient name or ID" autocomplete="off">
+                                        <button type="button" id="patientDropdownToggle"
+                                            aria-label="Show registered patients" aria-expanded="false">▾</button>
+                                    </span>
+                                    <input type="hidden" id="patientSelect">
+                                    <span id="patientOptions" class="patient-options" role="listbox" hidden></span>
+                                </span>
+                            </label>
+                            <label id="nonPatientRecipientField" hidden>
+                                Recipient name
+                                <input type="text" id="nonPatientName" autocomplete="name">
+                            </label>
+                            <label id="recipientCategoryField" hidden>
+                                Recipient category
+                                <select id="recipientCategory">
+                                    <option value="Resident">Resident</option>
+                                    <option value="Staff">Staff</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </label>
+                            <label>
+                                Medicine
+                                <select id="medicineSelect" required>
+                                    <option value="">Loading inventory...</option>
+                                </select>
+                            </label>
+                            <label>
+                                Quantity
+                                <span class="quantity-input-wrap">
+                                    <input type="number" id="issuanceQuantity" min="1" step="1" value="1" required>
+                                    <span class="quantity-unit" id="issuanceUnit">Select medicine</span>
+                                </span>
+                            </label>
+                            <label>
+                                Issued by
+                                <input type="text" id="issuedBy" required placeholder="Staff name">
+                            </label>
+                            <label class="issuance-full">
+                                Notes
+                                <input type="text" id="issuanceNotes" maxlength="500" placeholder="Optional">
+                            </label>
+                            <div class="issuance-full issuance-actions">
+                                <button type="submit" class="header-button primary" id="submitIssuance">Issue Medicine</button>
+                            </div>
+                        </div>
+                        <div class="issuance-summary">
+                            <div class="summary-row">
+                                <span>Available stock</span>
+                                <strong id="availableStock">—</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span>Remaining after issue</span>
+                                <strong id="remainingStock">—</strong>
+                            </div>
+                            <div class="summary-row important">
+                                <span>Transaction status</span>
+                                <strong id="issuanceStatus">Select a medicine</strong>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
+                <div class="issuance-history-grid">
+                    <section class="side-card">
                         <div class="side-card-header">
-
                             <h2>Low Stock Alerts</h2>
-
-                            <a href="#">View All</a>
-
                         </div>
-
-
-                        <div class="alert-item">
-
-                            <span class="alert-icon">⚠</span>
-
-                            <div>
-                                <strong>Amoxicillin 500mg cap</strong>
-                                <small>Current stock: 45 units</small>
-                            </div>
-
-                            <span>Reorder level: 120</span>
-
-                        </div>
-
-
-                        <div class="alert-item">
-
-                            <span class="alert-icon">⚠</span>
-
-                            <div>
-                                <strong>Omeprazole 20mg cap</strong>
-                                <small>Current stock: 32 units</small>
-                            </div>
-
-                            <span>Reorder level: 90</span>
-
-                        </div>
-
-
-                        <div class="alert-item">
-
-                            <span class="alert-icon">⚠</span>
-
-                            <div>
-                                <strong>Cetirizine 10mg tab</strong>
-                                <small>Current stock: 78 units</small>
-                            </div>
-
-                            <span>Reorder level: 120</span>
-
-                        </div>
-
-
-                        <div class="alert-item">
-
-                            <span class="alert-icon">⚠</span>
-
-                            <div>
-                                <strong>Metformin 500mg tab</strong>
-                                <small>Current stock: 60 units</small>
-                            </div>
-
-                            <span>Reorder level: 120</span>
-
-                        </div>
-
-
-                        <a class="side-link" href="#">
-                            View all low stock medicines →
-                        </a>
-
-                    </div>
-
-
-                    <div class="side-card">
-
+                        <div id="lowStockList" class="low-stock-list"></div>
+                    </section>
+                    <section class="side-card">
                         <div class="side-card-header">
-
                             <h2>Recent Issuance</h2>
-
-                            <a href="#">View All</a>
-
                         </div>
-
-
-                        <div class="issuance-table">
-
-                            <div class="issuance-heading">
-                                <span>Patient</span>
-                                <span>Medicine</span>
-                                <span>Qty</span>
-                                <span>Date</span>
-                            </div>
-
-
-                            <div>
-                                <span>Juan D. Dela Cruz</span>
-                                <span>Paracetamol 500mg tab</span>
-                                <span>10 tabs</span>
-                                <span>May 12</span>
-                            </div>
-
-
-                            <div>
-                                <span>Maria S. Esparza</span>
-                                <span>Amoxicillin 500mg cap</span>
-                                <span>15 caps</span>
-                                <span>May 12</span>
-                            </div>
-
-
-                            <div>
-                                <span>Leandro D. Garcia</span>
-                                <span>Losartan 50mg tab</span>
-                                <span>2 bottles</span>
-                                <span>May 12</span>
-                            </div>
-
-
-                            <div>
-                                <span>Georgina F. Williams</span>
-                                <span>Paracetamol 500mg tab</span>
-                                <span>5 tabs</span>
-                                <span>May 13</span>
-                            </div>
-
-
-                            <div>
-                                <span>Pedro O. Pendulo</span>
-                                <span>Cetirizine 10mg tab</span>
-                                <span>10 tabs</span>
-                                <span>May 13</span>
-                            </div>
-
+                        <div class="table-wrapper">
+                            <table class="recent-issuance-table">
+                                <thead><tr><th>Recipient</th><th>Medicine</th><th>Qty</th><th>Date</th></tr></thead>
+                                <tbody id="recentIssuanceBody">
+                                    <tr><td colspan="4">No issuance records yet.</td></tr>
+                                </tbody>
+                            </table>
                         </div>
-
-
-                        <a class="side-link" href="#">
-                            Go to Medicine Issuance →
-                        </a>
-
-                    </div>
-
-                </aside>
-
+                    </section>
+                </div>
             </div>
 
         </section>
@@ -648,11 +436,6 @@
                     </div>
 
                     <div>
-                        <label>Reorder Level</label>
-                        <input type="number" min="0" required>
-                    </div>
-
-                    <div>
                         <label>Expiry Date</label>
                         <input type="date" required>
                     </div>
@@ -703,31 +486,6 @@
 
         }
 
-        function searchMedicine() {
-
-            const search =
-                document
-                    .getElementById("medicineSearch")
-                    .value
-                    .toLowerCase();
-
-            const rows =
-                document.querySelectorAll("#medicineTable tbody tr");
-
-            rows.forEach(function (row) {
-
-                const text =
-                    row.textContent.toLowerCase();
-
-                row.style.display =
-                    text.includes(search)
-                        ? ""
-                        : "none";
-
-            });
-
-        }
-
         window.addEventListener("click", function (event) {
 
             const modal =
@@ -739,6 +497,624 @@
 
         });
 
+    </script>
+
+    <script>
+        const inventoryRecords = [];
+        let patientRecords = [];
+        const inventorySort = { field: "name", ascending: true };
+        const inventoryCurrency = new Intl.NumberFormat();
+
+        document.addEventListener("DOMContentLoaded", () => {
+            sortStaticMedicineRows();
+            document.querySelectorAll(".inventory-tab").forEach(tab => {
+                tab.addEventListener("click", () => {
+                    document.querySelectorAll(".inventory-tab").forEach(item => item.classList.toggle("active", item === tab));
+                    document.querySelectorAll(".inventory-tab-panel").forEach(panel => panel.classList.toggle("active", panel.id === tab.dataset.panel));
+                });
+            });
+
+            document.getElementById("recipientType").addEventListener("change", updateRecipientFields);
+            const patientSearch = document.getElementById("patientSearch");
+            patientSearch.addEventListener("input", () => {
+                document.getElementById("patientSelect").value = "";
+                renderPatientOptions();
+                setPatientDropdownOpen(true);
+            });
+            patientSearch.addEventListener("focus", () => {
+                if (document.getElementById("patientSelect").value) {
+                    patientSearch.value = "";
+                    document.getElementById("patientSelect").value = "";
+                }
+                renderPatientOptions();
+                setPatientDropdownOpen(true);
+            });
+            patientSearch.addEventListener("keydown", handlePatientSearchKeydown);
+            document.getElementById("patientOptions").addEventListener("keydown", handlePatientOptionKeydown);
+            document.getElementById("patientDropdownToggle").addEventListener("click", togglePatientDropdown);
+            document.addEventListener("click", event => {
+                if (!event.target.closest(".patient-combobox")) setPatientDropdownOpen(false);
+            });
+            document.getElementById("medicineSelect").addEventListener("change", updateIssuancePreview);
+            document.getElementById("issuanceQuantity").addEventListener("input", updateIssuancePreview);
+            document.getElementById("issuanceForm").addEventListener("submit", submitIssuance);
+            document.getElementById("medicineSearch").addEventListener("input", renderInventoryTable);
+            document.getElementById("categoryFilter").addEventListener("change", renderInventoryTable);
+            document.getElementById("statusFilter").addEventListener("change", renderInventoryTable);
+            document.getElementById("clearInventoryFilters").addEventListener("click", () => {
+                document.getElementById("medicineSearch").value = "";
+                document.getElementById("categoryFilter").value = "All Categories";
+                document.getElementById("statusFilter").value = "All Status";
+                renderInventoryTable();
+            });
+            document.querySelector(".refresh-button").addEventListener("click", loadInventory);
+            document.querySelectorAll("#medicineTable thead th[data-sort]").forEach(header => {
+                const sort = () => {
+                    const field = header.dataset.sort;
+                    inventorySort.ascending = inventorySort.field === field ? !inventorySort.ascending : true;
+                    inventorySort.field = field;
+                    renderInventoryTable();
+                };
+                header.addEventListener("click", sort);
+                header.addEventListener("keydown", event => {
+                    if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        sort();
+                    }
+                });
+            });
+
+            updateRecipientFields();
+            loadInventory();
+            loadPatients();
+            loadRecentIssuances();
+            loadMonthlyIssuanceCount();
+        });
+
+        function sortStaticMedicineRows() {
+            const body = document.getElementById("medicineTableBody");
+            const rows = Array.from(body.rows);
+            rows.sort((a, b) => a.cells[0].textContent.trim().localeCompare(
+                b.cells[0].textContent.trim(),
+                undefined,
+                { sensitivity: "base", numeric: true }
+            ));
+            rows.forEach(row => body.appendChild(row));
+        }
+
+        function setIssuanceMessage(message, isError = false) {
+            const element = document.getElementById("issuanceMessage");
+            element.textContent = message;
+            element.classList.toggle("error", isError);
+            element.classList.toggle("visible", Boolean(message));
+        }
+
+        function updateRecipientFields() {
+            const isPatient = document.getElementById("recipientType").value === "patient";
+            const patientField = document.getElementById("patientRecipientField");
+            const patientSelect = document.getElementById("patientSelect");
+            const nonPatientField = document.getElementById("nonPatientRecipientField");
+            const nonPatientName = document.getElementById("nonPatientName");
+            const categoryField = document.getElementById("recipientCategoryField");
+
+            patientField.hidden = !isPatient;
+            patientSelect.disabled = !isPatient;
+            document.getElementById("patientSearch").disabled = !isPatient;
+            document.getElementById("patientDropdownToggle").disabled = !isPatient;
+            if (!isPatient) setPatientDropdownOpen(false);
+            nonPatientField.hidden = isPatient;
+            nonPatientName.disabled = isPatient;
+            nonPatientName.required = !isPatient;
+            categoryField.hidden = isPatient;
+            updateIssuancePreview();
+        }
+
+        async function loadInventory() {
+            const select = document.getElementById("medicineSelect");
+            const submitButton = document.getElementById("submitIssuance");
+            submitButton.disabled = true;
+            select.innerHTML = '<option value="">Loading inventory...</option>';
+
+            if (!window.sb || !isConfigured) {
+                setIssuanceMessage("Inventory database is not configured. Configure Supabase before issuing stock.", true);
+                select.innerHTML = '<option value="">Inventory unavailable</option>';
+                setInventoryUnavailable("Inventory database is not configured.");
+                return;
+            }
+
+            let inventoryResponse;
+            try {
+                inventoryResponse = await window.sb
+                    .from("inventory")
+                    .select("id, name, category, unit, stock, reorder, status, expiry")
+                    .order("name", { ascending: true });
+            } catch (error) {
+                console.error("Unable to connect to inventory:", error);
+                setIssuanceMessage(`Could not load live inventory: ${error.message || error}`, true);
+                select.innerHTML = '<option value="">Inventory could not be loaded</option>';
+                setInventoryUnavailable("Could not load inventory.");
+                return;
+            }
+            const { data, error } = inventoryResponse;
+
+            if (error) {
+                console.error("Unable to load inventory:", error);
+                setIssuanceMessage(`Could not load live inventory: ${error.message}`, true);
+                select.innerHTML = '<option value="">Inventory could not be loaded</option>';
+                setInventoryUnavailable("Could not load inventory.");
+                return;
+            }
+
+            inventoryRecords.splice(0, inventoryRecords.length, ...(data || []).map(item => ({
+                ...item,
+                stock: Number(item.stock) || 0,
+                reorder: Number(item.reorder) || 0
+            })));
+
+            const categorySelect = document.getElementById("categoryFilter");
+            const categories = [...new Set(inventoryRecords.map(item => item.category).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+            categorySelect.replaceChildren(new Option("All Categories", "All Categories"));
+            categories.forEach(category => categorySelect.add(new Option(category, category)));
+
+            select.innerHTML = '<option value="">Select medicine</option>';
+            inventoryRecords.forEach(item => {
+                const option = document.createElement("option");
+                option.value = String(item.id);
+                option.textContent = `${item.name} — ${item.stock} ${item.unit} available`;
+                option.disabled = item.stock <= 0;
+                select.appendChild(option);
+            });
+
+            renderInventoryTable();
+            renderLowStock();
+            updateInventorySummary();
+            submitButton.disabled = inventoryRecords.length === 0;
+            if (inventoryRecords.length === 0) {
+                setIssuanceMessage("No medicines are recorded in the inventory yet.", true);
+            } else {
+                setIssuanceMessage("");
+            }
+            updateIssuancePreview();
+        }
+
+        async function loadPatients() {
+            const select = document.getElementById("patientSelect");
+            const search = document.getElementById("patientSearch");
+            if (!window.sb || !isConfigured) {
+                search.placeholder = "Patient directory unavailable";
+                search.disabled = true;
+                document.getElementById("patientDropdownToggle").disabled = true;
+                return;
+            }
+
+            let patientResponse;
+            try {
+                patientResponse = await window.sb
+                    .from("patients")
+                    .select("id, patient_code, first_name, middle_name, last_name, suffix, status")
+                    .order("last_name", { ascending: true });
+            } catch (error) {
+                console.error("Unable to connect to patient directory:", error);
+                search.placeholder = "Could not load patients";
+                setIssuanceMessage(`Could not load patient directory: ${error.message || error}`, true);
+                return;
+            }
+            const { data, error } = patientResponse;
+
+            if (error) {
+                console.error("Unable to load patients:", error);
+                search.placeholder = "Could not load patients";
+                setIssuanceMessage(`Could not load patient directory: ${error.message}`, true);
+                return;
+            }
+
+            patientRecords = data || [];
+            renderPatientOptions();
+            if (patientRecords.length === 0) {
+                search.placeholder = "No registered patients found";
+            }
+        }
+
+        function renderPatientOptions() {
+            const listbox = document.getElementById("patientOptions");
+            const query = document.getElementById("patientSearch").value.trim().toLocaleLowerCase();
+            const filteredPatients = patientRecords.filter(patient => {
+                const name = getPatientName(patient);
+                return `${name} ${patient.patient_code || ""}`.toLocaleLowerCase().includes(query)
+                    && (patient.status || "").toLowerCase() !== "archived";
+            });
+
+            listbox.replaceChildren();
+            if (!filteredPatients.length) {
+                const empty = document.createElement("span");
+                empty.className = "patient-options-empty";
+                empty.textContent = patientRecords.length ? "No matching patients" : "No registered patients found";
+                listbox.appendChild(empty);
+                return;
+            }
+
+            filteredPatients.forEach(patient => {
+                const option = document.createElement("button");
+                option.type = "button";
+                option.className = "patient-option";
+                option.setAttribute("role", "option");
+                option.setAttribute("aria-selected", document.getElementById("patientSelect").value === String(patient.id) ? "true" : "false");
+                option.dataset.patientId = String(patient.id);
+                const patientName = document.createElement("strong");
+                patientName.textContent = getPatientName(patient);
+                option.appendChild(patientName);
+                if (patient.patient_code) {
+                    const patientCode = document.createElement("small");
+                    patientCode.textContent = patient.patient_code;
+                    option.appendChild(patientCode);
+                }
+                option.addEventListener("click", () => selectIssuancePatient(patient));
+                listbox.appendChild(option);
+            });
+        }
+
+        function getPatientName(patient) {
+            return [patient.first_name, patient.middle_name, patient.last_name, patient.suffix].filter(Boolean).join(" ");
+        }
+
+        function selectIssuancePatient(patient) {
+            document.getElementById("patientSelect").value = String(patient.id);
+            document.getElementById("patientSearch").value = [
+                getPatientName(patient),
+                patient.patient_code
+            ].filter(Boolean).join(" — ");
+            renderPatientOptions();
+            setPatientDropdownOpen(false);
+        }
+
+        function setPatientDropdownOpen(isOpen) {
+            const search = document.getElementById("patientSearch");
+            const toggle = document.getElementById("patientDropdownToggle");
+            const listbox = document.getElementById("patientOptions");
+            listbox.hidden = !isOpen;
+            search.setAttribute("aria-expanded", String(isOpen));
+            toggle.setAttribute("aria-expanded", String(isOpen));
+        }
+
+        function togglePatientDropdown() {
+            const listbox = document.getElementById("patientOptions");
+            const search = document.getElementById("patientSearch");
+            const isOpen = listbox.hidden;
+            if (isOpen) {
+                search.value = "";
+                document.getElementById("patientSelect").value = "";
+                renderPatientOptions();
+                setPatientDropdownOpen(true);
+                search.focus();
+            } else {
+                setPatientDropdownOpen(false);
+            }
+        }
+
+        function handlePatientSearchKeydown(event) {
+            const listbox = document.getElementById("patientOptions");
+            const options = [...listbox.querySelectorAll(".patient-option")];
+            const focusedIndex = options.indexOf(document.activeElement);
+
+            if (event.key === "ArrowDown") {
+                event.preventDefault();
+                setPatientDropdownOpen(true);
+                if (options.length) options[Math.min(focusedIndex + 1, options.length - 1)].focus();
+            } else if (event.key === "ArrowUp") {
+                event.preventDefault();
+                if (focusedIndex > 0) options[focusedIndex - 1].focus();
+                else event.currentTarget.focus();
+            } else if (event.key === "Escape") {
+                setPatientDropdownOpen(false);
+            } else if (event.key === "Enter" && options.length === 1) {
+                event.preventDefault();
+                options[0].click();
+            }
+        }
+
+        function handlePatientOptionKeydown(event) {
+            const options = [...event.currentTarget.querySelectorAll(".patient-option")];
+            const focusedIndex = options.indexOf(document.activeElement);
+            if (event.key === "ArrowDown") {
+                event.preventDefault();
+                options[Math.min(focusedIndex + 1, options.length - 1)]?.focus();
+            } else if (event.key === "ArrowUp") {
+                event.preventDefault();
+                if (focusedIndex > 0) options[focusedIndex - 1].focus();
+                else document.getElementById("patientSearch").focus();
+            } else if (event.key === "Escape") {
+                event.preventDefault();
+                setPatientDropdownOpen(false);
+                document.getElementById("patientSearch").focus();
+            }
+        }
+
+        function getSelectedMedicine() {
+            const id = document.getElementById("medicineSelect").value;
+            return inventoryRecords.find(item => String(item.id) === id) || null;
+        }
+
+        function updateIssuancePreview() {
+            const item = getSelectedMedicine();
+            const quantityInput = document.getElementById("issuanceQuantity");
+            const quantity = Math.max(0, Number.parseInt(quantityInput.value, 10) || 0);
+            const button = document.getElementById("submitIssuance");
+
+            document.getElementById("availableStock").textContent = item ? inventoryCurrency.format(item.stock) : "—";
+            document.getElementById("remainingStock").textContent = item ? inventoryCurrency.format(item.stock - quantity) : "—";
+            document.getElementById("issuanceUnit").textContent = item ? item.unit : "Select medicine";
+            document.getElementById("issuanceStatus").textContent = !item
+                ? "Select a medicine"
+                : quantity < 1
+                    ? "Enter a quantity"
+                    : quantity > item.stock
+                        ? "Insufficient stock"
+                        : "Ready to dispense";
+            if (item) quantityInput.max = String(item.stock);
+            button.disabled = !item || quantity < 1 || quantity > item.stock;
+        }
+
+        async function submitIssuance(event) {
+            event.preventDefault();
+            const item = getSelectedMedicine();
+            if (!item) {
+                setIssuanceMessage("Select a medicine before issuing.", true);
+                return;
+            }
+
+            const recipientType = document.getElementById("recipientType").value;
+            const patientId = recipientType === "patient"
+                ? Number.parseInt(document.getElementById("patientSelect").value, 10)
+                : null;
+            const selectedPatient = patientRecords.find(patient => patient.id === patientId);
+            const recipientName = recipientType === "patient"
+                ? selectedPatient ? getPatientName(selectedPatient) : ""
+                : document.getElementById("nonPatientName").value.trim();
+            const quantity = Number.parseInt(document.getElementById("issuanceQuantity").value, 10);
+            const issuedBy = document.getElementById("issuedBy").value.trim();
+
+            if (!recipientName || (recipientType === "patient" && !patientId)) {
+                setIssuanceMessage("Choose a registered patient or enter the non-patient recipient's name.", true);
+                return;
+            }
+            if (!Number.isInteger(quantity) || quantity < 1 || quantity > item.stock) {
+                setIssuanceMessage("Enter a whole-number quantity within the available stock.", true);
+                updateIssuancePreview();
+                return;
+            }
+            if (!issuedBy) {
+                setIssuanceMessage("Enter the staff member issuing the medicine.", true);
+                return;
+            }
+
+            const submitButton = document.getElementById("submitIssuance");
+            submitButton.disabled = true;
+            submitButton.textContent = "Issuing...";
+            let issuanceResponse;
+            try {
+                issuanceResponse = await window.sb.rpc("issue_medicine", {
+                    p_inventory_id: item.id,
+                    p_patient_id: patientId,
+                    p_recipient_type: recipientType,
+                    p_recipient_name: recipientName,
+                    p_recipient_category: recipientType === "patient" ? null : document.getElementById("recipientCategory").value,
+                    p_quantity: quantity,
+                    p_issued_by: issuedBy,
+                    p_notes: document.getElementById("issuanceNotes").value.trim() || null
+                });
+            } catch (error) {
+                console.error("Medicine issuance request failed:", error);
+                submitButton.textContent = "Issue Medicine";
+                setIssuanceMessage(`Issuance failed; stock was not changed. ${error.message || error}`, true);
+                updateIssuancePreview();
+                return;
+            }
+            const { data, error } = issuanceResponse;
+            submitButton.textContent = "Issue Medicine";
+
+            if (error) {
+                console.error("Medicine issuance failed:", error);
+                setIssuanceMessage(`Issuance failed; stock was not changed. ${error.message}`, true);
+                updateIssuancePreview();
+                return;
+            }
+
+            const result = Array.isArray(data) ? data[0] : data;
+            setIssuanceMessage(`Issued ${quantity} ${item.unit} of ${item.name} to ${recipientName}. Remaining stock: ${result?.remaining_stock ?? "updated"}.`);
+            document.getElementById("issuanceForm").reset();
+            document.getElementById("issuanceQuantity").value = "1";
+            updateRecipientFields();
+            await Promise.all([loadInventory(), loadRecentIssuances()]);
+        }
+
+        function renderInventoryTable() {
+            const body = document.getElementById("medicineTableBody");
+            if (!inventoryRecords.length) {
+                body.replaceChildren();
+                const row = body.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 8;
+                cell.textContent = "No medicines found in inventory.";
+                document.getElementById("inventoryResultCount").textContent = "0 medicines";
+                return;
+            }
+
+            const query = document.getElementById("medicineSearch").value.trim().toLowerCase();
+            const categoryFilter = document.getElementById("categoryFilter").value;
+            const statusFilter = document.getElementById("statusFilter").value;
+            const filtered = inventoryRecords.filter(item => {
+                const status = item.stock <= 0 ? "Out of Stock" : item.stock <= item.reorder ? "Low Stock" : "Adequate";
+                return (!query || `${item.name} ${item.category} ${item.unit}`.toLowerCase().includes(query))
+                    && (categoryFilter === "All Categories" || item.category === categoryFilter || item.category.split(" / ")[0] === categoryFilter)
+                    && (statusFilter === "All Status" || status === statusFilter);
+            });
+
+            filtered.sort((a, b) => {
+                const left = inventorySort.field === "status"
+                    ? (a.stock <= 0 ? "Out of Stock" : a.stock <= a.reorder ? "Low Stock" : "Adequate")
+                    : a[inventorySort.field];
+                const right = inventorySort.field === "status"
+                    ? (b.stock <= 0 ? "Out of Stock" : b.stock <= b.reorder ? "Low Stock" : "Adequate")
+                    : b[inventorySort.field];
+                let result;
+                if (inventorySort.field === "stock" || inventorySort.field === "reorder") {
+                    result = Number(left) - Number(right);
+                } else if (inventorySort.field === "expiry") {
+                    result = new Date(left || "9999-12-31").getTime() - new Date(right || "9999-12-31").getTime();
+                } else {
+                    result = String(left || "").localeCompare(String(right || ""), undefined, { sensitivity: "base", numeric: true });
+                }
+                return inventorySort.ascending ? result : -result;
+            });
+
+            body.replaceChildren();
+            if (filtered.length === 0) {
+                const row = body.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 8;
+                cell.textContent = "No medicines match the selected search and filters.";
+            }
+            filtered.forEach(item => {
+                const status = item.stock <= 0 ? "Out of Stock" : item.stock <= item.reorder ? "Low Stock" : "Adequate";
+                const statusClass = status.toLowerCase().replaceAll(" ", "-");
+                const row = body.insertRow();
+                row.innerHTML = `<td><strong></strong></td><td></td><td></td><td class="stock-number"></td><td></td><td><span class="stock-status"></span></td><td></td><td>—</td>`;
+                row.cells[0].querySelector("strong").textContent = item.name;
+                row.cells[1].textContent = item.category;
+                row.cells[2].textContent = item.unit;
+                row.cells[3].textContent = inventoryCurrency.format(item.stock);
+                row.cells[3].classList.add(statusClass);
+                row.cells[4].textContent = inventoryCurrency.format(item.reorder);
+                row.cells[5].querySelector("span").textContent = status;
+                row.cells[5].querySelector("span").classList.add(statusClass);
+                row.cells[6].textContent = item.expiry ? new Date(`${item.expiry}T00:00:00`).toLocaleDateString() : "—";
+            });
+            document.getElementById("inventoryResultCount").textContent = `${filtered.length} of ${inventoryRecords.length} medicines`;
+        }
+
+        function renderLowStock() {
+            const container = document.getElementById("lowStockList");
+            const lowStock = inventoryRecords.filter(item => item.stock <= item.reorder);
+            container.replaceChildren();
+            if (!lowStock.length) {
+                container.textContent = "No low-stock medicines.";
+                return;
+            }
+            lowStock.forEach(item => {
+                const alert = document.createElement("div");
+                alert.className = "alert-item";
+                const icon = document.createElement("span");
+                icon.className = "alert-icon";
+                icon.textContent = "!";
+                const description = document.createElement("div");
+                const name = document.createElement("strong");
+                name.textContent = item.name;
+                const stock = document.createElement("small");
+                stock.textContent = `Current stock: ${item.stock} ${item.unit}`;
+                description.append(name, stock);
+                const reorder = document.createElement("span");
+                reorder.textContent = `Reorder level: ${item.reorder}`;
+                alert.append(icon, description, reorder);
+                container.appendChild(alert);
+            });
+        }
+
+        function updateInventorySummary() {
+            const totalUnits = inventoryRecords.reduce((sum, item) => sum + item.stock, 0);
+            const lowStock = inventoryRecords.filter(item => item.stock > 0 && item.stock <= item.reorder).length;
+            const outOfStock = inventoryRecords.filter(item => item.stock <= 0).length;
+            document.getElementById("totalMedicines").textContent = inventoryCurrency.format(inventoryRecords.length);
+            document.getElementById("totalStock").textContent = inventoryCurrency.format(totalUnits);
+            document.getElementById("lowStockCount").textContent = inventoryCurrency.format(lowStock);
+            document.getElementById("outOfStockCount").textContent = inventoryCurrency.format(outOfStock);
+        }
+
+        function setInventoryUnavailable(message) {
+            ["totalMedicines", "totalStock", "lowStockCount", "outOfStockCount"].forEach(id => {
+                document.getElementById(id).textContent = "—";
+            });
+            document.getElementById("lowStockList").textContent = message;
+            const body = document.getElementById("medicineTableBody");
+            body.replaceChildren();
+            const row = body.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 8;
+            cell.textContent = message;
+            document.getElementById("inventoryResultCount").textContent = message;
+        }
+
+        async function loadMonthlyIssuanceCount() {
+            const countElement = document.getElementById("issuedThisMonth");
+            if (!window.sb || !isConfigured) {
+                countElement.textContent = "—";
+                return;
+            }
+            const now = new Date();
+            const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+            const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
+            let response;
+            try {
+                response = await window.sb
+                    .from("inventory_issuances")
+                    .select("id", { count: "exact", head: true })
+                    .gte("created_at", monthStart)
+                    .lt("created_at", nextMonthStart);
+            } catch (error) {
+                console.error("Unable to load monthly issuance count:", error);
+                countElement.textContent = "—";
+                return;
+            }
+            if (response.error) {
+                console.error("Unable to load monthly issuance count:", response.error);
+                countElement.textContent = "—";
+                return;
+            }
+            countElement.textContent = inventoryCurrency.format(response.count || 0);
+        }
+
+        async function loadRecentIssuances() {
+            const body = document.getElementById("recentIssuanceBody");
+            if (!window.sb || !isConfigured) return;
+            let historyResponse;
+            try {
+                historyResponse = await window.sb
+                    .from("inventory_issuances")
+                    .select("recipient_name, medicine_name, quantity, unit, created_at")
+                    .order("created_at", { ascending: false })
+                    .limit(10);
+            } catch (error) {
+                console.error("Unable to connect to issuance history:", error);
+                body.replaceChildren();
+                const row = body.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 4;
+                cell.textContent = `Issuance history is unavailable: ${error.message || error}`;
+                return;
+            }
+            const { data, error } = historyResponse;
+
+            if (error) {
+                console.error("Unable to load issuance history:", error);
+                body.replaceChildren();
+                const row = body.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = 4;
+                cell.textContent = "Issuance history is unavailable. Apply the inventory_issuances schema setup.";
+                return;
+            }
+
+            body.replaceChildren();
+            if (!data || data.length === 0) {
+                body.innerHTML = '<tr><td colspan="4">No issuance records yet.</td></tr>';
+                return;
+            }
+            data.forEach(record => {
+                const row = body.insertRow();
+                [record.recipient_name, record.medicine_name, `${record.quantity} ${record.unit}`, new Date(record.created_at).toLocaleDateString()].forEach(value => {
+                    row.insertCell().textContent = value;
+                });
+            });
+        }
     </script>
 
     <script src="sidebar.js"></script>

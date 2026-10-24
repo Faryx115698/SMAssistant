@@ -8,6 +8,7 @@
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
     <link rel="stylesheet" href="sms-notifications.css">
+    <link rel="stylesheet" href="admin-profile.css">
 </head>
 
 <body>
@@ -162,7 +163,7 @@
 
     <div class="tab-content active" id="send-tab">
 
-        <div class="sms-layout">
+        <div class="sms-layout send-layout">
 
 
             <!-- SEND SMS -->
@@ -662,12 +663,7 @@
     <!-- OTHER TABS -->
 
     <div class="tab-content" id="history-tab">
-
-        <section class="card placeholder-card">
-            <h2>SMS History</h2>
-            <p>Previously sent SMS messages will appear here.</p>
-        </section>
-
+        <div class="history-tab-content"></div>
     </div>
 
 
@@ -727,6 +723,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const tabs = document.querySelectorAll(".notification-tab");
     const tabContents = document.querySelectorAll(".tab-content");
+    const recentNotifications = document.querySelector(".recent-card");
+    const historyContent = document.querySelector(".history-tab-content");
+    if (recentNotifications && historyContent) {
+        const historyTitle = recentNotifications.querySelector(".card-heading h2");
+        if (historyTitle) historyTitle.textContent = "SMS History";
+        const viewAllLink = recentNotifications.querySelector(".card-heading a");
+        if (viewAllLink) viewAllLink.remove();
+        historyContent.appendChild(recentNotifications);
+    }
 
     tabs.forEach(function (tab) {
 

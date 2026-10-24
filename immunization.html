@@ -10,6 +10,7 @@
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
+    <link rel="stylesheet" href="admin-profile.css">
 </head>
 
 <body>
@@ -55,21 +56,21 @@
                 </div>
                 <div>
                     <span>Total Patients</span>
-                    <strong>423</strong>
-                    <small>Registered in program</small>
+                    <strong id="statTotalPatients">—</strong>
+                    <small>Registered patients</small>
                 </div>
             </div>
 
             <div class="summary-card card-green">
                 <div class="summary-icon">
-                    <img src="icons/fully-immunized.png" alt="Fully Immunized"
+                    <img src="icons/fully-immunized.png" alt="Completed doses"
                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <i class="fa-solid fa-shield-heart" style="display:none;"></i>
                 </div>
                 <div>
-                    <span>Fully Immunized</span>
-                    <strong>4</strong>
-                    <small>57%% of total patients</small>
+                    <span>Completed Doses</span>
+                    <strong id="statFullyImmunized">—</strong>
+                    <small>Completed vaccine records</small>
                 </div>
             </div>
 
@@ -81,7 +82,7 @@
                 </div>
                 <div>
                     <span>Due This Month</span>
-                    <strong>2</strong>
+                    <strong id="statDueThisMonth">—</strong>
                     <small>Upcoming vaccines</small>
                 </div>
             </div>
@@ -94,7 +95,7 @@
                 </div>
                 <div>
                     <span>Overdue</span>
-                    <strong>1</strong>
+                    <strong id="statOverdue">—</strong>
                     <small>Missed vaccines</small>
                 </div>
             </div>
@@ -107,7 +108,7 @@
                 </div>
                 <div>
                     <span>Vaccines Today</span>
-                    <strong>18</strong>
+                    <strong id="statVaccinesToday">—</strong>
                     <small>Scheduled for today</small>
                 </div>
             </div>
@@ -128,6 +129,12 @@
                 <div class="tab-panel active" id="records">
 
                     <div class="record-main">
+                        <label class="patient-selector">
+                            <span>Patient</span>
+                            <select id="patientSelector" aria-label="Select patient">
+                                <option value="">Select a patient</option>
+                            </select>
+                        </label>
 
                         <div class="filters">
                             <div class="search-field">
@@ -162,24 +169,16 @@
                             </div>
 
                             <div class="patient-info">
-                                <h2>Juan D. Dela Cruz</h2>
-                                <div class="patient-meta">
-                                    <span>Patient ID: PT-0001</span>
-                                    <span>|</span>
-                                    <span>34 yrs</span>
-                                    <span>|</span>
-                                    <span>May 12, 1990</span>
+                                <h2 id="selectedPatientName">No patient selected</h2>
+                                <div class="patient-meta" id="selectedPatientMeta">
+                                    <span>Select a patient from Patient Registration and Record to view vaccination history.</span>
                                 </div>
-                                <div class="patient-contact">
-                                    <span><i
-                                            class="fa-solid fa-phone"></i>0917 123 4567</span>
-                                    <span><i
-                                            class="fa-solid fa-location-dot"></i>Labin Street, Talimundoc, Orani, Bataan</span>
+                                <div class="patient-contact" id="selectedPatientContact">
                                 </div>
                             </div>
 
                             <div class="patient-actions">
-                                <a class="view-profile" href="patient-registration.html">
+                                <a class="view-profile" id="viewPatientProfile" href="patient-registration.html">
                                     View Profile
                                 </a>
                                 <button class="add-button" type="button" onclick="openModal()">
@@ -206,118 +205,7 @@
                                     </tr>
                                 </thead>
                                 <tbody id="vaccinationBody">
-                                    
-        <tr data-vaccine="bcg" data-status="completed" data-age="3 days">
-            <td><strong>BCG</strong></td>
-            <td>1 of 1</td>
-            <td>Jan 05, 2026</td>
-            <td>3 days</td>
-            <td><code>BCG9234</code></td>
-            <td>BHW Alex</td>
-            <td>—</td>
-            <td><span class="status-badge status-completed">Completed</span></td>
-            <td>
-                <button class="btn-icon" title="Edit">✎</button>
-                <button class="btn-icon" title="Print">⎙</button>
-            </td>
-        </tr>
-    
-
-        <tr data-vaccine="hepatitis b" data-status="completed" data-age="6 months">
-            <td><strong>Hepatitis B</strong></td>
-            <td>3 of 3</td>
-            <td>Feb 11, 2026</td>
-            <td>6 months</td>
-            <td><code>HEP1128</code></td>
-            <td>BHW Alex</td>
-            <td>—</td>
-            <td><span class="status-badge status-completed">Completed</span></td>
-            <td>
-                <button class="btn-icon" title="Edit">✎</button>
-                <button class="btn-icon" title="Print">⎙</button>
-            </td>
-        </tr>
-    
-
-        <tr data-vaccine="dpt pentavalent" data-status="completed" data-age="1 year">
-            <td><strong>DPT Pentavalent</strong></td>
-            <td>3 of 3</td>
-            <td>Mar 08, 2026</td>
-            <td>1 year</td>
-            <td><code>DPT7321</code></td>
-            <td>BHW Alex</td>
-            <td>—</td>
-            <td><span class="status-badge status-completed">Completed</span></td>
-            <td>
-                <button class="btn-icon" title="Edit">✎</button>
-                <button class="btn-icon" title="Print">⎙</button>
-            </td>
-        </tr>
-    
-
-        <tr data-vaccine="polio (opv/ipv)" data-status="completed" data-age="1 year">
-            <td><strong>Polio (OPV/IPV)</strong></td>
-            <td>4 of 4</td>
-            <td>Apr 12, 2026</td>
-            <td>1 year</td>
-            <td><code>OPV9084</code></td>
-            <td>BHW Alex</td>
-            <td>—</td>
-            <td><span class="status-badge status-completed">Completed</span></td>
-            <td>
-                <button class="btn-icon" title="Edit">✎</button>
-                <button class="btn-icon" title="Print">⎙</button>
-            </td>
-        </tr>
-    
-
-        <tr data-vaccine="measles (mmr)" data-status="scheduled" data-age="2 years">
-            <td><strong>Measles (MMR)</strong></td>
-            <td>1 of 2</td>
-            <td>May 02, 2026</td>
-            <td>2 years</td>
-            <td><code>MMR5624</code></td>
-            <td>BHW Alex</td>
-            <td>Nov 02, 2026</td>
-            <td><span class="status-badge status-scheduled">Scheduled</span></td>
-            <td>
-                <button class="btn-icon" title="Edit">✎</button>
-                <button class="btn-icon" title="Print">⎙</button>
-            </td>
-        </tr>
-    
-
-        <tr data-vaccine="tetanus toxoid (tt)" data-status="due soon" data-age="34 years">
-            <td><strong>Tetanus Toxoid (TT)</strong></td>
-            <td>2 of 5</td>
-            <td>Jun 04, 2026</td>
-            <td>34 years</td>
-            <td><code>TT7635</code></td>
-            <td>BHW Alex</td>
-            <td>Nov 04, 2026</td>
-            <td><span class="status-badge status-due">Due Soon</span></td>
-            <td>
-                <button class="btn-icon" title="Edit">✎</button>
-                <button class="btn-icon" title="Print">⎙</button>
-            </td>
-        </tr>
-    
-
-        <tr data-vaccine="influenza vaccine" data-status="overdue" data-age="-">
-            <td><strong>Influenza Vaccine</strong></td>
-            <td>3 of 1</td>
-            <td>—</td>
-            <td>-</td>
-            <td><code>—</code></td>
-            <td>—</td>
-            <td>Dec 05, 2026</td>
-            <td><span class="status-badge status-overdue">Overdue</span></td>
-            <td>
-                <button class="btn-icon" title="Edit">✎</button>
-                <button class="btn-icon" title="Print">⎙</button>
-            </td>
-        </tr>
-    
+                                    <tr><td colspan="9">Loading patient vaccination records...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -337,110 +225,20 @@
 
                     </div>
 
-                    <aside class="right-column">
-
-                        <div class="side-card card">
-                            <div class="side-heading">
-                                <h3>Upcoming Vaccinations</h3>
-                                <a href="#">View All</a>
-                            </div>
-
-                            
-        <div class="schedule-item">
-            <div class="schedule-dot status-scheduled"></div>
-            <div class="schedule-details">
-                <strong>Measles (MMR) (1 of 2)</strong>
-                <span>Next Due: Nov 02, 2026</span>
-            </div>
-            <span class="status-badge status-scheduled">Scheduled</span>
-        </div>
-    
-
-        <div class="schedule-item">
-            <div class="schedule-dot status-due"></div>
-            <div class="schedule-details">
-                <strong>Tetanus Toxoid (TT) (2 of 5)</strong>
-                <span>Next Due: Nov 04, 2026</span>
-            </div>
-            <span class="status-badge status-due">Due Soon</span>
-        </div>
-    
-
-        <div class="schedule-item">
-            <div class="schedule-dot status-overdue"></div>
-            <div class="schedule-details">
-                <strong>Influenza Vaccine (3 of 1)</strong>
-                <span>Next Due: Dec 05, 2026</span>
-            </div>
-            <span class="status-badge status-overdue">Overdue</span>
-        </div>
-    
-
-                            <a class="view-schedule" href="#">View full schedule <i
-                                    class="fa-solid fa-arrow-right"></i></a>
-                        </div>
-
-                        <div class="side-card card coverage-card">
-                            <div class="side-heading">
-                                <h3>Immunization Coverage (This Year)</h3>
-                            </div>
-
-                            <div class="coverage-content">
-                                <div class="donut" style="--coverage: 57%%;">
-                                    <div>
-                                        <strong>57%%</strong>
-                                        <span>Fully Immunized</span>
-                                    </div>
-                                </div>
-
-                                <div class="coverage-legend">
-                                    <div><i class="green"></i><span>Fully
-                                            Immunized</span><strong>4</strong></div>
-                                    <div><i class="orange"></i><span>Partially
-                                            Immunized</span><strong>1</strong></div>
-                                    <div><i class="red"></i><span>Not
-                                            Immunized</span><strong>1</strong></div>
-                                    <b>Total Registered: 7</b>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="side-card card">
-                            <div class="side-heading">
-                                <h3>Alerts &amp; Reminders</h3>
-                            </div>
-
-                            <div class="alert-row warning">
-                                <i class="fa-solid fa-triangle-exclamation"></i>
-                                <span>1 patients with overdue vaccines</span>
-                                <i class="fa-solid fa-arrow-right"></i>
-                            </div>
-
-                            <div class="alert-row info">
-                                <i class="fa-solid fa-circle-info"></i>
-                                <span>2 patients with vaccines due this month</span>
-                                <i class="fa-solid fa-arrow-right"></i>
-                            </div>
-
-                            <div class="alert-row success">
-                                <i class="fa-solid fa-circle-check"></i>
-                                <span>Vaccine inventory is up to date</span>
-                                <i class="fa-solid fa-arrow-right"></i>
-                            </div>
-                        </div>
-
-                    </aside>
-
                 </div>
 
                 <div class="tab-panel" id="schedule">
-                    <div class="placeholder-panel">
-                        <div class="placeholder-icon">
-                            <i class="fa-solid fa-calendar-days"></i>
+                    <section class="schedule-panel card">
+                        <div class="side-heading">
+                            <div>
+                                <h2>Upcoming Vaccinations</h2>
+                                <p>Upcoming and overdue doses for the selected patient.</p>
+                            </div>
                         </div>
-                        <h2>Vaccination Schedule</h2>
-                        <p>Use this section to manage upcoming vaccination schedules and due dates.</p>
-                    </div>
+                        <div id="upcomingVaccinations" class="upcoming-list">
+                            <p class="empty-state">Select a patient to view upcoming vaccinations.</p>
+                        </div>
+                    </section>
                 </div>
 
                 <div class="tab-panel" id="inventory">
@@ -454,13 +252,28 @@
                 </div>
 
                 <div class="tab-panel" id="reports">
-                    <div class="placeholder-panel">
-                        <div class="placeholder-icon">
-                            <i class="fa-solid fa-chart-column"></i>
+                    <section class="coverage-card card">
+                        <div class="side-heading">
+                            <div>
+                                <h2>Immunization Coverage (This Year)</h2>
+                                <p>Completed doses compared with all recorded doses this year.</p>
+                            </div>
                         </div>
-                        <h2>Immunization Reports</h2>
-                        <p>Use this section for immunization summaries and reports.</p>
-                    </div>
+                        <div class="coverage-content">
+                            <div class="donut" id="coverageDonut" style="--coverage: 0%;">
+                                <div>
+                                    <strong id="coveragePercent">0%</strong>
+                                    <span>Completed doses</span>
+                                </div>
+                            </div>
+                            <div class="coverage-legend">
+                                <div><i class="green"></i><span>Completed this year</span><strong id="coverageCompleted">0</strong></div>
+                                <div><i class="orange"></i><span>Not completed</span><strong id="coverageOther">0</strong></div>
+                                <b>Total doses this year: <span id="coverageTotal">0</span></b>
+                            </div>
+                        </div>
+                        <p id="reportMessage" class="table-message" hidden></p>
+                    </section>
                 </div>
 
             </div>
@@ -475,9 +288,8 @@
                 <button type="button" onclick="closeModal()">&times;</button>
             </div>
 
-            <form method="POST">
-                <input type="hidden" name="action" value="add_vaccination">
-                <input type="hidden" name="user_id" value="1">
+            <form id="vaccinationForm">
+                <input type="hidden" name="patient_id" id="vaccinationPatientId">
 
                 <div class="form-grid">
                     <label>
@@ -535,7 +347,258 @@
     </div>
 
     <script>
+        let activePatient = null;
+        let vaccinationRecords = [];
+        let patientOptions = [];
+
+        function escapeHtml(value) {
+            return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
+                return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
+            });
+        }
+
+        function saveActivePatient(patient) {
+            activePatient = patient;
+            if (patient) {
+                localStorage.setItem("sm_active_patient_id", String(patient.id));
+                localStorage.setItem("sm_active_patient", JSON.stringify(patient));
+            } else {
+                localStorage.removeItem("sm_active_patient_id");
+                localStorage.removeItem("sm_active_patient");
+            }
+        }
+
+        function formatDate(value) {
+            if (!value) return "—";
+            const date = new Date(value + "T00:00:00");
+            return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric"
+            });
+        }
+
+        function showTableMessage(message) {
+            document.getElementById("vaccinationBody").innerHTML =
+                '<tr><td colspan="9" class="table-message">' + escapeHtml(message) + "</td></tr>";
+        }
+
+        function getActivePatient() {
+            try {
+                const patient = JSON.parse(localStorage.getItem("sm_active_patient") || "null");
+                return patient && patient.id ? patient : null;
+            } catch (error) {
+                console.warn("Could not read the selected patient:", error);
+                return null;
+            }
+        }
+
+        function setPatientDetails(patient) {
+            const name = [patient.first_name, patient.middle_name, patient.last_name, patient.suffix]
+                .filter(Boolean).join(" ");
+            const birthDate = patient.birth_date || "";
+            const age = patient.age || (birthDate ? calculatePatientAge(birthDate) : "");
+            document.getElementById("selectedPatientName").textContent = name || "Selected patient";
+            document.getElementById("selectedPatientMeta").innerHTML =
+                "<span>Patient ID: " + escapeHtml(patient.patient_code || patient.id) + "</span>" +
+                (age ? "<span>|</span><span>" + escapeHtml(age) + " yrs</span>" : "") +
+                (birthDate ? "<span>|</span><span>" + escapeHtml(formatDate(birthDate)) + "</span>" : "");
+            document.getElementById("selectedPatientContact").innerHTML = [
+                patient.contact_number ? '<span><i class="fa-solid fa-phone"></i>' + escapeHtml(patient.contact_number) + "</span>" : "",
+                patient.address ? '<span><i class="fa-solid fa-location-dot"></i>' + escapeHtml(patient.address) + "</span>" : ""
+            ].join("");
+            document.getElementById("viewPatientProfile").href =
+                "patient-registration.html?patient_id=" + encodeURIComponent(patient.id);
+            document.getElementById("vaccinationPatientId").value = patient.id;
+        }
+
+        function calculatePatientAge(birthDate) {
+            const born = new Date(birthDate + "T00:00:00");
+            if (Number.isNaN(born.getTime())) return "";
+            const today = new Date();
+            let age = today.getFullYear() - born.getFullYear();
+            if (today.getMonth() < born.getMonth() ||
+                (today.getMonth() === born.getMonth() && today.getDate() < born.getDate())) age--;
+            return age >= 0 ? age : "";
+        }
+
+        function statusClass(status) {
+            const value = String(status || "").toLowerCase();
+            if (value === "completed") return "status-completed";
+            if (value === "scheduled") return "status-scheduled";
+            if (value === "due soon") return "status-due";
+            return "status-overdue";
+        }
+
+        function getScheduleStatus(record) {
+            const status = record.status || "Scheduled";
+            if (!record.next_dose) return status;
+            const dueDate = new Date(record.next_dose + "T00:00:00");
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (!Number.isNaN(dueDate.getTime()) && dueDate < today) return "Overdue";
+            return String(status).toLowerCase() === "completed" ? "Scheduled" : status;
+        }
+
+        function renderRecords() {
+            const body = document.getElementById("vaccinationBody");
+            if (!vaccinationRecords.length) {
+                showTableMessage("No vaccination records found for this patient.");
+                return;
+            }
+            body.innerHTML = vaccinationRecords.map(function (record) {
+                const status = record.status || "Scheduled";
+                const age = record.age_at_dose || "—";
+                return '<tr data-vaccine="' + escapeHtml((record.vaccine || "").toLowerCase()) +
+                    '" data-status="' + escapeHtml(status.toLowerCase()) +
+                    '" data-age="' + escapeHtml(age.toLowerCase()) + '">' +
+                    "<td><strong>" + escapeHtml(record.vaccine) + "</strong></td>" +
+                    "<td>" + escapeHtml(record.dose) + "</td>" +
+                    "<td>" + escapeHtml(formatDate(record.date_given)) + "</td>" +
+                    "<td>" + escapeHtml(age) + "</td>" +
+                    "<td><code>" + escapeHtml(record.batch_no || "—") + "</code></td>" +
+                    "<td>" + escapeHtml(record.given_by || "—") + "</td>" +
+                    "<td>" + escapeHtml(formatDate(record.next_dose)) + "</td>" +
+                    '<td><span class="status-pill ' + statusClass(status) + '">' + escapeHtml(status) + "</span></td>" +
+                    '<td><button class="btn-icon" type="button" title="View record" aria-label="View record" onclick="viewRecord(this)">&#9432;</button></td>' +
+                    "</tr>";
+            }).join("");
+            applyFilters();
+        }
+
+        function renderSchedule() {
+            const target = document.getElementById("upcomingVaccinations");
+            const upcoming = vaccinationRecords.filter(function (record) {
+                return Boolean(record.next_dose);
+            }).sort(function (a, b) {
+                return String(a.next_dose).localeCompare(String(b.next_dose));
+            });
+            if (!upcoming.length) {
+                target.innerHTML = '<p class="empty-state">No upcoming vaccinations for this patient.</p>';
+                return;
+            }
+            target.innerHTML = upcoming.map(function (record) {
+                const status = getScheduleStatus(record);
+                return '<div class="schedule-item">' +
+                    '<div class="schedule-dot ' + statusClass(status) + '"></div>' +
+                    '<div class="schedule-details"><strong>' + escapeHtml(record.vaccine) +
+                    " (" + escapeHtml(record.dose) + ')</strong><span>Next due: ' +
+                    escapeHtml(formatDate(record.next_dose)) + "</span></div>" +
+                    '<span class="status-pill ' + statusClass(status) + '">' + escapeHtml(status) + "</span></div>";
+            }).join("");
+        }
+
+        async function loadVaccinations() {
+            const storedPatient = getActivePatient();
+            const addButton = document.querySelector(".patient-actions .add-button");
+            if (!window.sb || typeof isConfigured === "undefined" || !isConfigured) {
+                showTableMessage("Vaccination data is unavailable because Supabase is not configured.");
+                addButton.disabled = true;
+                return;
+            }
+
+            const patientsResponse = await window.sb.from("patients").select("*").order("last_name", { ascending: true });
+            if (patientsResponse.error) throw patientsResponse.error;
+            patientOptions = patientsResponse.data || [];
+            const selector = document.getElementById("patientSelector");
+            selector.innerHTML = '<option value="">Select a patient</option>' + patientOptions.map(function (patient) {
+                const name = [patient.first_name, patient.middle_name, patient.last_name, patient.suffix]
+                    .filter(Boolean).join(" ") || "Patient";
+                return '<option value="' + escapeHtml(patient.id) + '">' +
+                    escapeHtml(name + " (" + (patient.patient_code || patient.id) + ")") + "</option>";
+            }).join("");
+            activePatient = patientOptions.find(function (patient) {
+                return storedPatient && String(patient.id) === String(storedPatient.id);
+            }) || null;
+            selector.value = activePatient ? String(activePatient.id) : "";
+
+            if (!activePatient) {
+                document.getElementById("selectedPatientName").textContent = "No patient selected";
+                document.getElementById("selectedPatientMeta").innerHTML =
+                    "<span>Choose a patient from the selector above to view vaccination history.</span>";
+                document.getElementById("viewPatientProfile").href = "patient-registration.html";
+                addButton.disabled = true;
+                showTableMessage("No patient selected. Choose a patient from the selector above.");
+                document.getElementById("upcomingVaccinations").innerHTML =
+                    '<p class="empty-state">Select a patient to view upcoming vaccinations.</p>';
+                await loadReportSummarySafely();
+                return;
+            }
+
+            setPatientDetails(activePatient);
+            addButton.disabled = false;
+            const recordsResponse = await window.sb.from("immunization_records").select(
+                "id, patient_id, vaccine, dose, date_given, age_at_dose, batch_no, given_by, next_dose, status"
+            ).eq("patient_id", activePatient.id).order("date_given", { ascending: false, nullsFirst: false });
+            if (recordsResponse.error) throw recordsResponse.error;
+            vaccinationRecords = recordsResponse.data || [];
+            renderRecords();
+            renderSchedule();
+            await loadReportSummarySafely();
+        }
+
+        async function loadReportSummary() {
+            const [patientsResponse, recordsResponse] = await Promise.all([
+                window.sb.from("patients").select("id", { count: "exact", head: true }),
+                window.sb.from("immunization_records").select("status, date_given, next_dose")
+            ]);
+            if (patientsResponse.error) throw patientsResponse.error;
+            if (recordsResponse.error) throw recordsResponse.error;
+
+            const records = recordsResponse.data || [];
+            const year = new Date().getFullYear();
+            const thisYear = records.filter(function (record) {
+                return record.date_given && String(record.date_given).slice(0, 4) === String(year);
+            });
+            const completed = thisYear.filter(function (record) {
+                return String(record.status || "").toLowerCase() === "completed";
+            }).length;
+            const percent = thisYear.length ? Math.round(completed / thisYear.length * 100) : 0;
+            const dueThisMonth = records.filter(function (record) {
+                if (!record.next_dose) return false;
+                const due = new Date(record.next_dose + "T00:00:00");
+                const today = new Date();
+                return due.getFullYear() === today.getFullYear() && due.getMonth() === today.getMonth();
+            }).length;
+            const overdue = records.filter(function (record) {
+                return String(getScheduleStatus(record)).toLowerCase() === "overdue";
+            }).length;
+            const completedTotal = records.filter(function (record) {
+                return String(record.status || "").toLowerCase() === "completed";
+            }).length;
+            document.getElementById("statTotalPatients").textContent = patientsResponse.count || 0;
+            document.getElementById("statFullyImmunized").textContent = completedTotal;
+            document.getElementById("statDueThisMonth").textContent = dueThisMonth;
+            document.getElementById("statOverdue").textContent = overdue;
+            document.getElementById("statVaccinesToday").textContent =
+                records.filter(function (record) {
+                    return record.next_dose === new Date().toISOString().slice(0, 10) &&
+                        String(record.status || "").toLowerCase() !== "completed";
+                }).length;
+            document.getElementById("coveragePercent").textContent = percent + "%";
+            document.getElementById("coverageDonut").style.setProperty("--coverage", percent + "%");
+            document.getElementById("coverageCompleted").textContent = completed;
+            document.getElementById("coverageOther").textContent = thisYear.length - completed;
+            document.getElementById("coverageTotal").textContent = thisYear.length;
+        }
+
+        async function loadReportSummarySafely() {
+            const message = document.getElementById("reportMessage");
+            try {
+                await loadReportSummary();
+                message.hidden = true;
+            } catch (error) {
+                console.error("Could not load immunization report summary:", error);
+                message.textContent = "Report data is unavailable: " + (error.message || "Unknown database error");
+                message.hidden = false;
+            }
+        }
+
         function openModal() {
+            if (!activePatient) {
+                alert("Select a patient before adding a vaccination record.");
+                return;
+            }
             document.getElementById("vaccinationModal").classList.add("show");
         }
 
@@ -545,6 +608,17 @@
 
         document.getElementById("vaccinationModal").addEventListener("click", function (e) {
             if (e.target === this) closeModal();
+        });
+
+        document.getElementById("patientSelector").addEventListener("change", function (event) {
+            const patient = patientOptions.find(function (item) {
+                return String(item.id) === event.target.value;
+            });
+            saveActivePatient(patient || null);
+            loadVaccinations().catch(function (error) {
+                console.error("Could not load the selected patient's immunization data:", error);
+                showTableMessage("Could not load vaccination data: " + (error.message || "Unknown database error"));
+            });
         });
 
         function applyFilters() {
@@ -605,35 +679,48 @@
                 "\nStatus: " + cells[7].innerText.trim()
             );
         }
-    </script>
+        document.getElementById("vaccinationForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            if (!activePatient) return;
+            if (!window.sb || typeof isConfigured === "undefined" || !isConfigured) {
+                alert("Cannot save the vaccination record because Supabase is not configured.");
+                return;
+            }
+            const form = event.currentTarget;
+            const fields = new FormData(form);
+            const record = {
+                patient_id: activePatient.id,
+                vaccine: String(fields.get("vaccine") || "").trim(),
+                dose: String(fields.get("dose") || "").trim(),
+                date_given: fields.get("date_given") || null,
+                age_at_dose: fields.get("age_at_dose") || null,
+                batch_no: fields.get("batch_no") || null,
+                given_by: fields.get("given_by") || null,
+                next_dose: fields.get("next_dose") || null,
+                status: fields.get("status") || "Completed"
+            };
+            const saveButton = form.querySelector(".save-button");
+            saveButton.disabled = true;
+            try {
+                const response = await window.sb.from("immunization_records").insert(record);
+                if (response.error) throw response.error;
+                closeModal();
+                form.reset();
+                await loadVaccinations();
+            } catch (error) {
+                console.error("Could not save vaccination record:", error);
+                alert("Failed to save vaccination record: " + (error.message || "Unknown database error"));
+            } finally {
+                saveButton.disabled = false;
+            }
+        });
 
-
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById("vaccinationForm");
-        if (form) {
-            form.addEventListener("submit", async function(e) {
-                e.preventDefault();
-                const fd = new FormData(form);
-                fd.append("action", "add_vaccination");
-                try {
-                    const res = await fetch("api/immunization.php?action=add_vaccination", {
-                        method: "POST",
-                        body: fd
-                    });
-                    const d = await res.json();
-                    if (d.success) {
-                        alert("Vaccination record saved successfully!");
-                        window.location.reload();
-                    } else {
-                        alert(d.error || "Failed to save record.");
-                    }
-                } catch(err) {
-                    alert("Network error saving vaccination.");
-                }
+        document.addEventListener("DOMContentLoaded", function () {
+            loadVaccinations().catch(function (error) {
+                console.error("Could not load immunization data:", error);
+                showTableMessage("Could not load vaccination data: " + (error.message || "Unknown database error"));
             });
-        }
-    });
+        });
     </script>
     <script src="sidebar.js"></script>
     <script src="auth-guard.js"></script>

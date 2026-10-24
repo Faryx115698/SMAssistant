@@ -55,7 +55,7 @@ button {
 
 .page-header p {
     margin-top: 5px;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
 }
 
@@ -78,7 +78,7 @@ button {
 
 .admin-text small {
     display: block;
-    font-size: 9px;
+    font-size: 12px;
 }
 
 .admin-text strong {
@@ -87,6 +87,17 @@ button {
     color: #0753aa;
     font-size: 15px;
     white-space: nowrap;
+}
+
+th[data-sort] {
+    cursor: pointer;
+    user-select: none;
+}
+
+th[data-sort]:hover,
+th[data-sort]:focus {
+    color: #0757b8;
+    outline-color: #0757b8;
 }
 
 .admin-photo {
@@ -107,7 +118,7 @@ button {
     border-radius: 5px;
     background: #fff;
     color: #0754a8;
-    font-size: 8px;
+    font-size: 12px;
     font-weight: 700;
 }
 
@@ -122,6 +133,272 @@ button {
     grid-template-columns: repeat(5, 1fr);
     gap: 10px;
     margin-top: 13px;
+}
+
+.issuance-panel {
+    padding: 18px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+}
+
+.issuance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.eyebrow {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+}
+
+.issuance-header h2 {
+    color: var(--text);
+    font-size: 24px;
+}
+
+.issuance-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(220px, 1fr);
+    gap: 14px;
+}
+
+.issuance-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.issuance-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.issuance-form label[hidden] {
+    display: none;
+}
+
+.patient-combobox {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.patient-combobox-control {
+    display: flex;
+    width: 100%;
+}
+
+.issuance-form .patient-combobox-control input {
+    min-width: 0;
+    border-radius: 6px 0 0 6px;
+}
+
+.patient-combobox-control button {
+    flex: 0 0 46px;
+    min-height: 44px;
+    border: 1px solid #cad3e0;
+    border-left: 0;
+    border-radius: 0 6px 6px 0;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 20px;
+}
+
+#patientSelect {
+    display: none;
+}
+
+.patient-options {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 4px);
+    right: 0;
+    left: 0;
+    max-height: 260px;
+    overflow-y: auto;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, .16);
+}
+
+.patient-options[hidden] {
+    display: none;
+}
+
+.patient-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-bottom: 1px solid #edf1f5;
+    background: #fff;
+    color: #1f2b3d;
+    text-align: left;
+    cursor: pointer;
+}
+
+.patient-option:last-child {
+    border-bottom: 0;
+}
+
+.patient-option:hover,
+.patient-option:focus {
+    outline: none;
+    background: #eff6ff;
+}
+
+.patient-option strong {
+    font-size: 14px;
+}
+
+.patient-option small,
+.patient-options-empty {
+    margin-top: 3px;
+    color: #657083;
+    font-size: 12px;
+}
+
+.patient-options-empty {
+    display: block;
+    padding: 12px;
+}
+
+.issuance-form input,
+.issuance-form select {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid #cad3e0;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 14px;
+}
+
+.quantity-input-wrap {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.quantity-input-wrap input {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+    border-radius: 6px 0 0 6px;
+}
+
+.quantity-unit {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border: 1px solid #cad3e0;
+    border-left: 0;
+    border-radius: 0 6px 6px 0;
+    background: #f1f5f9;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.issuance-summary {
+    background: #f7faff;
+    border: 1px solid #dfeafc;
+    border-radius: 8px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.issuance-full {
+    grid-column: 1 / -1;
+}
+
+.issuance-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.issuance-actions button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.issuance-message {
+    display: none;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border: 1px solid #a7d9b5;
+    border-radius: 6px;
+    background: #e2f7e8;
+    color: #13773a;
+    font-size: 14px;
+}
+
+.issuance-message.visible {
+    display: block;
+}
+
+.issuance-message.error {
+    border-color: #f0c6c6;
+    background: #fff0f0;
+    color: #a62b2b;
+}
+
+.issuance-history-grid {
+    display: grid;
+    grid-template-columns: minmax(240px, .8fr) minmax(0, 1.4fr);
+    gap: 14px;
+    padding: 12px;
+}
+
+.low-stock-list .alert-item {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+}
+
+.recent-issuance-table {
+    min-width: 620px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+}
+
+.summary-row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.summary-row strong {
+    color: var(--text);
+}
+
+.summary-row.important strong {
+    color: #0b7a49;
 }
 
 .summary-card {
@@ -175,7 +452,7 @@ button {
 
 .summary-card span {
     display: block;
-    font-size: 9px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
 }
@@ -188,7 +465,7 @@ button {
 }
 
 .summary-card small {
-    font-size: 8px;
+    font-size: 11px;
     color: var(--muted);
 }
 
@@ -210,12 +487,12 @@ button {
 }
 
 .inventory-tab {
-    padding: 12px 35px;
+    padding: 14px 28px;
     border: 0;
     border-bottom: 3px solid transparent;
     background: #fff;
     color: #30394d;
-    font-size: 10px;
+    font-size: 14px;
     font-weight: 700;
 }
 
@@ -224,9 +501,17 @@ button {
     border-bottom-color: #0757b8;
 }
 
+.inventory-tab-panel {
+    display: none;
+}
+
+.inventory-tab-panel.active {
+    display: block;
+}
+
 .inventory-content {
     display: grid;
-    grid-template-columns: minmax(500px, 1fr) 400px;
+    grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     padding: 12px;
 }
@@ -237,8 +522,8 @@ button {
 
 .inventory-controls {
     display: grid;
-    grid-template-columns: minmax(160px, 1fr) auto 130px 110px auto;
-    gap: 7px;
+    grid-template-columns: minmax(200px, 1fr) auto minmax(150px, auto) minmax(135px, auto) auto;
+    gap: 10px;
     margin-bottom: 10px;
 }
 
@@ -249,38 +534,42 @@ button {
 
 .search-input input {
     width: 100%;
-    padding: 8px 27px 8px 9px;
+    min-height: 42px;
+    padding: 9px 32px 9px 12px;
     border: 1px solid #bdc9d8;
-    border-radius: 4px;
+    border-radius: 6px;
     outline: none;
-    font-size: 8px;
+    font-size: 14px;
 }
 
 .search-input span {
     position: absolute;
-    right: 8px;
-    top: 5px;
+    right: 12px;
+    top: 9px;
     color: #0757b8;
+    font-size: 17px;
 }
 
 .filter-button,
 .refresh-button,
 .inventory-controls select {
     border: 1px solid #bdc9d8;
-    border-radius: 4px;
+    border-radius: 6px;
     background: #fff;
     color: #0757b8;
-    font-size: 8px;
+    font-size: 13px;
     font-weight: 700;
 }
 
 .filter-button,
 .refresh-button {
-    padding: 0 10px;
+    min-height: 42px;
+    padding: 0 14px;
 }
 
 .inventory-controls select {
-    padding: 0 7px;
+    min-height: 42px;
+    padding: 0 10px;
 }
 
 .table-wrapper {
@@ -291,29 +580,30 @@ button {
 
 table {
     width: 100%;
-    min-width: 800px;
+    min-width: 980px;
     border-collapse: collapse;
 }
 
 th,
 td {
-    padding: 10px 7px;
+    padding: 12px 10px;
     border-bottom: 1px solid #d4dce5;
     text-align: left;
     vertical-align: middle;
-    font-size: 7px;
+    font-size: 13px;
+    line-height: 1.4;
 }
 
 th {
     background: #eaf3ff;
     color: #30394d;
-    font-size: 7px;
+    font-size: 12px;
     font-weight: 800;
     white-space: nowrap;
 }
 
 td strong {
-    font-size: 8px;
+    font-size: 13px;
 }
 
 .stock-number.adequate {
@@ -333,9 +623,9 @@ td strong {
 
 .stock-status {
     display: inline-block;
-    padding: 4px 6px;
+    padding: 5px 8px;
     border-radius: 4px;
-    font-size: 6px;
+    font-size: 11px;
     font-weight: 800;
     white-space: nowrap;
 }
@@ -373,7 +663,7 @@ td strong {
     justify-content: space-between;
     gap: 10px;
     margin-top: 10px;
-    font-size: 7px;
+    font-size: 12px;
 }
 
 .pagination {
@@ -382,11 +672,11 @@ td strong {
 }
 
 .pagination button {
-    min-width: 24px;
-    height: 24px;
+    min-width: 34px;
+    height: 34px;
     border: 1px solid #d2d9e3;
     background: #fff;
-    font-size: 8px;
+    font-size: 12px;
 }
 
 .pagination button.active {
@@ -395,9 +685,9 @@ td strong {
 }
 
 .table-footer select {
-    padding: 5px;
+    padding: 7px 9px;
     border: 1px solid #cbd5e1;
-    font-size: 8px;
+    font-size: 12px;
 }
 
 .inventory-side {
@@ -419,12 +709,12 @@ td strong {
 }
 
 .side-card-header h2 {
-    font-size: 11px;
+    font-size: 16px;
 }
 
 .side-card-header a {
     color: #0757b8;
-    font-size: 7px;
+    font-size: 12px;
 }
 
 .alert-item {
@@ -447,17 +737,17 @@ td strong {
 }
 
 .alert-item strong {
-    font-size: 8px;
+    font-size: 13px;
 }
 
 .alert-item small {
     margin-top: 3px;
     color: #657083;
-    font-size: 7px;
+    font-size: 12px;
 }
 
 .alert-item>span:last-child {
-    font-size: 7px;
+    font-size: 12px;
     white-space: nowrap;
 }
 
@@ -465,7 +755,7 @@ td strong {
     display: block;
     margin-top: 10px;
     color: #0757b8;
-    font-size: 8px;
+    font-size: 12px;
     font-weight: 700;
 }
 
@@ -483,7 +773,7 @@ td strong {
 
 .issuance-table span {
     min-width: 0;
-    font-size: 7px;
+    font-size: 12px;
     overflow-wrap: anywhere;
 }
 
@@ -544,7 +834,7 @@ td strong {
 
 .form-grid label {
     display: block;
-    font-size: 10px;
+    font-size: 13px;
     font-weight: 700;
 }
 
@@ -552,10 +842,10 @@ td strong {
 .form-grid select {
     width: 100%;
     margin-top: 4px;
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #b8c5d3;
-    border-radius: 4px;
-    font-size: 10px;
+    border-radius: 6px;
+    font-size: 13px;
 }
 
 .modal-actions {
@@ -567,9 +857,9 @@ td strong {
 
 .cancel-button,
 .save-button {
-    padding: 8px 13px;
-    border-radius: 4px;
-    font-size: 10px;
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-size: 13px;
     font-weight: 700;
 }
 
@@ -586,17 +876,12 @@ td strong {
 
 @media (max-width: 1300px) {
 
-    .inventory-content {
-        grid-template-columns: minmax(450px, 1fr) 330px;
-    }
-
     .inventory-controls {
-        grid-template-columns: 1fr auto 110px;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
-    .inventory-controls select:nth-of-type(1),
-    .inventory-controls select:nth-of-type(2) {
-        display: none;
+    .search-input {
+        grid-column: 1 / -1;
     }
 
 }
@@ -606,10 +891,6 @@ td strong {
 
     .summary-cards {
         grid-template-columns: repeat(3, 1fr);
-    }
-
-    .inventory-content {
-        grid-template-columns: 1fr;
     }
 
     .inventory-side {
@@ -644,6 +925,18 @@ td strong {
         grid-template-columns: 1fr;
     }
 
+    .inventory-controls {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .search-input {
+        grid-column: 1 / -1;
+    }
+
+    .issuance-history-grid {
+        grid-template-columns: 1fr;
+    }
+
 }
 
 
@@ -657,13 +950,26 @@ td strong {
         display: block;
     }
 
+    .issuance-grid,
+    .issuance-form {
+        grid-template-columns: 1fr;
+    }
+
+    .inventory-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .search-input {
+        grid-column: auto;
+    }
+
     .page-header h1 {
         margin-top: 0;
         font-size: 23px;
     }
 
     .page-header p {
-        font-size: 10px;
+        font-size: 13px;
     }
 
     .header-right {
@@ -707,15 +1013,11 @@ td strong {
 
     .inventory-controls {
         display: grid;
-        grid-template-columns: 1fr auto;
-    }
-
-    .inventory-controls select {
-        display: none;
+        grid-template-columns: 1fr;
     }
 
     .search-input {
-        grid-column: 1 / -1;
+        grid-column: auto;
     }
 
     .filter-button,

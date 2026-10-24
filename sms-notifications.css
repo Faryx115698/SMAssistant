@@ -360,6 +360,31 @@ a {
     align-items: stretch;
 }
 
+.sms-layout.send-layout {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.send-layout .send-card {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.send-layout .right-column {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.history-tab-content {
+    padding-top: 18px;
+}
+
+.history-tab-content .recent-card {
+    grid-column: auto;
+    grid-row: auto;
+    height: auto;
+    min-height: 0;
+}
+
 .sms-layout > *,
 .left-column,
 .center-column,

@@ -1,0 +1,75 @@
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    padding: 8px 12px;
+    border: 1px solid #d7e0ec;
+    border-radius: 30px;
+    background: #fff;
+}
+
+.admin-profile .admin-info,
+.admin-profile .admin-text {
+    text-align: right;
+}
+
+.admin-profile .admin-info > span,
+.admin-profile .admin-text > small {
+    display: block;
+    margin-bottom: 3px;
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.3;
+}
+
+.admin-profile .admin-info > strong,
+.admin-profile .admin-text > strong {
+    display: block;
+    margin: 0;
+    color: #0b2148;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.admin-profile .admin-text > span:not(.admin-name),
+.admin-profile > .profile-arrow {
+    display: none;
+}
+
+.admin-profile .admin-photo,
+.admin-profile .profile-image {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    padding: 2px;
+    overflow: hidden;
+    border: 1px solid #d7e0ec;
+    border-radius: 50%;
+    background: #fff url("logo.png") center / cover no-repeat;
+}
+
+.admin-profile .admin-photo img,
+.admin-profile .admin-photo i,
+.admin-profile .profile-image img {
+    display: none;
+}
+
+.admin-profile > img.admin-photo {
+    object-fit: cover;
+}
+
+@media (max-width: 650px) {
+    .admin-profile {
+        gap: 8px;
+        padding: 6px 9px;
+    }
+
+    .admin-profile .admin-photo,
+    .admin-profile .profile-image {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+    }
+}

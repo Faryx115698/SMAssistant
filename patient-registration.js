@@ -6,7 +6,34 @@ let selectedPatientId = null;
 let currentFilter = "all";
 let isEditingPatient = false;
 
+function loadPatientsListFromStorage() {
+    try {
+        const stored = localStorage.getItem("sm_patient_registry");
+        if (!stored) return [];
+        const parsed = JSON.parse(stored);
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+        console.warn("Could not load patient registry from localStorage:", e);
+        return [];
+    }
+}
+
+function persistPatientsList() {
+    try {
+        localStorage.setItem("sm_patient_registry", JSON.stringify(patientsList));
+        if (selectedPatientId) {
+            const currentPatient = patientsList.find(p => p.id === selectedPatientId);
+            if (currentPatient) {
+                saveActivePatientToStorage(currentPatient);
+            }
+        }
+    } catch (e) {
+        console.warn("Could not persist patient registry:", e);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+    patientsList = loadPatientsListFromStorage();
     initTabs();
     initEventListeners();
     updateCounterCards();
@@ -67,6 +94,7 @@ async function fetchLivePatients() {
                     };
                 });
                 patientsList = Object.values(map);
+                persistPatientsList();
                 applyFilters();
                 if (selectedPatientId) {
                     populatePatientData(selectedPatientId);
@@ -78,6 +106,7 @@ async function fetchLivePatients() {
     }
     updateCounterCards();
     applyFilters();
+    persistPatientsList();
 }
 
 function calculateAge(birthDateStr) {
@@ -241,6 +270,7 @@ function populatePatientData(patientId) {
     setVal("hBloodType", patient.blood_type || "");
     setVal("hHeight", patient.height || "");
     setVal("hWeight", patient.weight || "");
+    setVal("hTemperature", patient.temperature || "");
     setVal("hAllergies", patient.allergies || "");
     setVal("hConditions", patient.conditions || "");
 
@@ -689,6 +719,7 @@ async function handleSavePersonalForm() {
     }
 
     populatePatientData(patient.id);
+    persistPatientsList();
     saveActivePatientToStorage(patient);
     updateCounterCards();
     applyFilters();
@@ -704,12 +735,14 @@ async function handleSaveHealthProfileForm() {
     const blood = document.getElementById("hBloodType") ? document.getElementById("hBloodType").value : (patient.blood_type || "");
     const height = document.getElementById("hHeight") ? document.getElementById("hHeight").value.trim() : (patient.height || "");
     const weight = document.getElementById("hWeight") ? document.getElementById("hWeight").value.trim() : (patient.weight || "");
+    const temperature = document.getElementById("hTemperature") ? document.getElementById("hTemperature").value.trim() : (patient.temperature || "");
     const allergies = document.getElementById("hAllergies") ? document.getElementById("hAllergies").value.trim() : (patient.allergies || "");
     const conditions = document.getElementById("hConditions") ? document.getElementById("hConditions").value.trim() : (patient.conditions || "");
 
     patient.blood_type = blood;
     patient.height = height;
     patient.weight = weight;
+    patient.temperature = temperature;
     patient.allergies = allergies;
     patient.conditions = conditions;
 
@@ -719,6 +752,7 @@ async function handleSaveHealthProfileForm() {
                 blood_type: patient.blood_type,
                 height: patient.height,
                 weight: patient.weight,
+                temperature: patient.temperature,
                 allergies: patient.allergies,
                 conditions: patient.conditions
             }).eq("id", patient.id);
@@ -728,6 +762,7 @@ async function handleSaveHealthProfileForm() {
     }
 
     populatePatientData(patient.id);
+    persistPatientsList();
     saveActivePatientToStorage(patient);
     setPatientEditMode(false);
     showNotice(`Health Profile for ${patient.first_name} ${patient.last_name} saved successfully!`);
@@ -752,6 +787,10 @@ async function handleSaveNewPatientForm() {
     const telephone = fd.get("telephone") || "";
     const email = fd.get("email") || "";
     const address = fd.get("address") || "";
+    const bloodType = fd.get("blood_type") || "";
+    const height = fd.get("height") || "";
+    const weight = fd.get("weight") || "";
+    const temperature = fd.get("temperature") || "";
     const allergies = fd.get("allergies") || "None";
     const conditions = fd.get("medical_conditions") || "None";
 
@@ -778,6 +817,10 @@ async function handleSaveNewPatientForm() {
         address: address,
         status: "Active",
         created_at: new Date().toISOString(),
+        blood_type: bloodType,
+        height: height,
+        weight: weight,
+        temperature: temperature,
         lastConsultationDate: "",
         lastConsultationType: "",
         nextApptDate: "",
@@ -806,6 +849,12 @@ async function handleSaveNewPatientForm() {
                 telephone: telephone,
                 email: email,
                 address: address,
+                blood_type: bloodType,
+                height: height,
+                weight: weight,
+                temperature: temperature,
+                allergies: allergies,
+                conditions: conditions,
                 status: "Active"
             }]).select();
 
@@ -820,6 +869,7 @@ async function handleSaveNewPatientForm() {
 
     patientsList.unshift(newPatient);
     form.reset();
+    persistPatientsList();
     saveActivePatientToStorage(newPatient);
     updateCounterCards();
     applyFilters();
@@ -900,7 +950,7 @@ function setPatientEditMode(editable) {
     if (sexEl) sexEl.disabled = !isEditingPatient;
 
     // Toggle readonly/disabled on Health Profile inputs
-    const healthTextInputs = ["hHeight", "hWeight", "hAllergies", "hConditions"];
+    const healthTextInputs = ["hHeight", "hWeight", "hTemperature", "hAllergies", "hConditions"];
     healthTextInputs.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.readOnly = !isEditingPatient;
