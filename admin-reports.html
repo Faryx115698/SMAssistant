@@ -1,706 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin & Reports</title>
-
+    <meta name="description" content="Live, aggregate reports for the Smart Assistant health center.">
+    <title>Admin &amp; Reports</title>
     <link rel="stylesheet" href="admin-reports.css">
+    <link rel="stylesheet" href="darkmode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
-    <link rel="stylesheet" href="admin-profile.css">
 </head>
 
 <body>
+    <div id="sidebar-container"></div>
 
-<div id="sidebar-container"></div>
-
-<main class="main-content">
-
-    <header class="page-header">
-
-        <div>
-            <h1>Admin & Reports</h1>
-            <p>Manage system administration, generate reports, analyze data, and monitor system activity.</p>
-        </div>
-
-        <div class="header-right">
-
-            <div class="admin-profile">
-
-                <div class="admin-text">
-                    <small>You are logged in as</small>
-
-                    <strong>
-                        <span class="admin-name">ADMIN</span>
-                    </strong>
-
-                    <span>Administrator</span>
-                </div>
-
-                <div class="admin-photo">
-                    <img src="icons/admin.png" alt="Admin">
-                </div>
-
+    <main class="main-content">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">ADMINISTRATION</p>
+                <h1>Reports &amp; Analytics</h1>
+                <p>Review activity totals and export an aggregate report for a selected period.</p>
             </div>
-
-            <button class="ask-ai" type="button">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <a class="ask-ai" href="ai-moto.html">
+                <i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>
                 Ask AI Moto
-            </button>
+            </a>
+        </header>
 
-        </div>
+        <nav class="report-tabs" role="tablist" aria-label="Admin and reports sections">
+            <button class="report-tab active" id="reportsTab" type="button" role="tab" aria-selected="true" aria-controls="reportsPanel" data-panel="reportsPanel">Reports</button>
+            <button class="report-tab" id="analyticsTab" type="button" role="tab" aria-selected="false" aria-controls="analyticsPanel" data-panel="analyticsPanel" tabindex="-1">Analytics</button>
+            <button class="report-tab" id="usersTab" type="button" role="tab" aria-selected="false" aria-controls="usersPanel" data-panel="usersPanel" tabindex="-1">User Management</button>
+            <button class="report-tab" id="exportTab" type="button" role="tab" aria-selected="false" aria-controls="exportPanel" data-panel="exportPanel" tabindex="-1">Data Export</button>
+            <button class="report-tab" id="backupTab" type="button" role="tab" aria-selected="false" aria-controls="backupPanel" data-panel="backupPanel" tabindex="-1">Backup &amp; Restore</button>
+        </nav>
 
-    </header>
+        <p id="reportStatus" class="report-status" role="status" aria-live="polite">Loading report data…</p>
 
-    <section class="summary-cards">
-
-        <div class="summary-card purple">
-            <div class="summary-icon">
-                <i class="fa-solid fa-user"></i>
-            </div>
-
-            <div class="summary-content">
-                <span>TOTAL USERS</span>
-                <strong>24</strong>
-                <small>System users</small>
-            </div>
-        </div>
-
-        <div class="summary-card green">
-            <div class="summary-icon">
-                <i class="fa-solid fa-user-group"></i>
-            </div>
-
-            <div class="summary-content">
-                <span>TOTAL PATIENTS</span>
-                <strong>3,482</strong>
-                <small>Registered patients</small>
-            </div>
-        </div>
-
-        <div class="summary-card orange">
-            <div class="summary-icon">
-                <i class="fa-solid fa-users"></i>
-            </div>
-
-            <div class="summary-content">
-                <span>TOTAL APPOINTMENTS</span>
-                <strong>1,256</strong>
-                <small>This month</small>
-            </div>
-        </div>
-
-        <div class="summary-card blue">
-            <div class="summary-icon">
-                <i class="fa-solid fa-file-lines"></i>
-            </div>
-
-            <div class="summary-content">
-                <span>REPORT GENERATED</span>
-                <strong>56</strong>
-                <small>This month</small>
-            </div>
-        </div>
-
-        <div class="summary-card red">
-            <div class="summary-icon">
-                <i class="fa-solid fa-exclamation-triangle"></i>
-            </div>
-
-            <div class="summary-content">
-                <span>SYSTEM STATUS</span>
-                <strong class="status-text">All Systems Operational</strong>
-                <small>From 56 incidents</small>
-            </div>
-        </div>
-
-    </section>
-
-    <nav class="report-tabs">
-
-        <button class="report-tab active" type="button" data-tab="user-management">
-            User Management
-        </button>
-
-        <button class="report-tab" type="button" data-tab="reports">
-            Reports
-        </button>
-
-        <button class="report-tab" type="button" data-tab="analytics">
-            Data Analytics
-        </button>
-
-        <button class="report-tab" type="button" data-tab="logs">
-            System Logs
-        </button>
-
-        <button class="report-tab" type="button" data-tab="backup">
-            Backup & Restore
-        </button>
-
-        <button class="report-tab" type="button" data-tab="audit">
-            Audit Trail
-        </button>
-
-        <button class="report-tab" type="button" data-tab="settings">
-            Settings
-        </button>
-
-    </nav>
-
-    <section class="report-layout">
-
-        <div class="left-column">
-
-            <div class="card report-categories">
-
-                <div class="card-title">
-                    <h2>REPORT CATEGORIES</h2>
+        <section id="reportsPanel" class="tab-panel active" role="tabpanel" aria-labelledby="reportsTab">
+            <div class="panel-intro">
+                <div>
+                    <h2>Report Builder</h2>
+                    <p>Choose a report and date range, then build an aggregate report.</p>
                 </div>
-
-                <button class="category-item active" type="button">
-                    <i class="fa-solid fa-chart-column"></i>
-                    Overview
-                </button>
-
-                <button class="category-item" type="button">
-                    <i class="fa-solid fa-folder"></i>
-                    Patients Reports
-                </button>
-
-                <button class="category-item" type="button">
-                    <i class="fa-solid fa-notes-medical"></i>
-                    Health Programs
-                </button>
-
-                <button class="category-item" type="button">
-                    <i class="fa-solid fa-box"></i>
-                    Inventory Reports
-                </button>
-
-                <button class="category-item" type="button">
-                    <i class="fa-solid fa-money-bill"></i>
-                    Financial Reports
-                </button>
-
-                <button class="category-item" type="button">
-                    <i class="fa-solid fa-gears"></i>
-                    Operational Reports
-                </button>
-
-                <button class="category-item" type="button">
-                    <i class="fa-solid fa-comments"></i>
-                    Communication Reports
-                </button>
-
-                <button class="category-item" type="button">
-                    <i class="fa-solid fa-file-circle-plus"></i>
-                    Custom Reports
-                </button>
-
             </div>
-
-            <div class="card report-filter">
-
-                <div class="card-title">
-                    <h2>REPORT FILTER</h2>
+            <section class="filter-card" aria-label="Report builder filters">
+                <div class="filter-field">
+                    <label for="reportType">Report type</label>
+                    <select id="reportType">
+                        <option value="all">All activity</option>
+                        <option value="consultations">Consultations</option>
+                        <option value="appointments">Appointments</option>
+                        <option value="immunizations">Immunizations</option>
+                        <option value="registrations">New patient registrations</option>
+                        <option value="inventory">Medicine inventory snapshot</option>
+                    </select>
                 </div>
-
-                <label>Date Range</label>
-
-                <div class="input-box">
-                    <span>May 1 - May 10, 2026</span>
-                    <i class="fa-regular fa-calendar"></i>
+                <div class="filter-field">
+                    <label for="startDate">From</label>
+                    <input id="startDate" type="date">
                 </div>
-
-                <label>Location</label>
-
-                <select>
-                    <option>All Locations</option>
-                    <option>Barangay Talimundoc</option>
-                </select>
-
-                <label>Program</label>
-
-                <select>
-                    <option>All Programs</option>
-                    <option>Immunization</option>
-                    <option>Maternal Health</option>
-                    <option>Infant & Child Health</option>
-                    <option>TB DOTS</option>
-                </select>
-
-                <button class="apply-button" type="button">
-                    Apply Filter
+                <div class="filter-field">
+                    <label for="endDate">To</label>
+                    <input id="endDate" type="date">
+                </div>
+                <button id="applyFilters" class="button primary" type="button">
+                    <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+                    Build report
                 </button>
+                <p id="filterNote" class="filter-note">Date range is limited to one year.</p>
+            </section>
 
+            <article class="panel detail-panel report-results">
+                <div class="panel-heading">
+                    <div>
+                        <h2 id="tableHeading">Activity details</h2>
+                        <p>Aggregate values only; no patient names or identifiers are included.</p>
+                    </div>
+                    <span id="recordCount" class="record-count"></span>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead id="reportTableHead"></thead>
+                        <tbody id="reportTableBody">
+                            <tr><td class="empty-cell">Loading report data…</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <section id="analyticsPanel" class="tab-panel" role="tabpanel" aria-labelledby="analyticsTab" hidden>
+            <div class="panel-intro">
+                <div>
+                    <h2>Analytics</h2>
+                    <p>Activity trends and category totals for the selected report period.</p>
+                </div>
             </div>
-
-        </div>
-
-        <div class="center-column">
-
-            <div class="card report-overview">
-
-                <div class="card-title overview-title">
-                    <h2>Report Overview</h2>
-
-                    <button class="view-all" type="button">
-                        View All
-                    </button>
+            <section class="metric-grid" aria-label="Activity totals for the selected period">
+                <article class="metric-card">
+                    <span class="metric-icon"><i class="fa-solid fa-chart-column" aria-hidden="true"></i></span>
+                    <div><p>Total activity</p><strong id="metricTotal">—</strong><small id="metricPeriod">Selected period</small></div>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-icon blue-icon"><i class="fa-solid fa-stethoscope" aria-hidden="true"></i></span>
+                    <div><p>Consultations</p><strong id="metricConsultations">—</strong><small>Recorded visits</small></div>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-icon green-icon"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i></span>
+                    <div><p>Appointments</p><strong id="metricAppointments">—</strong><small>Scheduled records</small></div>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-icon purple-icon"><i class="fa-solid fa-syringe" aria-hidden="true"></i></span>
+                    <div><p>Immunizations</p><strong id="metricImmunizations">—</strong><small>Doses recorded</small></div>
+                </article>
+                <article class="metric-card">
+                    <span class="metric-icon orange-icon"><i class="fa-solid fa-user-plus" aria-hidden="true"></i></span>
+                    <div><p>New registrations</p><strong id="metricRegistrations">—</strong><small>Patients added</small></div>
+                </article>
+            </section>
+            <article class="panel trend-panel analytics-results">
+                <div class="panel-heading">
+                    <div>
+                        <h2 id="reportHeading">Activity by period</h2>
+                        <p id="reportDescription">Aggregate records grouped by day or week.</p>
+                    </div>
                 </div>
+                <div id="trendChart" class="trend-chart" aria-label="Activity trend chart"></div>
+            </article>
+        </section>
 
-                <div class="overview-cards">
-
-                    <div class="overview-card">
-                        <span>Total Consultations</span>
-                        <strong>892</strong>
-                        <small class="positive">↑ 12.5%</small>
-                        <small>vs last month</small>
-                    </div>
-
-                    <div class="overview-card">
-                        <span>Immunization Given</span>
-                        <strong>615</strong>
-                        <small class="positive">↑ 6.3%</small>
-                        <small>vs last month</small>
-                    </div>
-
-                    <div class="overview-card green-box">
-                        <span>Maternal Check-ups</span>
-                        <strong>146</strong>
-                        <small class="positive">↑ 15.2%</small>
-                        <small>vs last month</small>
-                    </div>
-
-                    <div class="overview-card pink-box">
-                        <span>Follow-Up Visits</span>
-                        <strong>28</strong>
-                        <small class="negative">↓ 3.4%</small>
-                        <small>vs last month</small>
-                    </div>
-
-                    <div class="overview-card purple-box">
-                        <span>Health Education Sessions</span>
-                        <strong>34</strong>
-                        <small class="positive">↑ 15.2%</small>
-                        <small>vs last month</small>
-                    </div>
-
+        <section id="usersPanel" class="tab-panel" role="tabpanel" aria-labelledby="usersTab" hidden>
+            <div class="panel-intro">
+                <div>
+                    <h2>User Management</h2>
+                    <p>Manage staff access to the health-center system. Staff accounts are separate from patient records.</p>
                 </div>
-
-                <div class="analytics-row">
-
-                    <div class="chart-card">
-
-                        <div class="chart-header">
-                            <h3>Consultation Trend</h3>
-
-                            <select>
-                                <option>Daily</option>
-                                <option>Weekly</option>
-                                <option>Monthly</option>
+            </div>
+            <article class="panel feature-panel">
+                <span class="feature-icon"><i class="fa-solid fa-user-shield" aria-hidden="true"></i></span>
+                <div>
+                    <h3>Invite a staff member</h3>
+                    <p>Send a sign-up invitation to a staff member’s work email. This creates a staff authentication account, not a patient record.</p>
+                    <form id="staffInviteForm" class="staff-invite-form">
+                        <div class="staff-form-field">
+                            <label for="staffFullName">Staff name</label>
+                            <input id="staffFullName" name="fullName" type="text" maxlength="100" autocomplete="name" required>
+                        </div>
+                        <div class="staff-form-field">
+                            <label for="staffEmail">Work email</label>
+                            <input id="staffEmail" name="email" type="email" maxlength="254" autocomplete="email" required>
+                        </div>
+                        <div class="staff-form-field">
+                            <label for="staffRole">Staff designation</label>
+                            <select id="staffRole" name="role" required>
+                                <option value="Health Worker">Health Worker</option>
+                                <option value="Nurse">Nurse</option>
+                                <option value="Midwife">Midwife</option>
+                                <option value="Records Staff">Records Staff</option>
+                                <option value="Inventory Staff">Inventory Staff</option>
                             </select>
                         </div>
-
-                        <div class="legend">
-
-                            <span>
-                                <i class="dot blue-dot"></i>
-                                Total Visits
-                            </span>
-
-                            <span>
-                                <i class="dot gray-dot"></i>
-                                Last Month
-                            </span>
-
-                        </div>
-
-                        <div class="line-chart">
-
-                            <div class="y-labels">
-                                <span>200</span>
-                                <span>150</span>
-                                <span>100</span>
-                                <span>50</span>
-                                <span>0</span>
-                            </div>
-
-                            <div class="chart-area">
-
-                                <div class="grid-line line-1"></div>
-                                <div class="grid-line line-2"></div>
-                                <div class="grid-line line-3"></div>
-                                <div class="grid-line line-4"></div>
-                                <div class="grid-line line-5"></div>
-
-                                <svg viewBox="0 0 500 210" preserveAspectRatio="none">
-
-                                    <polyline
-                                        points="20,145 110,82 200,76 290,94 380,70 470,82"
-                                        fill="none"
-                                        stroke="#0759b7"
-                                        stroke-width="3"
-                                    />
-
-                                    <polyline
-                                        points="20,170 110,148 200,143 290,154 380,140 470,112"
-                                        fill="none"
-                                        stroke="#a9b1bc"
-                                        stroke-width="2"
-                                        stroke-dasharray="7 6"
-                                    />
-
-                                    <circle cx="20" cy="145" r="4"/>
-                                    <circle cx="110" cy="82" r="4"/>
-                                    <circle cx="200" cy="76" r="4"/>
-                                    <circle cx="290" cy="94" r="4"/>
-                                    <circle cx="380" cy="70" r="4"/>
-                                    <circle cx="470" cy="82" r="4"/>
-
-                                </svg>
-
-                                <div class="x-labels">
-                                    <span>May 1</span>
-                                    <span>May 3</span>
-                                    <span>May 5</span>
-                                    <span>May 7</span>
-                                    <span>May 9</span>
-                                    <span>May 10</span>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="chart-card donut-card">
-
-                        <h3>Report by Category</h3>
-
-                        <div class="donut-content">
-
-                            <div class="donut-chart"></div>
-
-                            <div class="donut-legend">
-
-                                <span>
-                                    <i class="legend-dot blue"></i>
-                                    Patient Reports
-                                    <b>32%</b>
-                                </span>
-
-                                <span>
-                                    <i class="legend-dot green"></i>
-                                    Health Programs
-                                    <b>24%</b>
-                                </span>
-
-                                <span>
-                                    <i class="legend-dot orange"></i>
-                                    Inventory
-                                    <b>18%</b>
-                                </span>
-
-                                <span>
-                                    <i class="legend-dot purple"></i>
-                                    Financial
-                                    <b>12%</b>
-                                </span>
-
-                                <span>
-                                    <i class="legend-dot red"></i>
-                                    Operations
-                                    <b>8%</b>
-                                </span>
-
-                                <span>
-                                    <i class="legend-dot gray"></i>
-                                    Others
-                                    <b>6%</b>
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
+                        <button id="inviteStaffButton" class="button primary" type="submit">
+                            <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
+                            Send staff invitation
+                        </button>
+                        <p id="staffInviteStatus" class="staff-invite-status" role="status" aria-live="polite"></p>
+                    </form>
+                    <p class="staff-role-note">Designations label staff accounts; they do not yet grant different page permissions. Invitation access is checked server-side against Supabase-managed app metadata, which users cannot edit themselves. For first-time setup, the project owner must set the authorized administrator’s Auth user app_metadata role to Administrator.</p>
                 </div>
+            </article>
+        </section>
 
+        <section id="exportPanel" class="tab-panel" role="tabpanel" aria-labelledby="exportTab" hidden>
+            <div class="panel-intro">
+                <div>
+                    <h2>Data Export</h2>
+                    <p>Download the aggregate report currently built in the Reports section.</p>
+                </div>
             </div>
-
-            <div class="card generated-reports">
-
-                <div class="card-title">
-                    <h2>Recently Generated Reports</h2>
+            <article class="panel feature-panel">
+                <span class="feature-icon export-icon"><i class="fa-solid fa-file-csv" aria-hidden="true"></i></span>
+                <div class="feature-content">
+                    <h3>Export current report</h3>
+                    <p id="exportSummary">Build a report first. Activity reports contain aggregate counts. Inventory exports include medicine stock details, not patient information.</p>
+                    <button id="exportReport" class="button primary" type="button" disabled>
+                        <i class="fa-solid fa-download" aria-hidden="true"></i>
+                        Export CSV
+                    </button>
                 </div>
+            </article>
+        </section>
 
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <thead>
-                            <tr>
-                                <th>Report Name</th>
-                                <th>Category</th>
-                                <th>Date Generated</th>
-                                <th>Generated By</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-
-                            <tr>
-                                <td>Weekly Consultation Report</td>
-                                <td>Patient Reports</td>
-                                <td>May 10, 2026 10:45 AM</td>
-                                <td>Admin</td>
-                                <td>
-                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
-                                    <button type="button"><i class="fa-solid fa-download"></i></button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>Immunization Coverage Report</td>
-                                <td>Health Programs</td>
-                                <td>May 10, 2026 09:30 AM</td>
-                                <td>Admin Cyron</td>
-                                <td>
-                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
-                                    <button type="button"><i class="fa-solid fa-download"></i></button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>Inventory Stock Report</td>
-                                <td>Inventory Reports</td>
-                                <td>May 10, 2026 08:40 AM</td>
-                                <td>Admin</td>
-                                <td>
-                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
-                                    <button type="button"><i class="fa-solid fa-download"></i></button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>Financial Summary Report</td>
-                                <td>Financial Reports</td>
-                                <td>May 9, 2026 04:20 PM</td>
-                                <td>Admin</td>
-                                <td>
-                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
-                                    <button type="button"><i class="fa-solid fa-download"></i></button>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>TB DOTS Monitoring Report</td>
-                                <td>Health Programs</td>
-                                <td>May 9, 2026 03:15 PM</td>
-                                <td>BHW Admin</td>
-                                <td>
-                                    <button type="button"><i class="fa-regular fa-eye"></i></button>
-                                    <button type="button"><i class="fa-solid fa-download"></i></button>
-                                </td>
-                            </tr>
-
-                        </tbody>
-
-                    </table>
-
+        <section id="backupPanel" class="tab-panel" role="tabpanel" aria-labelledby="backupTab" hidden>
+            <div class="panel-intro">
+                <div>
+                    <h2>Backup &amp; Restore</h2>
+                    <p>Database backups must be managed through the Supabase project with appropriate owner permissions.</p>
                 </div>
-
-                <button class="view-more" type="button">
-                    View all reports
-                    <i class="fa-solid fa-arrow-right"></i>
-                </button>
-
             </div>
-
-        </div>
-
-        <div class="right-column">
-
-            <div class="card shortcuts-card">
-
-                <div class="card-title">
-                    <h2>System Shortcuts</h2>
+            <article class="panel feature-panel">
+                <span class="feature-icon backup-icon"><i class="fa-solid fa-database" aria-hidden="true"></i></span>
+                <div>
+                    <h3>Managed database backups</h3>
+                    <p>Backup creation and restoration are not available from this app. Use Supabase’s managed backup tools; restore operations should only be performed by an authorized project owner.</p>
+                    <a class="button secondary external-action" href="https://supabase.com/dashboard" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                        Open Supabase Dashboard
+                    </a>
                 </div>
+            </article>
+        </section>
 
-                <div class="shortcut-grid">
+        <footer class="report-footer">
+            <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
+            <p>Reports use aggregate counts from authenticated Supabase data. Availability is subject to the project’s database permissions and configured tables.</p>
+        </footer>
+    </main>
 
-                    <button type="button">
-                        <div class="shortcut-icon">
-                            <i class="fa-solid fa-user-plus"></i>
-                        </div>
-                        <span>Add New User</span>
-                    </button>
-
-                    <button type="button">
-                        <div class="shortcut-icon">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
-                        <span>User Roles</span>
-                    </button>
-
-                    <button type="button">
-                        <div class="shortcut-icon">
-                            <i class="fa-solid fa-file-lines"></i>
-                        </div>
-                        <span>Report Builder</span>
-                    </button>
-
-                    <button type="button">
-                        <div class="shortcut-icon">
-                            <i class="fa-solid fa-file-export"></i>
-                        </div>
-                        <span>Data Export</span>
-                    </button>
-
-                    <button type="button">
-                        <div class="shortcut-icon">
-                            <i class="fa-solid fa-database"></i>
-                        </div>
-                        <span>Database Backup</span>
-                    </button>
-
-                    <button type="button">
-                        <div class="shortcut-icon">
-                            <i class="fa-solid fa-gear"></i>
-                        </div>
-                        <span>System Settings</span>
-                    </button>
-
-                </div>
-
-            </div>
-
-            <div class="card activity-card">
-
-                <div class="card-title">
-                    <h2>System Activity</h2>
-                </div>
-
-                <div class="activity-item">
-                    <i class="fa-solid fa-user-plus"></i>
-                    <span>New Patient Registered</span>
-                    <strong>142</strong>
-                    <small>↑ 7.8%</small>
-                </div>
-
-                <div class="activity-item">
-                    <i class="fa-solid fa-calendar-check"></i>
-                    <span>Appointments Scheduled</span>
-                    <strong>1,092</strong>
-                    <small>↑ 4.2%</small>
-                </div>
-
-                <div class="activity-item">
-                    <i class="fa-solid fa-pills"></i>
-                    <span>Medicine Issued</span>
-                    <strong>1,248</strong>
-                    <small>↑ 2.6%</small>
-                </div>
-
-                <div class="activity-item">
-                    <i class="fa-solid fa-message"></i>
-                    <span>Feedback Received</span>
-                    <strong>76</strong>
-                    <small>↑ 4.8%</small>
-                </div>
-
-            </div>
-
-            <div class="card system-info">
-
-                <div class="card-title">
-                    <h2>System Information</h2>
-                </div>
-
-                <div class="info-row">
-                    <span>System Version</span>
-                    <strong>v2.3.1</strong>
-                </div>
-
-                <div class="info-row">
-                    <span>Last Backup</span>
-                    <strong>May 10, 2026 · 2:00 AM</strong>
-                </div>
-
-                <div class="info-row">
-                    <span>Database Size</span>
-                    <strong>125 MB</strong>
-                </div>
-
-                <div class="info-row">
-                    <span>Uptime</span>
-                    <strong>14 days, 7 hours</strong>
-                </div>
-
-                <div class="info-row">
-                    <span>Environment</span>
-                    <strong>Production</strong>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-    <div class="bottom-notice">
-
-        <i class="fa-solid fa-circle-info"></i>
-
-        <span>
-            Use the reports and analytics to monitor performance, improve services, and make data-driven decisions.
-        </span>
-
-    </div>
-
-</main>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    const tabs = document.querySelectorAll(".report-tab");
-
-    tabs.forEach(function (tab) {
-        tab.addEventListener("click", function () {
-
-            tabs.forEach(function (item) {
-                item.classList.remove("active");
-            });
-
-            this.classList.add("active");
-        });
-    });
-
-    const categories = document.querySelectorAll(".category-item");
-
-    categories.forEach(function (category) {
-        category.addEventListener("click", function () {
-
-            categories.forEach(function (item) {
-                item.classList.remove("active");
-            });
-
-            this.classList.add("active");
-        });
-    });
-
-});
-</script>
-
-<script src="sidebar.js"></script>
-<script src="auth-guard.js"></script>
+    <script src="admin-reports.js"></script>
+    <script src="sidebar.js"></script>
+    <script src="auth-guard.js"></script>
 </body>
+
 </html>

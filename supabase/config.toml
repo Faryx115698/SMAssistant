@@ -1,0 +1,5 @@
+[functions.ai-moto]
+verify_jwt = true
+
+[functions.invite-staff]
+verify_jwt = true

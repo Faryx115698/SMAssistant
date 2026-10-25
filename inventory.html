@@ -52,19 +52,22 @@
 
                 <div class="header-actions">
 
-                    <button class="header-button">
+                    <a class="header-button" href="ai-moto.html">
                         + Ask AI Moto
-                    </button>
+                    </a>
 
-                    <button class="header-button">
+                    <button class="header-button" id="importStockButton" type="button"
+                        title="CSV columns: name, category, unit, stock, reorder, expiry">
                         ⇩ Import Stock
                     </button>
 
-                    <button class="header-button primary" onclick="openMedicineModal()">
+                    <input id="importStockFile" type="file" accept=".csv,text/csv" hidden>
+
+                    <button class="header-button primary" id="addMedicineButton" type="button">
                         + Add Medicine
                     </button>
 
-                    <button class="header-button">
+                    <button class="header-button" id="inventoryReportButton" type="button">
                         ▰ Reports
                     </button>
 
@@ -213,8 +216,12 @@
                             <option>Out of Stock</option>
                         </select>
 
+                        <label class="archived-filter">
+                            <input type="checkbox" id="showArchivedMedicines">
+                            Show archived
+                        </label>
 
-                        <button class="refresh-button">
+                        <button class="refresh-button" type="button">
                             ↻ Refresh
                         </button>
 
@@ -390,54 +397,57 @@
 
             <div class="modal-header">
 
-                <h2>Add Medicine</h2>
+                <h2 id="medicineModalTitle">Add Medicine</h2>
 
                 <button onclick="closeMedicineModal()">×</button>
 
             </div>
 
 
-            <form onsubmit="saveMedicine(event)">
+            <form id="medicineForm">
+                <p class="inventory-form-message" id="medicineFormMessage" role="alert"></p>
+                <input type="hidden" id="medicineRecordId">
 
                 <div class="form-grid">
 
                     <div>
-                        <label>Medicine Name</label>
-                        <input type="text" required>
+                        <label for="medicineName">Medicine Name</label>
+                        <input type="text" id="medicineName" maxlength="150" required>
                     </div>
 
                     <div>
-                        <label>Category</label>
+                        <label for="medicineCategory">Category</label>
 
-                        <select required>
-
-                            <option value="">
-                                Select category
-                            </option>
-
-                            <option>Analgesic</option>
-                            <option>Antibiotic</option>
-                            <option>Antihistamine</option>
-                            <option>Anti-hypertensive</option>
-                            <option>Respiratory</option>
-
-                        </select>
+                        <input type="text" id="medicineCategory" maxlength="100" required list="medicineCategories"
+                            placeholder="e.g. Analgesic">
+                        <datalist id="medicineCategories">
+                            <option value="Analgesic">
+                            <option value="Antibiotic">
+                            <option value="Antihistamine">
+                            <option value="Anti-hypertensive">
+                            <option value="Respiratory">
+                        </datalist>
 
                     </div>
 
                     <div>
-                        <label>Unit</label>
-                        <input type="text" placeholder="Tablet">
+                        <label for="medicineUnit">Unit</label>
+                        <input type="text" id="medicineUnit" maxlength="50" placeholder="Tablet" required>
+                    </div>
+
+                    <div id="medicineStockField">
+                        <label for="medicineStock">Current Stock</label>
+                        <input type="number" id="medicineStock" min="0" step="1" value="0" required>
                     </div>
 
                     <div>
-                        <label>Current Stock</label>
-                        <input type="number" min="0" required>
+                        <label for="medicineReorder">Reorder Level</label>
+                        <input type="number" id="medicineReorder" min="0" step="1" value="50" required>
                     </div>
 
                     <div>
-                        <label>Expiry Date</label>
-                        <input type="date" required>
+                        <label for="medicineExpiry">Expiry Date (optional)</label>
+                        <input type="date" id="medicineExpiry">
                     </div>
 
                 </div>
@@ -461,40 +471,91 @@
 
     </div>
 
+    <div class="modal" id="restockModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Receive Stock</h2>
+                <button type="button" id="closeRestockModal" aria-label="Close">×</button>
+            </div>
+            <form id="restockForm">
+                <p class="inventory-form-message" id="restockFormMessage" role="alert"></p>
+                <p id="restockMedicineName" class="restock-medicine-name"></p>
+                <div class="form-grid">
+                    <div>
+                        <label for="restockQuantity">Quantity received</label>
+                        <input type="number" id="restockQuantity" min="1" step="1" required>
+                    </div>
+                    <div>
+                        <label for="restockReceivedBy">Received by</label>
+                        <input type="text" id="restockReceivedBy" maxlength="150" required>
+                    </div>
+                    <div class="form-full">
+                        <label for="restockNotes">Notes (optional)</label>
+                        <input type="text" id="restockNotes" maxlength="500">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="cancel-button" id="cancelRestock">Cancel</button>
+                    <button type="submit" class="save-button" id="saveRestockButton">Receive Stock</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <script>
 
         function openMedicineModal() {
-            document
-                .getElementById("medicineModal")
-                .classList.add("show");
+            document.getElementById("medicineForm").reset();
+            document.getElementById("medicineFormMessage").textContent = "";
+            document.getElementById("medicineRecordId").value = "";
+            document.getElementById("medicineModalTitle").textContent = "Add Medicine";
+            document.getElementById("medicineStockField").hidden = false;
+            document.getElementById("medicineStock").required = true;
+            document.getElementById("medicineStock").value = "0";
+            document.getElementById("medicineReorder").value = "50";
+            document.getElementById("medicineModal").classList.add("show");
+        }
+
+        async function setMedicineActive(id, isActive) {
+            const item = inventoryRecords.find(record => String(record.id) === String(id));
+            if (!item) return;
+            const action = isActive ? "archive" : "restore";
+            const accepted = window.confirm(
+                isActive
+                    ? `Archive ${item.name}? It will be removed from dispensing but its history will remain.`
+                    : `Restore ${item.name} to active inventory?`
+            );
+            if (!accepted) return;
+            try {
+                const response = await window.sb.rpc("set_medicine_active", {
+                    p_inventory_id: Number(id),
+                    p_is_active: !isActive
+                });
+                if (response.error) {
+                    showInventoryNotice(`Could not ${action} medicine: ${response.error.message}`, true);
+                    return;
+                }
+                showInventoryNotice(`${item.name} ${isActive ? "archived" : "restored"}.`);
+                await loadInventory();
+            } catch (error) {
+                console.error(`Could not ${action} medicine:`, error);
+                showInventoryNotice(`Could not ${action} medicine. Check your connection and try again.`, true);
+            }
         }
 
         function closeMedicineModal() {
-            document
-                .getElementById("medicineModal")
-                .classList.remove("show");
-        }
-
-        function saveMedicine(event) {
-
-            event.preventDefault();
-
-            alert("Medicine added successfully.");
-
-            closeMedicineModal();
-
+            document.getElementById("medicineModal").classList.remove("show");
         }
 
         window.addEventListener("click", function (event) {
-
-            const modal =
-                document.getElementById("medicineModal");
-
-            if (event.target === modal) {
+            if (event.target === document.getElementById("medicineModal")) closeMedicineModal();
+            if (event.target === document.getElementById("restockModal")) closeRestockModal();
+        });
+        document.addEventListener("keydown", function (event) {
+            if (event.key === "Escape") {
                 closeMedicineModal();
+                closeRestockModal();
             }
-
         });
 
     </script>
@@ -502,11 +563,36 @@
     <script>
         const inventoryRecords = [];
         let patientRecords = [];
+        let inventoryLoadVersion = 0;
         const inventorySort = { field: "name", ascending: true };
         const inventoryCurrency = new Intl.NumberFormat();
 
         document.addEventListener("DOMContentLoaded", () => {
             sortStaticMedicineRows();
+            document.getElementById("addMedicineButton").addEventListener("click", openMedicineModal);
+            document.getElementById("medicineForm").addEventListener("submit", saveMedicine);
+            document.getElementById("importStockButton").addEventListener("click", () => {
+                document.getElementById("importStockFile").click();
+            });
+            document.getElementById("importStockFile").addEventListener("change", importStockFile);
+            document.getElementById("inventoryReportButton").addEventListener("click", exportInventoryReport);
+            document.getElementById("closeRestockModal").addEventListener("click", closeRestockModal);
+            document.getElementById("cancelRestock").addEventListener("click", closeRestockModal);
+            document.getElementById("restockForm").addEventListener("submit", saveRestock);
+            document.getElementById("medicineTableBody").addEventListener("click", event => {
+                const editButton = event.target.closest("[data-edit-id]");
+                if (editButton) {
+                    editMedicine(editButton.dataset.editId);
+                    return;
+                }
+                const button = event.target.closest("[data-restock-id]");
+                if (button) {
+                    openRestockModal(button.dataset.restockId);
+                    return;
+                }
+                const archiveButton = event.target.closest("[data-active-id]");
+                if (archiveButton) setMedicineActive(archiveButton.dataset.activeId, archiveButton.dataset.active === "true");
+            });
             document.querySelectorAll(".inventory-tab").forEach(tab => {
                 tab.addEventListener("click", () => {
                     document.querySelectorAll(".inventory-tab").forEach(item => item.classList.toggle("active", item === tab));
@@ -541,10 +627,12 @@
             document.getElementById("medicineSearch").addEventListener("input", renderInventoryTable);
             document.getElementById("categoryFilter").addEventListener("change", renderInventoryTable);
             document.getElementById("statusFilter").addEventListener("change", renderInventoryTable);
+            document.getElementById("showArchivedMedicines").addEventListener("change", renderInventoryTable);
             document.getElementById("clearInventoryFilters").addEventListener("click", () => {
                 document.getElementById("medicineSearch").value = "";
                 document.getElementById("categoryFilter").value = "All Categories";
                 document.getElementById("statusFilter").value = "All Status";
+                document.getElementById("showArchivedMedicines").checked = false;
                 renderInventoryTable();
             });
             document.querySelector(".refresh-button").addEventListener("click", loadInventory);
@@ -589,6 +677,285 @@
             element.classList.toggle("visible", Boolean(message));
         }
 
+        function showInventoryNotice(message, isError = false) {
+            let notice = document.getElementById("inventoryNotice");
+            if (!notice) {
+                notice = document.createElement("div");
+                notice.id = "inventoryNotice";
+                notice.className = "inventory-notice";
+                notice.setAttribute("role", "status");
+                document.querySelector(".main-content").prepend(notice);
+            }
+            notice.textContent = message;
+            notice.classList.toggle("error", isError);
+            notice.hidden = false;
+            window.clearTimeout(showInventoryNotice.timeout);
+            showInventoryNotice.timeout = window.setTimeout(() => { notice.hidden = true; }, 7000);
+        }
+
+        function getStockStatus(stock, reorder) {
+            return stock <= 0 ? "Out of Stock" : stock <= reorder ? "Low Stock" : "Adequate";
+        }
+
+        async function saveMedicine(event) {
+            event.preventDefault();
+            const form = document.getElementById("medicineForm");
+            const message = document.getElementById("medicineFormMessage");
+            const submit = form.querySelector('[type="submit"]');
+            const stock = Number(document.getElementById("medicineStock").value);
+            const reorder = Number(document.getElementById("medicineReorder").value);
+            const recordId = document.getElementById("medicineRecordId").value;
+            if ((!recordId && (!Number.isSafeInteger(stock) || stock < 0 || stock > 2147483647)) ||
+                !Number.isSafeInteger(reorder) || reorder < 0 || reorder > 2147483647) {
+                message.textContent = "Stock and reorder level must be whole numbers between zero and 2,147,483,647.";
+                return;
+            }
+            const payload = {
+                name: document.getElementById("medicineName").value.trim(),
+                category: document.getElementById("medicineCategory").value.trim(),
+                unit: document.getElementById("medicineUnit").value.trim(),
+                reorder: reorder,
+                expiry: document.getElementById("medicineExpiry").value || null
+            };
+            if (!recordId) {
+                payload.stock = stock;
+                payload.status = getStockStatus(stock, reorder);
+            }
+            if (!window.sb || !isConfigured) {
+                message.textContent = "Supabase is not configured. The medicine was not saved.";
+                return;
+            }
+            submit.disabled = true;
+            submit.textContent = "Saving...";
+            try {
+                const result = recordId
+                    ? await window.sb.from("inventory").update(payload).eq("id", recordId)
+                    : await window.sb.from("inventory").insert(payload);
+                if (result.error) {
+                    message.textContent = `Could not ${recordId ? "update" : "save"} medicine: ${result.error.message}`;
+                    return;
+                }
+                closeMedicineModal();
+                form.reset();
+                showInventoryNotice(recordId ? `${payload.name} was updated.` : `${payload.name} was added to inventory.`);
+                await loadInventory();
+            } catch (error) {
+                console.error("Could not save medicine:", error);
+                message.textContent = "Could not save medicine. Check your connection and try again.";
+            } finally {
+                submit.disabled = false;
+                submit.textContent = document.getElementById("medicineRecordId").value ? "Save Changes" : "Save Medicine";
+            }
+        }
+
+        function editMedicine(id) {
+            const item = inventoryRecords.find(record => String(record.id) === String(id));
+            if (!item) return;
+            const form = document.getElementById("medicineForm");
+            form.reset();
+            document.getElementById("medicineFormMessage").textContent = "";
+            document.getElementById("medicineRecordId").value = String(item.id);
+            document.getElementById("medicineModalTitle").textContent = "Edit Medicine";
+            document.getElementById("medicineName").value = item.name;
+            document.getElementById("medicineCategory").value = item.category;
+            document.getElementById("medicineUnit").value = item.unit;
+            document.getElementById("medicineReorder").value = String(item.reorder);
+            document.getElementById("medicineExpiry").value = item.expiry || "";
+            document.getElementById("medicineStockField").hidden = true;
+            document.getElementById("medicineStock").required = false;
+            const submit = form.querySelector('[type="submit"]');
+            submit.textContent = "Save Changes";
+            document.getElementById("medicineModal").classList.add("show");
+        }
+
+        function openRestockModal(id) {
+            const item = inventoryRecords.find(record => String(record.id) === String(id));
+            if (!item || item.is_active === false) return;
+            document.getElementById("restockForm").reset();
+            document.getElementById("restockModal").dataset.inventoryId = String(item.id);
+            document.getElementById("restockMedicineName").textContent =
+                `${item.name} · ${inventoryCurrency.format(item.stock)} ${item.unit} currently in stock`;
+            document.getElementById("restockFormMessage").textContent = "";
+            document.getElementById("restockModal").classList.add("show");
+            document.getElementById("restockQuantity").focus();
+        }
+
+        function closeRestockModal() {
+            document.getElementById("restockModal").classList.remove("show");
+        }
+
+        async function saveRestock(event) {
+            event.preventDefault();
+            const modal = document.getElementById("restockModal");
+            const message = document.getElementById("restockFormMessage");
+            const submit = document.getElementById("saveRestockButton");
+            const quantity = Number(document.getElementById("restockQuantity").value);
+            if (!Number.isSafeInteger(quantity) || quantity < 1 || quantity > 2147483647) {
+                message.textContent = "Enter a whole number between 1 and 2,147,483,647.";
+                return;
+            }
+            if (!window.sb || !isConfigured) {
+                message.textContent = "Supabase is not configured. Stock was not changed.";
+                return;
+            }
+            submit.disabled = true;
+            submit.textContent = "Receiving...";
+            try {
+                const response = await window.sb.rpc("receive_medicine", {
+                    p_inventory_id: Number(modal.dataset.inventoryId),
+                    p_quantity: quantity,
+                    p_received_by: document.getElementById("restockReceivedBy").value.trim(),
+                    p_notes: document.getElementById("restockNotes").value.trim() || null
+                });
+                if (response.error) {
+                    message.textContent = `Could not receive stock: ${response.error.message}`;
+                    return;
+                }
+                const result = Array.isArray(response.data) ? response.data[0] : response.data;
+                closeRestockModal();
+                showInventoryNotice(`Received ${inventoryCurrency.format(quantity)} units. New stock: ${inventoryCurrency.format(result.remaining_stock)}.`);
+                await loadInventory();
+            } catch (error) {
+                console.error("Could not receive inventory stock:", error);
+                message.textContent = "Could not receive stock. Check your connection and try again.";
+            } finally {
+                submit.disabled = false;
+                submit.textContent = "Receive Stock";
+            }
+        }
+
+        async function importStockFile(event) {
+            const file = event.target.files[0];
+            event.target.value = "";
+            if (!file) return;
+            if (file.size > 2 * 1024 * 1024) {
+                showInventoryNotice("CSV file is too large. Maximum size is 2 MB.", true);
+                return;
+            }
+            try {
+                const rows = parseInventoryCsv(await file.text());
+                if (!rows.length || rows.length > 500) {
+                    showInventoryNotice("CSV must contain between 1 and 500 medicine rows.", true);
+                    return;
+                }
+                if (!window.sb || !isConfigured) {
+                    showInventoryNotice("Supabase is not configured. No medicines were imported.", true);
+                    return;
+                }
+                const result = await window.sb.from("inventory").insert(rows);
+                if (result.error) {
+                    showInventoryNotice(`Import failed; no rows were added: ${result.error.message}`, true);
+                    return;
+                }
+                showInventoryNotice(`Imported ${rows.length} medicines.`);
+                await loadInventory();
+            } catch (error) {
+                showInventoryNotice(error.message || "Could not read the CSV file.", true);
+            }
+        }
+
+        function parseInventoryCsv(text) {
+            const rows = [];
+            let row = [];
+            let value = "";
+            let quoted = false;
+            for (let i = 0; i < text.length; i += 1) {
+                const character = text[i];
+                if (quoted && character === '"' && text[i + 1] === '"') {
+                    value += '"';
+                    i += 1;
+                } else if (character === '"') {
+                    quoted = !quoted;
+                } else if (!quoted && character === ",") {
+                    row.push(value.trim());
+                    value = "";
+                } else if (!quoted && (character === "\n" || character === "\r")) {
+                    row.push(value.trim());
+                    if (row.some(cell => cell !== "")) rows.push(row);
+                    row = [];
+                    value = "";
+                    if (character === "\r" && text[i + 1] === "\n") i += 1;
+                } else {
+                    value += character;
+                }
+            }
+            if (quoted) throw new Error("CSV contains an unclosed quoted field.");
+            row.push(value.trim());
+            if (row.some(cell => cell !== "")) rows.push(row);
+            if (rows.length < 2) throw new Error("CSV needs a header row and at least one medicine.");
+
+            const headers = rows.shift().map((header, index) =>
+                (index === 0 ? header.replace(/^\uFEFF/, "") : header).toLowerCase().replace(/[\s-]+/g, "_"));
+            const required = ["name", "category", "unit", "stock", "reorder"];
+            const missing = required.filter(header => !headers.includes(header));
+            if (missing.length) throw new Error(`CSV is missing required columns: ${missing.join(", ")}.`);
+            const column = Object.fromEntries(headers.map((header, index) => [header, index]));
+            return rows.map((cells, index) => {
+                const line = index + 2;
+                const name = cells[column.name] || "";
+                const category = cells[column.category] || "";
+                const unit = cells[column.unit] || "";
+                const stockValue = cells[column.stock];
+                const reorderValue = cells[column.reorder];
+                const stock = Number(stockValue);
+                const reorder = Number(reorderValue);
+                const expiry = column.expiry === undefined ? "" : (cells[column.expiry] || "");
+                if (!name || !category || !unit || stockValue === "" || reorderValue === "" ||
+                    !Number.isSafeInteger(stock) || stock < 0 || stock > 2147483647 ||
+                    !Number.isSafeInteger(reorder) || reorder < 0 || reorder > 2147483647) {
+                    throw new Error(`CSV row ${line} has missing fields or invalid stock/reorder values.`);
+                }
+                if (expiry && !isValidDate(expiry)) throw new Error(`CSV row ${line} has an invalid expiry date.`);
+                return {
+                    name: name,
+                    category: category,
+                    unit: unit,
+                    stock: stock,
+                    reorder: reorder,
+                    status: getStockStatus(stock, reorder),
+                    expiry: expiry || null
+                };
+            });
+        }
+
+        function isValidDate(value) {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+            const date = new Date(value + "T00:00:00");
+            return !Number.isNaN(date.getTime()) &&
+                date.getFullYear() === Number(value.slice(0, 4)) &&
+                date.getMonth() + 1 === Number(value.slice(5, 7)) &&
+                date.getDate() === Number(value.slice(8, 10));
+        }
+
+        function exportInventoryReport() {
+            if (!inventoryRecords.length) {
+                showInventoryNotice("There are no inventory records to export.", true);
+                return;
+            }
+            const columns = ["name", "category", "unit", "stock", "reorder", "status", "expiry", "is_active"];
+            const lines = [columns.join(",")].concat(inventoryRecords.map(item => {
+                const values = [
+                    item.name, item.category, item.unit, item.stock, item.reorder,
+                    getStockStatus(item.stock, item.reorder), item.expiry || "",
+                    item.is_active !== false ? "Active" : "Archived"
+                ];
+                return values.map(value => {
+                    const text = String(value);
+                    const safeText = /^[=+\-@]/.test(text) ? "'" + text : text;
+                    return `"${safeText.replace(/"/g, '""')}"`;
+                }).join(",");
+            }));
+            const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `medicine-inventory-${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
         function updateRecipientFields() {
             const isPatient = document.getElementById("recipientType").value === "patient";
             const patientField = document.getElementById("patientRecipientField");
@@ -610,6 +977,7 @@
         }
 
         async function loadInventory() {
+            const loadVersion = ++inventoryLoadVersion;
             const select = document.getElementById("medicineSelect");
             const submitButton = document.getElementById("submitIssuance");
             submitButton.disabled = true;
@@ -626,15 +994,17 @@
             try {
                 inventoryResponse = await window.sb
                     .from("inventory")
-                    .select("id, name, category, unit, stock, reorder, status, expiry")
+                    .select("id, name, category, unit, stock, reorder, status, expiry, is_active")
                     .order("name", { ascending: true });
             } catch (error) {
+                if (loadVersion !== inventoryLoadVersion) return;
                 console.error("Unable to connect to inventory:", error);
                 setIssuanceMessage(`Could not load live inventory: ${error.message || error}`, true);
                 select.innerHTML = '<option value="">Inventory could not be loaded</option>';
                 setInventoryUnavailable("Could not load inventory.");
                 return;
             }
+            if (loadVersion !== inventoryLoadVersion) return;
             const { data, error } = inventoryResponse;
 
             if (error) {
@@ -657,7 +1027,7 @@
             categories.forEach(category => categorySelect.add(new Option(category, category)));
 
             select.innerHTML = '<option value="">Select medicine</option>';
-            inventoryRecords.forEach(item => {
+            inventoryRecords.filter(item => item.is_active !== false).forEach(item => {
                 const option = document.createElement("option");
                 option.value = String(item.id);
                 option.textContent = `${item.name} — ${item.stock} ${item.unit} available`;
@@ -942,19 +1312,21 @@
             const query = document.getElementById("medicineSearch").value.trim().toLowerCase();
             const categoryFilter = document.getElementById("categoryFilter").value;
             const statusFilter = document.getElementById("statusFilter").value;
+            const showArchived = document.getElementById("showArchivedMedicines").checked;
             const filtered = inventoryRecords.filter(item => {
-                const status = item.stock <= 0 ? "Out of Stock" : item.stock <= item.reorder ? "Low Stock" : "Adequate";
-                return (!query || `${item.name} ${item.category} ${item.unit}`.toLowerCase().includes(query))
+                const status = getStockStatus(item.stock, item.reorder);
+                return (showArchived || item.is_active !== false)
+                    && (!query || `${item.name} ${item.category} ${item.unit}`.toLowerCase().includes(query))
                     && (categoryFilter === "All Categories" || item.category === categoryFilter || item.category.split(" / ")[0] === categoryFilter)
                     && (statusFilter === "All Status" || status === statusFilter);
             });
 
             filtered.sort((a, b) => {
                 const left = inventorySort.field === "status"
-                    ? (a.stock <= 0 ? "Out of Stock" : a.stock <= a.reorder ? "Low Stock" : "Adequate")
+                    ? getStockStatus(a.stock, a.reorder)
                     : a[inventorySort.field];
                 const right = inventorySort.field === "status"
-                    ? (b.stock <= 0 ? "Out of Stock" : b.stock <= b.reorder ? "Low Stock" : "Adequate")
+                    ? getStockStatus(b.stock, b.reorder)
                     : b[inventorySort.field];
                 let result;
                 if (inventorySort.field === "stock" || inventorySort.field === "reorder") {
@@ -972,13 +1344,15 @@
                 const row = body.insertRow();
                 const cell = row.insertCell();
                 cell.colSpan = 8;
-                cell.textContent = "No medicines match the selected search and filters.";
+                cell.textContent = document.getElementById("showArchivedMedicines").checked
+                    ? "No medicines match the selected search and filters."
+                    : "No active medicines match. Use Show archived to view archived medicines.";
             }
             filtered.forEach(item => {
-                const status = item.stock <= 0 ? "Out of Stock" : item.stock <= item.reorder ? "Low Stock" : "Adequate";
+                const status = getStockStatus(item.stock, item.reorder);
                 const statusClass = status.toLowerCase().replaceAll(" ", "-");
                 const row = body.insertRow();
-                row.innerHTML = `<td><strong></strong></td><td></td><td></td><td class="stock-number"></td><td></td><td><span class="stock-status"></span></td><td></td><td>—</td>`;
+                row.innerHTML = `<td><strong></strong></td><td></td><td></td><td class="stock-number"></td><td></td><td><span class="stock-status"></span></td><td></td><td class="actions"></td>`;
                 row.cells[0].querySelector("strong").textContent = item.name;
                 row.cells[1].textContent = item.category;
                 row.cells[2].textContent = item.unit;
@@ -988,13 +1362,40 @@
                 row.cells[5].querySelector("span").textContent = status;
                 row.cells[5].querySelector("span").classList.add(statusClass);
                 row.cells[6].textContent = item.expiry ? new Date(`${item.expiry}T00:00:00`).toLocaleDateString() : "—";
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.dataset.editId = String(item.id);
+                editButton.textContent = "Edit";
+                editButton.setAttribute("aria-label", `Edit ${item.name}`);
+                row.cells[7].appendChild(editButton);
+                if (item.is_active === false) {
+                    const archivedLabel = document.createElement("span");
+                    archivedLabel.className = "archived-label";
+                    archivedLabel.textContent = "Archived";
+                    row.cells[7].appendChild(archivedLabel);
+                } else {
+                    const restockButton = document.createElement("button");
+                    restockButton.type = "button";
+                    restockButton.dataset.restockId = String(item.id);
+                    restockButton.textContent = "Receive stock";
+                    restockButton.setAttribute("aria-label", `Receive stock for ${item.name}`);
+                    row.cells[7].appendChild(restockButton);
+                }
+                const activeButton = document.createElement("button");
+                activeButton.type = "button";
+                activeButton.dataset.activeId = String(item.id);
+                activeButton.dataset.active = String(item.is_active !== false);
+                activeButton.textContent = item.is_active === false ? "Restore" : "Archive";
+                activeButton.setAttribute("aria-label", `${item.is_active === false ? "Restore" : "Archive"} ${item.name}`);
+                row.cells[7].appendChild(activeButton);
             });
             document.getElementById("inventoryResultCount").textContent = `${filtered.length} of ${inventoryRecords.length} medicines`;
         }
 
         function renderLowStock() {
             const container = document.getElementById("lowStockList");
-            const lowStock = inventoryRecords.filter(item => item.stock <= item.reorder);
+            const lowStock = inventoryRecords.filter(item =>
+                item.is_active !== false && item.stock > 0 && item.stock <= item.reorder);
             container.replaceChildren();
             if (!lowStock.length) {
                 container.textContent = "No low-stock medicines.";
@@ -1020,10 +1421,11 @@
         }
 
         function updateInventorySummary() {
-            const totalUnits = inventoryRecords.reduce((sum, item) => sum + item.stock, 0);
-            const lowStock = inventoryRecords.filter(item => item.stock > 0 && item.stock <= item.reorder).length;
-            const outOfStock = inventoryRecords.filter(item => item.stock <= 0).length;
-            document.getElementById("totalMedicines").textContent = inventoryCurrency.format(inventoryRecords.length);
+            const activeRecords = inventoryRecords.filter(item => item.is_active !== false);
+            const totalUnits = activeRecords.reduce((sum, item) => sum + item.stock, 0);
+            const lowStock = activeRecords.filter(item => item.stock > 0 && item.stock <= item.reorder).length;
+            const outOfStock = activeRecords.filter(item => item.stock <= 0).length;
+            document.getElementById("totalMedicines").textContent = inventoryCurrency.format(activeRecords.length);
             document.getElementById("totalStock").textContent = inventoryCurrency.format(totalUnits);
             document.getElementById("lowStockCount").textContent = inventoryCurrency.format(lowStock);
             document.getElementById("outOfStockCount").textContent = inventoryCurrency.format(outOfStock);

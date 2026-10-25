@@ -7,7 +7,7 @@
     <title>Appointment and Schedule</title>
 
     <link rel="stylesheet" href="appointment-schedule.css">
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
 
@@ -60,7 +60,7 @@
 
                 <div>
                     <span>Today's Appointments</span>
-                    <strong>32</strong>
+                    <strong id="todayCount">—</strong>
                     <small>Schedule for today</small>
                 </div>
 
@@ -75,7 +75,7 @@
 
                 <div>
                     <span>Completed Today</span>
-                    <strong>18</strong>
+                    <strong id="completedCount">—</strong>
                     <small>Completed appointments</small>
                 </div>
 
@@ -90,7 +90,7 @@
 
                 <div>
                     <span>Pending</span>
-                    <strong>12</strong>
+                    <strong id="pendingCount">—</strong>
                     <small>Upcoming appointments</small>
                 </div>
 
@@ -105,7 +105,7 @@
 
                 <div>
                     <span>Cancelled</span>
-                    <strong>2</strong>
+                    <strong id="cancelledCount">—</strong>
                     <small>Cancelled appointments</small>
                 </div>
 
@@ -120,7 +120,7 @@
 
                 <div>
                     <span>No-Show</span>
-                    <strong>1</strong>
+                    <strong id="noShowCount">—</strong>
                     <small>Did not attend</small>
                 </div>
 
@@ -137,7 +137,7 @@
                     <div class="card-title">
                         <h2>Calendar</h2>
 
-                        <button class="today-button">
+                        <button class="today-button" id="todayButton" type="button">
                             Today
                         </button>
                     </div>
@@ -145,11 +145,11 @@
 
                     <div class="calendar-header">
 
-                        <button>‹</button>
+                        <button id="previousMonth" type="button" aria-label="Previous month">‹</button>
 
-                        <strong>August 2026</strong>
+                        <strong id="calendarMonth"></strong>
 
-                        <button>›</button>
+                        <button id="nextMonth" type="button" aria-label="Next month">›</button>
 
                     </div>
 
@@ -167,58 +167,9 @@
                     </div>
 
 
-                    <div class="calendar-grid">
-
-                        <span class="muted">26</span>
-                        <span class="muted">27</span>
-                        <span class="muted">28</span>
-                        <span class="muted">29</span>
-                        <span class="muted">30</span>
-                        <span class="muted">31</span>
-                        <span>1</span>
-
-                        <span>2</span>
-                        <span>3</span>
-                        <span>4</span>
-                        <span>5</span>
-                        <span>6</span>
-                        <span>7</span>
-                        <span>8</span>
-
-                        <span>9</span>
-                        <span>10</span>
-                        <span>11</span>
-                        <span>12</span>
-                        <span>13</span>
-                        <span>14</span>
-                        <span>15</span>
-
-                        <span>16</span>
-                        <span>17</span>
-                        <span>18</span>
-                        <span class="today">19</span>
-                        <span>20</span>
-                        <span>21</span>
-                        <span>22</span>
-
-                        <span>23</span>
-                        <span>24</span>
-                        <span>25</span>
-                        <span>26</span>
-                        <span>27</span>
-                        <span>28</span>
-                        <span>29</span>
-
-                        <span>30</span>
-                        <span>31</span>
-                        <span class="muted">1</span>
-                        <span class="muted">2</span>
-                        <span class="muted">3</span>
-                        <span class="muted">4</span>
-                        <span class="muted">5</span>
-
+                    <div class="calendar-grid" id="calendarGrid" role="group" aria-label="Appointment calendar">
+                        <!-- Days are rendered from the selected month. -->
                     </div>
-
 
                     <div class="calendar-legend">
 
@@ -240,16 +191,16 @@
 
                     <h2>Quick Actions</h2>
 
-                    <button class="primary-action" onclick="openAppointmentModal()">
+                    <button class="primary-action" id="newAppointmentButton" type="button">
                         + &nbsp; New Appointment
                     </button>
 
-                    <button>
-                        👤 &nbsp; Appointment Walk-in
+                    <button id="walkInButton" type="button">
+                        Walk-in Appointment
                     </button>
 
-                    <button>
-                        ◷ &nbsp; Manage Time Slots
+                    <button id="availabilityButton" type="button">
+                        View selected-day schedule
                     </button>
 
                 </div>
@@ -265,20 +216,22 @@
                     <div class="search-row">
 
                         <div class="search-input">
-                            <input type="text" id="appointmentSearch" placeholder="Search name or appointment..."
-                                onkeyup="searchAppointments()">
+                            <input type="search" id="appointmentSearch" placeholder="Search name or visit...">
                             <span>⌕</span>
                         </div>
 
-                        <button class="filter-button">
-                            ⚑ Filter
-                        </button>
+                        <select class="filter-button" id="statusFilter" aria-label="Filter by status">
+                            <option value="">All statuses</option>
+                            <option>Scheduled</option>
+                            <option>Confirmed</option>
+                            <option>Checked in</option>
+                            <option>In progress</option>
+                            <option>Completed</option>
+                            <option>Cancelled</option>
+                            <option>No-show</option>
+                        </select>
 
                     </div>
-
-                    <button class="new-patient-button" onclick="openAppointmentModal()">
-                        + New Patient
-                    </button>
 
                 </div>
 
@@ -394,23 +347,6 @@
                 </div>
 
 
-                <div class="pagination">
-
-                    <span>Showing 1 to 7 of 32 appointments</span>
-
-                    <div>
-                        <button>‹</button>
-                        <button class="active">1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>4</button>
-                        <button>...</button>
-                        <button>12</button>
-                        <button>›</button>
-                    </div>
-
-                </div>
-
             </div>
 
             <div class="right-column">
@@ -421,7 +357,7 @@
 
                         <h2>Appointment Details</h2>
 
-                        <button class="edit-button">
+                        <button class="edit-button" id="editAppointmentButton" type="button" disabled>
                             ✎ Edit
                         </button>
 
@@ -435,18 +371,12 @@
                         </div>
 
                         <div>
-                            <strong id="selectedName">
-                                Juan D. Dela Cruz
-                            </strong>
+                            <strong id="selectedName">Select an appointment</strong>
 
-                            <span id="selectedId">
-                                PT-2026-0001
-                            </span>
+                            <span id="selectedId"></span>
                         </div>
 
-                        <span class="scheduled-label">
-                            Scheduled
-                        </span>
+                        <span class="scheduled-label" id="selectedStatus">—</span>
 
                     </div>
 
@@ -456,45 +386,52 @@
                         <div>
                             <span>▣</span>
                             <strong>Date & Time</strong>
-                            <p id="selectedDate">
-                                April 10, 2026
-                                ·
-                                09:00 AM
-                            </p>
+                            <p id="selectedDate">Choose a date and appointment</p>
                         </div>
 
                         <div>
                             <span>♧</span>
                             <strong>Type of Visit</strong>
-                            <p id="selectedVisit">
-                                Pediatric Check Up
-                            </p>
+                            <p id="selectedVisit">—</p>
                         </div>
 
                         <div>
                             <span>▣</span>
                             <strong>Reason</strong>
-                            <p>Routine health center consultation.</p>
+                            <p id="selectedReason">—</p>
                         </div>
 
                         <div>
                             <span>♟</span>
                             <strong>Healthcare Worker</strong>
-                            <p>Midwife Cyron</p>
+                            <p>Not assigned</p>
                         </div>
 
                         <div>
                             <span>⌖</span>
                             <strong>Location / Room</strong>
-                            <p>Consultation Room 1</p>
+                            <p>Not assigned</p>
                         </div>
 
                         <div>
                             <span>▣</span>
                             <strong>Notes</strong>
-                            <p>Bring previous lab results if available.</p>
+                            <p id="selectedNotes">—</p>
                         </div>
 
+                    </div>
+                    <div class="status-actions">
+                        <label for="appointmentStatus">Update status</label>
+                        <select id="appointmentStatus" disabled>
+                            <option>Scheduled</option>
+                            <option>Confirmed</option>
+                            <option>Checked in</option>
+                            <option>In progress</option>
+                            <option>Completed</option>
+                            <option>Cancelled</option>
+                            <option>No-show</option>
+                        </select>
+                        <button id="updateStatusButton" type="button" disabled>Save status</button>
                     </div>
 
                 </div>
@@ -503,10 +440,10 @@
                 <div class="card schedule-card">
 
                     <div class="card-title">
-                        <h2>Today's Schedule (August 12, 2026)</h2>
+                        <h2 id="scheduleTitle">Schedule</h2>
                     </div>
 
-                    
+                    <div id="daySchedule" aria-live="polite">
         <div>
             <span>09:00 AM</span>
             <p>Juan D. Dela Cruz - Pediatric Check Up</p>
@@ -549,9 +486,7 @@
         </div>
     
 
-                    <a href="#" class="view-all">
-                        View Full Schedule →
-                    </a>
+                    </div>
 
                 </div>
 
@@ -582,33 +517,32 @@
 
             </div>
 
-            <form onsubmit="saveAppointment(event)">
+            <form id="appointmentForm">
+                <p class="form-error" id="appointmentFormError" role="alert"></p>
+                <input type="hidden" id="appointmentRecordId">
 
                 <div class="form-grid">
 
                     <div>
-                        <label>Patient Name</label>
-                        <input type="text" required>
+                        <label for="patientSelect">Patient</label>
+                        <select id="patientSelect" required>
+                            <option value="">Loading patients…</option>
+                        </select>
                     </div>
 
                     <div>
-                        <label>Patient ID</label>
-                        <input type="text" required>
+                        <label for="appointmentDate">Date</label>
+                        <input type="date" id="appointmentDate" required>
                     </div>
 
                     <div>
-                        <label>Date</label>
-                        <input type="date" required>
-                    </div>
-
-                    <div>
-                        <label>Time</label>
-                        <input type="time" required>
+                        <label for="appointmentTime">Time</label>
+                        <input type="time" id="appointmentTime" required>
                     </div>
 
                     <div class="full">
-                        <label>Type of Visit</label>
-                        <select required>
+                        <label for="appointmentService">Type of Visit</label>
+                        <select id="appointmentService" required>
                             <option value="">Select visit type</option>
                             <option>General Consultation</option>
                             <option>Follow-up Check Up</option>
@@ -619,8 +553,8 @@
                     </div>
 
                     <div class="full">
-                        <label>Reason / Notes</label>
-                        <textarea rows="4"></textarea>
+                        <label for="appointmentPurpose">Reason / Notes</label>
+                        <textarea id="appointmentPurpose" rows="4"></textarea>
                     </div>
 
                 </div>
@@ -631,7 +565,7 @@
                         Cancel
                     </button>
 
-                    <button type="submit" class="save-button">
+                    <button type="submit" class="save-button" id="saveAppointmentButton">
                         Save Appointment
                     </button>
 
@@ -644,7 +578,7 @@
     </div>
 
 
-    <script>
+    <script type="text/plain">
 
         function openAppointmentModal() {
             document.getElementById("appointmentModal").classList.add("show");
@@ -729,6 +663,7 @@
 
     </script>
 
+<script src="appointment-schedule.js"></script>
 <script src="sidebar.js"></script>
 <script src="auth-guard.js"></script>
 </body>

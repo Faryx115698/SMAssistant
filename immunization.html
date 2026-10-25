@@ -7,7 +7,7 @@
     <title>Immunization and Vaccination</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="immunization.css">
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
     <link rel="stylesheet" href="admin-profile.css">
@@ -153,7 +153,9 @@
                                 <option value="Completed">Completed</option>
                                 <option value="Scheduled">Scheduled</option>
                                 <option value="Due Soon">Due Soon</option>
+                                <option value="Due Today">Due Today</option>
                                 <option value="Overdue">Overdue</option>
+                                <option value="Voided">Voided</option>
                             </select>
 
                             <button class="filter-button" type="button" onclick="applyFilters()">
@@ -219,8 +221,7 @@
 
                         <div class="notice">
                             <i class="fa-solid fa-circle-info"></i>
-                            <span>Ensure all vaccines are given according to the National Immunization Program (NIP)
-                                schedule. Click the eye icon to view detailed record of each vaccine.</span>
+                            <span>Follow the clinic-approved schedule. Dates and dose guidance are managed by clinic staff; this page does not prescribe a vaccine schedule.</span>
                         </div>
 
                     </div>
@@ -231,24 +232,52 @@
                     <section class="schedule-panel card">
                         <div class="side-heading">
                             <div>
-                                <h2>Upcoming Vaccinations</h2>
-                                <p>Upcoming and overdue doses for the selected patient.</p>
+                                <h2>Clinic Due Queue</h2>
+                                <p>Scheduled, due today, and overdue doses across patients. "Due soon" means within 30 days; verify timing with clinic staff.</p>
                             </div>
+                            <button class="secondary-button" type="button" onclick="exportDueQueue()">Export contacts</button>
+                        </div>
+                        <div class="queue-filters">
+                            <input id="scheduleSearch" type="search" placeholder="Search patient or vaccine">
+                            <select id="scheduleStatusFilter" aria-label="Filter by due status">
+                                <option value="">All due statuses</option>
+                                <option value="Overdue">Overdue</option>
+                                <option value="Due Today">Due Today</option>
+                                <option value="Due Soon">Due Soon</option>
+                                <option value="Scheduled">Scheduled</option>
+                            </select>
                         </div>
                         <div id="upcomingVaccinations" class="upcoming-list">
-                            <p class="empty-state">Select a patient to view upcoming vaccinations.</p>
+                            <p class="empty-state">Loading clinic due queue...</p>
                         </div>
                     </section>
                 </div>
 
                 <div class="tab-panel" id="inventory">
-                    <div class="placeholder-panel">
-                        <div class="placeholder-icon">
-                            <i class="fa-solid fa-boxes-stacked"></i>
+                    <section class="inventory-panel card">
+                        <div class="side-heading">
+                            <div>
+                                <h2>Vaccine lots</h2>
+                                <p>Track received lots, expiry dates, available doses, and clinic stock movements.</p>
+                            </div>
+                            <button class="primary-button" type="button" onclick="openStockForm()"><i class="fa-solid fa-plus"></i> Receive stock</button>
                         </div>
-                        <h2>Vaccine Inventory</h2>
-                        <p>Use this section to monitor vaccine stock and availability.</p>
-                    </div>
+                        <p class="inventory-note">Vaccine stock is separate from medicine inventory. Only completed doses explicitly linked to a lot are deducted. Expired or depleted lots cannot be selected.</p>
+                        <p id="inventoryMessage" class="table-message" role="status">Loading vaccine inventory...</p>
+                        <div class="table-wrap">
+                            <table class="vaccination-table inventory-table">
+                                <thead><tr><th>Vaccine</th><th>Manufacturer</th><th>Lot / Batch</th><th>Expiry</th><th>Available doses</th><th>Received</th><th>Received date / by</th></tr></thead>
+                                <tbody id="vaccineInventoryBody"></tbody>
+                            </table>
+                        </div>
+                        <h3 class="table-title">Recent stock movements</h3>
+                        <div class="table-wrap">
+                            <table class="vaccination-table movement-table">
+                                <thead><tr><th>Date</th><th>Vaccine / lot</th><th>Movement</th><th>Quantity</th><th>Patient / staff</th><th>Notes</th></tr></thead>
+                                <tbody id="vaccineMovementBody"></tbody>
+                            </table>
+                        </div>
+                    </section>
                 </div>
 
                 <div class="tab-panel" id="reports">
@@ -256,7 +285,11 @@
                         <div class="side-heading">
                             <div>
                                 <h2>Immunization Coverage (This Year)</h2>
-                                <p>Completed doses compared with all recorded doses this year.</p>
+                                <p>Completed doses compared with all recorded doses this year. This is a record count, not a population coverage estimate.</p>
+                            </div>
+                            <div class="report-actions">
+                                <button class="secondary-button" type="button" onclick="exportImmunizationReport()">Export CSV</button>
+                                <button class="secondary-button" type="button" onclick="window.print()">Print / Save PDF</button>
                             </div>
                         </div>
                         <div class="coverage-content">
@@ -273,6 +306,13 @@
                             </div>
                         </div>
                         <p id="reportMessage" class="table-message" hidden></p>
+                        <h3 class="table-title">Breakdown by vaccine</h3>
+                        <div class="table-wrap">
+                            <table class="vaccination-table report-table">
+                                <thead><tr><th>Vaccine</th><th>Completed this year</th><th>Scheduled / due</th><th>Voided</th><th>Total this year</th></tr></thead>
+                                <tbody id="reportBreakdownBody"></tbody>
+                            </table>
+                        </div>
                     </section>
                 </div>
 
@@ -284,7 +324,7 @@
     <div class="modal" id="vaccinationModal">
         <div class="modal-box">
             <div class="modal-header">
-                <h2>Add Vaccination Record</h2>
+                <h2 id="vaccinationModalTitle">Add Vaccination Record</h2>
                 <button type="button" onclick="closeModal()">&times;</button>
             </div>
 
@@ -294,7 +334,8 @@
                 <div class="form-grid">
                     <label>
                         Vaccine
-                        <input type="text" name="vaccine" required placeholder="e.g. MMR">
+                        <input type="text" name="vaccine" list="vaccineCatalog" required placeholder="Enter clinic-approved vaccine name">
+                        <datalist id="vaccineCatalog"></datalist>
                     </label>
 
                     <label>
@@ -334,9 +375,25 @@
                             <option value="Scheduled">Scheduled</option>
                             <option value="Due Soon">Due Soon</option>
                             <option value="Overdue">Overdue</option>
+                            <option value="Voided">Voided</option>
+                        </select>
+                    </label>
+                    <label>
+                        Dose source
+                        <select name="administration_source" id="administrationSource">
+                            <option value="external">Given elsewhere / stock not tracked</option>
+                            <option value="clinic">Administered at this clinic from a lot</option>
+                        </select>
+                    </label>
+                    <label id="stockLotField" hidden>
+                        Vaccine lot (required for clinic doses)
+                        <select name="inventory_lot_id" id="inventoryLotSelector">
+                            <option value="">Select an available lot</option>
                         </select>
                     </label>
                 </div>
+                <p class="form-help">Enter the clinic-approved dose and next-dose date. Selecting a clinic lot deducts one dose only when the record is completed; updates and voids create an audit trail and restore or reassign stock transactionally.</p>
+                <p id="vaccinationFormMessage" class="form-message" role="alert" hidden></p>
 
                 <div class="modal-actions">
                     <button class="cancel-button" type="button" onclick="closeModal()">Cancel</button>
@@ -346,385 +403,50 @@
         </div>
     </div>
 
-    <script>
-        let activePatient = null;
-        let vaccinationRecords = [];
-        let patientOptions = [];
+    <div class="modal" id="auditModal">
+        <div class="modal-box audit-modal-box">
+            <div class="modal-header">
+                <h2>Record details and change history</h2>
+                <button type="button" onclick="closeAuditModal()" aria-label="Close">&times;</button>
+            </div>
+            <div class="audit-content">
+                <div id="recordDetails"></div>
+                <h3>Change history</h3>
+                <div id="recordAuditHistory"><p class="empty-state">Loading record history...</p></div>
+            </div>
+        </div>
+    </div>
 
-        function escapeHtml(value) {
-            return String(value == null ? "" : value).replace(/[&<>"']/g, function (character) {
-                return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character];
-            });
-        }
+    <div class="modal" id="stockModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Receive vaccine stock</h2>
+                <button type="button" onclick="closeStockForm()" aria-label="Close">&times;</button>
+            </div>
+            <form id="stockForm">
+                <div class="form-grid">
+                    <label>Vaccine name<input name="vaccine" list="vaccineCatalog" required maxlength="120"></label>
+                    <label>Manufacturer<input name="manufacturer" maxlength="120"></label>
+                    <label>Lot / batch number<input name="lot_number" required maxlength="120"></label>
+                    <label>Expiry date<input name="expiry_date" type="date" required></label>
+                    <label>Quantity received<input name="quantity" type="number" min="1" step="1" required></label>
+                    <label>Received date<input name="received_date" type="date" required></label>
+                    <label>Received by<input name="received_by" required maxlength="120"></label>
+                    <label>Notes<input name="notes" maxlength="500"></label>
+                </div>
+                <p id="stockFormMessage" class="form-message" role="alert" hidden></p>
+                <div class="modal-actions">
+                    <button class="cancel-button" type="button" onclick="closeStockForm()">Cancel</button>
+                    <button class="save-button" type="submit">Save stock receipt</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        function saveActivePatient(patient) {
-            activePatient = patient;
-            if (patient) {
-                localStorage.setItem("sm_active_patient_id", String(patient.id));
-                localStorage.setItem("sm_active_patient", JSON.stringify(patient));
-            } else {
-                localStorage.removeItem("sm_active_patient_id");
-                localStorage.removeItem("sm_active_patient");
-            }
-        }
-
-        function formatDate(value) {
-            if (!value) return "—";
-            const date = new Date(value + "T00:00:00");
-            return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "short",
-                day: "numeric"
-            });
-        }
-
-        function showTableMessage(message) {
-            document.getElementById("vaccinationBody").innerHTML =
-                '<tr><td colspan="9" class="table-message">' + escapeHtml(message) + "</td></tr>";
-        }
-
-        function getActivePatient() {
-            try {
-                const patient = JSON.parse(localStorage.getItem("sm_active_patient") || "null");
-                return patient && patient.id ? patient : null;
-            } catch (error) {
-                console.warn("Could not read the selected patient:", error);
-                return null;
-            }
-        }
-
-        function setPatientDetails(patient) {
-            const name = [patient.first_name, patient.middle_name, patient.last_name, patient.suffix]
-                .filter(Boolean).join(" ");
-            const birthDate = patient.birth_date || "";
-            const age = patient.age || (birthDate ? calculatePatientAge(birthDate) : "");
-            document.getElementById("selectedPatientName").textContent = name || "Selected patient";
-            document.getElementById("selectedPatientMeta").innerHTML =
-                "<span>Patient ID: " + escapeHtml(patient.patient_code || patient.id) + "</span>" +
-                (age ? "<span>|</span><span>" + escapeHtml(age) + " yrs</span>" : "") +
-                (birthDate ? "<span>|</span><span>" + escapeHtml(formatDate(birthDate)) + "</span>" : "");
-            document.getElementById("selectedPatientContact").innerHTML = [
-                patient.contact_number ? '<span><i class="fa-solid fa-phone"></i>' + escapeHtml(patient.contact_number) + "</span>" : "",
-                patient.address ? '<span><i class="fa-solid fa-location-dot"></i>' + escapeHtml(patient.address) + "</span>" : ""
-            ].join("");
-            document.getElementById("viewPatientProfile").href =
-                "patient-registration.html?patient_id=" + encodeURIComponent(patient.id);
-            document.getElementById("vaccinationPatientId").value = patient.id;
-        }
-
-        function calculatePatientAge(birthDate) {
-            const born = new Date(birthDate + "T00:00:00");
-            if (Number.isNaN(born.getTime())) return "";
-            const today = new Date();
-            let age = today.getFullYear() - born.getFullYear();
-            if (today.getMonth() < born.getMonth() ||
-                (today.getMonth() === born.getMonth() && today.getDate() < born.getDate())) age--;
-            return age >= 0 ? age : "";
-        }
-
-        function statusClass(status) {
-            const value = String(status || "").toLowerCase();
-            if (value === "completed") return "status-completed";
-            if (value === "scheduled") return "status-scheduled";
-            if (value === "due soon") return "status-due";
-            return "status-overdue";
-        }
-
-        function getScheduleStatus(record) {
-            const status = record.status || "Scheduled";
-            if (!record.next_dose) return status;
-            const dueDate = new Date(record.next_dose + "T00:00:00");
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            if (!Number.isNaN(dueDate.getTime()) && dueDate < today) return "Overdue";
-            return String(status).toLowerCase() === "completed" ? "Scheduled" : status;
-        }
-
-        function renderRecords() {
-            const body = document.getElementById("vaccinationBody");
-            if (!vaccinationRecords.length) {
-                showTableMessage("No vaccination records found for this patient.");
-                return;
-            }
-            body.innerHTML = vaccinationRecords.map(function (record) {
-                const status = record.status || "Scheduled";
-                const age = record.age_at_dose || "—";
-                return '<tr data-vaccine="' + escapeHtml((record.vaccine || "").toLowerCase()) +
-                    '" data-status="' + escapeHtml(status.toLowerCase()) +
-                    '" data-age="' + escapeHtml(age.toLowerCase()) + '">' +
-                    "<td><strong>" + escapeHtml(record.vaccine) + "</strong></td>" +
-                    "<td>" + escapeHtml(record.dose) + "</td>" +
-                    "<td>" + escapeHtml(formatDate(record.date_given)) + "</td>" +
-                    "<td>" + escapeHtml(age) + "</td>" +
-                    "<td><code>" + escapeHtml(record.batch_no || "—") + "</code></td>" +
-                    "<td>" + escapeHtml(record.given_by || "—") + "</td>" +
-                    "<td>" + escapeHtml(formatDate(record.next_dose)) + "</td>" +
-                    '<td><span class="status-pill ' + statusClass(status) + '">' + escapeHtml(status) + "</span></td>" +
-                    '<td><button class="btn-icon" type="button" title="View record" aria-label="View record" onclick="viewRecord(this)">&#9432;</button></td>' +
-                    "</tr>";
-            }).join("");
-            applyFilters();
-        }
-
-        function renderSchedule() {
-            const target = document.getElementById("upcomingVaccinations");
-            const upcoming = vaccinationRecords.filter(function (record) {
-                return Boolean(record.next_dose);
-            }).sort(function (a, b) {
-                return String(a.next_dose).localeCompare(String(b.next_dose));
-            });
-            if (!upcoming.length) {
-                target.innerHTML = '<p class="empty-state">No upcoming vaccinations for this patient.</p>';
-                return;
-            }
-            target.innerHTML = upcoming.map(function (record) {
-                const status = getScheduleStatus(record);
-                return '<div class="schedule-item">' +
-                    '<div class="schedule-dot ' + statusClass(status) + '"></div>' +
-                    '<div class="schedule-details"><strong>' + escapeHtml(record.vaccine) +
-                    " (" + escapeHtml(record.dose) + ')</strong><span>Next due: ' +
-                    escapeHtml(formatDate(record.next_dose)) + "</span></div>" +
-                    '<span class="status-pill ' + statusClass(status) + '">' + escapeHtml(status) + "</span></div>";
-            }).join("");
-        }
-
-        async function loadVaccinations() {
-            const storedPatient = getActivePatient();
-            const addButton = document.querySelector(".patient-actions .add-button");
-            if (!window.sb || typeof isConfigured === "undefined" || !isConfigured) {
-                showTableMessage("Vaccination data is unavailable because Supabase is not configured.");
-                addButton.disabled = true;
-                return;
-            }
-
-            const patientsResponse = await window.sb.from("patients").select("*").order("last_name", { ascending: true });
-            if (patientsResponse.error) throw patientsResponse.error;
-            patientOptions = patientsResponse.data || [];
-            const selector = document.getElementById("patientSelector");
-            selector.innerHTML = '<option value="">Select a patient</option>' + patientOptions.map(function (patient) {
-                const name = [patient.first_name, patient.middle_name, patient.last_name, patient.suffix]
-                    .filter(Boolean).join(" ") || "Patient";
-                return '<option value="' + escapeHtml(patient.id) + '">' +
-                    escapeHtml(name + " (" + (patient.patient_code || patient.id) + ")") + "</option>";
-            }).join("");
-            activePatient = patientOptions.find(function (patient) {
-                return storedPatient && String(patient.id) === String(storedPatient.id);
-            }) || null;
-            selector.value = activePatient ? String(activePatient.id) : "";
-
-            if (!activePatient) {
-                document.getElementById("selectedPatientName").textContent = "No patient selected";
-                document.getElementById("selectedPatientMeta").innerHTML =
-                    "<span>Choose a patient from the selector above to view vaccination history.</span>";
-                document.getElementById("viewPatientProfile").href = "patient-registration.html";
-                addButton.disabled = true;
-                showTableMessage("No patient selected. Choose a patient from the selector above.");
-                document.getElementById("upcomingVaccinations").innerHTML =
-                    '<p class="empty-state">Select a patient to view upcoming vaccinations.</p>';
-                await loadReportSummarySafely();
-                return;
-            }
-
-            setPatientDetails(activePatient);
-            addButton.disabled = false;
-            const recordsResponse = await window.sb.from("immunization_records").select(
-                "id, patient_id, vaccine, dose, date_given, age_at_dose, batch_no, given_by, next_dose, status"
-            ).eq("patient_id", activePatient.id).order("date_given", { ascending: false, nullsFirst: false });
-            if (recordsResponse.error) throw recordsResponse.error;
-            vaccinationRecords = recordsResponse.data || [];
-            renderRecords();
-            renderSchedule();
-            await loadReportSummarySafely();
-        }
-
-        async function loadReportSummary() {
-            const [patientsResponse, recordsResponse] = await Promise.all([
-                window.sb.from("patients").select("id", { count: "exact", head: true }),
-                window.sb.from("immunization_records").select("status, date_given, next_dose")
-            ]);
-            if (patientsResponse.error) throw patientsResponse.error;
-            if (recordsResponse.error) throw recordsResponse.error;
-
-            const records = recordsResponse.data || [];
-            const year = new Date().getFullYear();
-            const thisYear = records.filter(function (record) {
-                return record.date_given && String(record.date_given).slice(0, 4) === String(year);
-            });
-            const completed = thisYear.filter(function (record) {
-                return String(record.status || "").toLowerCase() === "completed";
-            }).length;
-            const percent = thisYear.length ? Math.round(completed / thisYear.length * 100) : 0;
-            const dueThisMonth = records.filter(function (record) {
-                if (!record.next_dose) return false;
-                const due = new Date(record.next_dose + "T00:00:00");
-                const today = new Date();
-                return due.getFullYear() === today.getFullYear() && due.getMonth() === today.getMonth();
-            }).length;
-            const overdue = records.filter(function (record) {
-                return String(getScheduleStatus(record)).toLowerCase() === "overdue";
-            }).length;
-            const completedTotal = records.filter(function (record) {
-                return String(record.status || "").toLowerCase() === "completed";
-            }).length;
-            document.getElementById("statTotalPatients").textContent = patientsResponse.count || 0;
-            document.getElementById("statFullyImmunized").textContent = completedTotal;
-            document.getElementById("statDueThisMonth").textContent = dueThisMonth;
-            document.getElementById("statOverdue").textContent = overdue;
-            document.getElementById("statVaccinesToday").textContent =
-                records.filter(function (record) {
-                    return record.next_dose === new Date().toISOString().slice(0, 10) &&
-                        String(record.status || "").toLowerCase() !== "completed";
-                }).length;
-            document.getElementById("coveragePercent").textContent = percent + "%";
-            document.getElementById("coverageDonut").style.setProperty("--coverage", percent + "%");
-            document.getElementById("coverageCompleted").textContent = completed;
-            document.getElementById("coverageOther").textContent = thisYear.length - completed;
-            document.getElementById("coverageTotal").textContent = thisYear.length;
-        }
-
-        async function loadReportSummarySafely() {
-            const message = document.getElementById("reportMessage");
-            try {
-                await loadReportSummary();
-                message.hidden = true;
-            } catch (error) {
-                console.error("Could not load immunization report summary:", error);
-                message.textContent = "Report data is unavailable: " + (error.message || "Unknown database error");
-                message.hidden = false;
-            }
-        }
-
-        function openModal() {
-            if (!activePatient) {
-                alert("Select a patient before adding a vaccination record.");
-                return;
-            }
-            document.getElementById("vaccinationModal").classList.add("show");
-        }
-
-        function closeModal() {
-            document.getElementById("vaccinationModal").classList.remove("show");
-        }
-
-        document.getElementById("vaccinationModal").addEventListener("click", function (e) {
-            if (e.target === this) closeModal();
-        });
-
-        document.getElementById("patientSelector").addEventListener("change", function (event) {
-            const patient = patientOptions.find(function (item) {
-                return String(item.id) === event.target.value;
-            });
-            saveActivePatient(patient || null);
-            loadVaccinations().catch(function (error) {
-                console.error("Could not load the selected patient's immunization data:", error);
-                showTableMessage("Could not load vaccination data: " + (error.message || "Unknown database error"));
-            });
-        });
-
-        function applyFilters() {
-            const search = document.getElementById("vaccineSearch").value.toLowerCase().trim();
-            const status = document.getElementById("statusFilter").value.toLowerCase();
-            const age = document.getElementById("ageFilter").value.toLowerCase();
-
-            document.querySelectorAll("#vaccinationBody tr").forEach(function (row) {
-                const vaccine = row.dataset.vaccine || "";
-                const rowStatus = (row.dataset.status || "").toLowerCase();
-                const rowAge = (row.dataset.age || "").toLowerCase();
-
-                const matchesSearch = !search || vaccine.includes(search);
-                const matchesStatus = !status || rowStatus === status;
-
-                let matchesAge = true;
-                if (age === "child") {
-                    matchesAge = /day|month|year/.test(rowAge) && !/3[0-9]|4[0-9]|5[0-9]|6[0-9]/.test(rowAge);
-                } else if (age === "adult") {
-                    matchesAge = /3[0-9]|4[0-9]|5[0-9]|6[0-9]|adult/.test(rowAge);
-                }
-
-                row.style.display = matchesSearch && matchesStatus && matchesAge ? "" : "none";
-            });
-        }
-
-        document.getElementById("vaccineSearch").addEventListener("input", applyFilters);
-        document.getElementById("statusFilter").addEventListener("change", applyFilters);
-        document.getElementById("ageFilter").addEventListener("change", applyFilters);
-
-        document.querySelectorAll(".record-tab").forEach(function (tab) {
-            tab.addEventListener("click", function () {
-                document.querySelectorAll(".record-tab").forEach(function (item) {
-                    item.classList.remove("active");
-                });
-
-                document.querySelectorAll(".tab-panel").forEach(function (panel) {
-                    panel.classList.remove("active");
-                });
-
-                this.classList.add("active");
-                document.getElementById(this.dataset.tab).classList.add("active");
-            });
-        });
-
-        function viewRecord(button) {
-            const row = button.closest("tr");
-            const cells = row.querySelectorAll("td");
-
-            alert(
-                "Vaccine: " + cells[0].innerText.trim() +
-                "\nDose: " + cells[1].innerText.trim() +
-                "\nDate Given: " + cells[2].innerText.trim() +
-                "\nAge at Dose: " + cells[3].innerText.trim() +
-                "\nBatch No.: " + cells[4].innerText.trim() +
-                "\nGiven By: " + cells[5].innerText.trim() +
-                "\nNext Dose: " + cells[6].innerText.trim() +
-                "\nStatus: " + cells[7].innerText.trim()
-            );
-        }
-        document.getElementById("vaccinationForm").addEventListener("submit", async function (event) {
-            event.preventDefault();
-            if (!activePatient) return;
-            if (!window.sb || typeof isConfigured === "undefined" || !isConfigured) {
-                alert("Cannot save the vaccination record because Supabase is not configured.");
-                return;
-            }
-            const form = event.currentTarget;
-            const fields = new FormData(form);
-            const record = {
-                patient_id: activePatient.id,
-                vaccine: String(fields.get("vaccine") || "").trim(),
-                dose: String(fields.get("dose") || "").trim(),
-                date_given: fields.get("date_given") || null,
-                age_at_dose: fields.get("age_at_dose") || null,
-                batch_no: fields.get("batch_no") || null,
-                given_by: fields.get("given_by") || null,
-                next_dose: fields.get("next_dose") || null,
-                status: fields.get("status") || "Completed"
-            };
-            const saveButton = form.querySelector(".save-button");
-            saveButton.disabled = true;
-            try {
-                const response = await window.sb.from("immunization_records").insert(record);
-                if (response.error) throw response.error;
-                closeModal();
-                form.reset();
-                await loadVaccinations();
-            } catch (error) {
-                console.error("Could not save vaccination record:", error);
-                alert("Failed to save vaccination record: " + (error.message || "Unknown database error"));
-            } finally {
-                saveButton.disabled = false;
-            }
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            loadVaccinations().catch(function (error) {
-                console.error("Could not load immunization data:", error);
-                showTableMessage("Could not load vaccination data: " + (error.message || "Unknown database error"));
-            });
-        });
-    </script>
+    <div id="pageMessage" class="page-message" role="alert" hidden></div>
+    <script src="immunization.js"></script>
     <script src="sidebar.js"></script>
     <script src="auth-guard.js"></script>
-    
 </body>
 
 </html>

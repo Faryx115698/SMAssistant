@@ -1456,3 +1456,325 @@ a {
 #records.tab-panel.active {
     display: grid;
 }
+
+body {
+    font-size: 15px;
+}
+
+.summary-card span,
+.summary-card small,
+.record-tab,
+.filters select,
+.search-field input,
+.filter-button,
+.patient-meta,
+.patient-contact,
+.view-profile,
+.add-button,
+.table-title,
+.vaccination-table th,
+.vaccination-table td,
+.status-pill,
+.legend,
+.notice,
+.side-heading h3,
+.side-heading a,
+.upcoming-date,
+.upcoming-date small,
+.upcoming-info strong,
+.upcoming-info span,
+.view-schedule,
+.empty-state,
+.coverage-legend div,
+.coverage-legend b,
+.alert-row,
+.placeholder-panel p,
+.form-grid label,
+.form-grid input,
+.form-grid select,
+.cancel-button,
+.save-button {
+    font-size: 13px;
+}
+
+.record-tab {
+    padding: 15px 10px;
+}
+
+.summary-card span,
+.summary-card small {
+    white-space: normal;
+}
+
+.table-title {
+    margin: 20px 0 10px;
+}
+
+.vaccination-table {
+    table-layout: auto;
+    min-width: 920px;
+}
+
+.vaccination-table th,
+.vaccination-table td {
+    line-height: 1.45;
+}
+
+.row-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #c4d2e1;
+    border-radius: 4px;
+    background: #fff;
+    color: #0759b7;
+}
+
+.btn-icon:hover,
+.secondary-button:hover {
+    background: #edf5ff;
+}
+
+.danger-action {
+    color: #b4232f;
+}
+
+.status-voided {
+    background: #eceff3;
+    color: #596273;
+}
+
+.schedule-panel,
+.inventory-panel,
+.coverage-card {
+    margin: 18px;
+    padding: 22px;
+}
+
+.side-heading h2 {
+    margin-bottom: 5px;
+    color: #28354a;
+    font-size: 20px;
+}
+
+.side-heading p,
+.inventory-note,
+.form-help {
+    color: #596273;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.inventory-note {
+    margin: 12px 0;
+    padding: 10px 12px;
+    border-radius: 5px;
+    background: #edf5ff;
+}
+
+.primary-button,
+.secondary-button {
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid #aebed0;
+    border-radius: 5px;
+    background: #fff;
+    color: #0755aa;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.primary-button {
+    border-color: #0759b7;
+    background: #0759b7;
+    color: #fff;
+}
+
+.report-actions,
+.queue-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.queue-filters {
+    margin: 12px 0;
+}
+
+.queue-filters input,
+.queue-filters select {
+    min-height: 38px;
+    padding: 8px 10px;
+    border: 1px solid #b8c6d5;
+    border-radius: 4px;
+    color: #30394d;
+    font: inherit;
+}
+
+.queue-filters input {
+    flex: 1 1 250px;
+}
+
+.queue-table {
+    min-width: 880px;
+}
+
+.queue-table td:last-child {
+    white-space: nowrap;
+}
+
+.stock-low {
+    display: inline-block;
+    padding: 3px 6px;
+    border-radius: 4px;
+    background: #fff0d4;
+    color: #8b6114;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.page-message {
+    position: fixed;
+    z-index: 10000;
+    right: 20px;
+    bottom: 20px;
+    max-width: min(560px, calc(100vw - 40px));
+    padding: 13px 16px;
+    border: 1px solid #a7d9b5;
+    border-radius: 6px;
+    background: #e2f7e8;
+    color: #13773a;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, .15);
+    font-size: 14px;
+}
+
+.page-message.error,
+.form-message {
+    border-color: #e7b1b5;
+    background: #fff0f1;
+    color: #9f1d28;
+}
+
+.form-message {
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.form-help {
+    margin-top: 14px;
+}
+
+.audit-modal-box {
+    width: min(800px, 100%);
+}
+
+.audit-content {
+    padding: 18px;
+}
+
+.audit-content h3 {
+    margin: 20px 0 10px;
+    font-size: 16px;
+}
+
+.record-detail-grid {
+    display: grid;
+    grid-template-columns: minmax(120px, .4fr) 1fr;
+    gap: 8px 14px;
+    font-size: 13px;
+}
+
+.record-detail-grid dt {
+    color: #596273;
+    font-weight: 700;
+}
+
+.audit-entry {
+    padding: 12px 0;
+    border-top: 1px solid #d7dee7;
+    font-size: 13px;
+}
+
+.audit-entry time {
+    display: block;
+    margin-top: 4px;
+    color: #596273;
+}
+
+.audit-entry details {
+    margin-top: 8px;
+}
+
+.audit-entry pre {
+    max-height: 240px;
+    overflow: auto;
+    margin-top: 8px;
+    padding: 10px;
+    background: #f4f6fa;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.modal[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 700px) {
+    .schedule-panel,
+    .inventory-panel,
+    .coverage-card {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .side-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .report-actions {
+        width: 100%;
+    }
+
+    .report-actions button {
+        flex: 1;
+    }
+
+    .queue-filters {
+        align-items: stretch;
+        flex-direction: column;
+    }
+}
+
+@media print {
+    .sidebar,
+    .header-right,
+    .record-tabs,
+    .filters,
+    .patient-actions,
+    .queue-filters,
+    .primary-button,
+    .secondary-button,
+    .row-actions,
+    .notice,
+    .modal,
+    .page-message {
+        display: none !important;
+    }
+
+    .main-content {
+        margin: 0;
+        width: 100%;
+        padding: 0;
+    }
+}

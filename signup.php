@@ -1,3 +1,3 @@
 <?php
-header("Location: signup.html", true, 301);
+header("Location: login.html", true, 302);
 exit;
