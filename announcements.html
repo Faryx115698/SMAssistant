@@ -52,7 +52,7 @@
             </div>
             <div>
                 <small>TOTAL ANNOUNCEMENTS</small>
-                <strong>28</strong>
+                <strong id="annTotalCount">0</strong>
                 <span>All time</span>
             </div>
         </div>
@@ -63,7 +63,7 @@
             </div>
             <div>
                 <small>ACTIVE ANNOUNCEMENTS</small>
-                <strong>6</strong>
+                <strong id="annActiveCount">0</strong>
                 <span>Currently published</span>
             </div>
         </div>
@@ -74,7 +74,7 @@
             </div>
             <div>
                 <small>UPCOMING EVENTS</small>
-                <strong>5</strong>
+                <strong id="annScheduledCount">0</strong>
                 <span>In the next 30 days</span>
             </div>
         </div>
@@ -84,9 +84,9 @@
                 <i class="fa-solid fa-users"></i>
             </div>
             <div>
-                <small>TOTAL REACH</small>
-                <strong>1,256</strong>
-                <span>This month</span>
+                <small>EXPIRED</small>
+                <strong id="annExpiredCount">0</strong>
+                <span>Past expiry</span>
             </div>
         </div>
 
@@ -96,226 +96,36 @@
 
         <div class="announcement-main card">
 
-            <div class="tabs">
-                <button class="active">All Announcements</button>
-                <button>General News</button>
-                <button>Health Reminders</button>
-                <button>Events</button>
-                <button>Programs & Services</button>
-                <button>Emergency Alerts</button>
-            </div>
-
-            <div class="announcement-tools">
-
-                <input
-                    type="text"
-                    id="searchAnnouncement"
-                    placeholder="Search announcements..."
-                    onkeyup="searchAnnouncements()"
-                >
-
-                <select>
-                    <option>All Categories</option>
+                        <div class="announcement-tools">
+                <input type="text" id="searchAnnouncement" placeholder="Search announcements..." oninput="applyAnnouncementFilters()">
+                <select id="announcementCategoryFilter" onchange="applyAnnouncementFilters()">
+                    <option value="">All Categories</option>
                     <option>General News</option>
-                    <option>Health Reminder</option>
+                    <option>Health Reminders</option>
                     <option>Events</option>
-                    <option>Programs</option>
-                    <option>Emergency Alert</option>
+                    <option>Programs &amp; Services</option>
+                    <option>Emergency Alerts</option>
                 </select>
-
-                <select>
-                    <option>All Status</option>
+                <select id="announcementStatusFilter" onchange="applyAnnouncementFilters()">
+                    <option value="">All Status</option>
                     <option>Active</option>
-                    <option>Expired</option>
                     <option>Scheduled</option>
+                    <option>Expired</option>
+                    <option>Draft</option>
+                    <option>Archived</option>
                 </select>
-
-                <button class="filter-button">
-                    <i class="fa-solid fa-filter"></i> Filter
-                </button>
-
-                <button class="new-button" onclick="openModal()">
-                    <i class="fa-solid fa-plus"></i> New Announcement
-                </button>
-
+                <button class="filter-button" type="button" onclick="applyAnnouncementFilters()"><i class="fa-solid fa-filter"></i> Filter</button>
+                <button class="new-button" type="button" onclick="openAnnouncementModal()"><i class="fa-solid fa-plus"></i> New Announcement</button>
             </div>
 
             <div id="announcementList">
 
-                <article class="announcement-item">
-                    <div class="announcement-icon blue-icon">
-                        <i class="fa-solid fa-syringe"></i>
-                    </div>
+</div>
 
-                    <div class="announcement-content">
-                        <h2>Free Flu Vaccination Day</h2>
-                        <p>We will be having a free flu vaccination for all center residents and individuals with health conditions.</p>
+<div class="pagination">
+                <span id="announcementPaginationInfo">Showing 0 announcements</span>
 
-                        <div class="announcement-meta">
-                            <span>May 3, 2026</span>
-                            <span>By Admin</span>
-                            <b>Immunization</b>
-                        </div>
-                    </div>
-
-                    <div class="announcement-status">
-                        <span class="active-status">Active</span>
-                        <small>362 views</small>
-                    </div>
-
-                    <span class="priority high">High</span>
-
-                    <button class="more-button">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                </article>
-
-                <article class="announcement-item">
-                    <div class="announcement-icon pink-icon">
-                        <i class="fa-solid fa-person-pregnant"></i>
-                    </div>
-
-                    <div class="announcement-content">
-                        <h2>Prenatal Check-up Schedule</h2>
-                        <p>All pregnant women are encouraged to attend their regular prenatal check-ups.</p>
-
-                        <div class="announcement-meta">
-                            <span>May 6, 2026</span>
-                            <span>By Midwife Cyron</span>
-                            <b>Maternal Health</b>
-                        </div>
-                    </div>
-
-                    <div class="announcement-status">
-                        <span class="active-status">Active</span>
-                        <small>235 views</small>
-                    </div>
-
-                    <span class="priority medium">Medium</span>
-
-                    <button class="more-button">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                </article>
-
-                <article class="announcement-item">
-                    <div class="announcement-icon yellow-icon">
-                        <i class="fa-solid fa-tooth"></i>
-                    </div>
-
-                    <div class="announcement-content">
-                        <h2>Dental Mission - May 22, 2026</h2>
-                        <p>Free dental check-up, cleaning, and basic supplies for children and adults.</p>
-
-                        <div class="announcement-meta">
-                            <span>May 3, 2026</span>
-                            <span>By Admin</span>
-                            <b>Event</b>
-                        </div>
-                    </div>
-
-                    <div class="announcement-status">
-                        <span class="active-status">Active</span>
-                        <small>189 views</small>
-                    </div>
-
-                    <span class="priority medium">Medium</span>
-
-                    <button class="more-button">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                </article>
-
-                <article class="announcement-item">
-                    <div class="announcement-icon blue-icon">
-                        <i class="fa-solid fa-pills"></i>
-                    </div>
-
-                    <div class="announcement-content">
-                        <h2>Medicine Stock Availability Update</h2>
-                        <p>Regular supply of medicines and essential items are now available.</p>
-
-                        <div class="announcement-meta">
-                            <span>Apr 30, 2026</span>
-                            <span>By Pharmacist</span>
-                            <b>Service</b>
-                        </div>
-                    </div>
-
-                    <div class="announcement-status">
-                        <span class="expired-status">Expired</span>
-                        <small>412 views</small>
-                    </div>
-
-                    <span class="priority low">Low</span>
-
-                    <button class="more-button">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                </article>
-
-                <article class="announcement-item">
-                    <div class="announcement-icon red-icon">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-
-                    <div class="announcement-content">
-                        <h2>Heat Index Advisory</h2>
-                        <p>High heat index reported this week. Stay hydrated and avoid prolonged exposure.</p>
-
-                        <div class="announcement-meta">
-                            <span>Apr 28, 2026</span>
-                            <span>By Admin</span>
-                            <b>Alert</b>
-                        </div>
-                    </div>
-
-                    <div class="announcement-status">
-                        <span class="expired-status">Expired</span>
-                        <small>351 views</small>
-                    </div>
-
-                    <span class="priority high">High</span>
-
-                    <button class="more-button">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                </article>
-
-                <article class="announcement-item">
-                    <div class="announcement-icon green-icon">
-                        <i class="fa-solid fa-ban"></i>
-                    </div>
-
-                    <div class="announcement-content">
-                        <h2>World No Tobacco Day - May 31</h2>
-                        <p>Let's work together to promote a smoke-free community and encourage healthy living.</p>
-
-                        <div class="announcement-meta">
-                            <span>Apr 21, 2026</span>
-                            <span>By Health Educator</span>
-                            <b>Health Center</b>
-                        </div>
-                    </div>
-
-                    <div class="announcement-status">
-                        <span class="scheduled-status">Scheduled</span>
-                        <small>97 views</small>
-                    </div>
-
-                    <span class="priority medium">Medium</span>
-
-                    <button class="more-button">
-                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                    </button>
-                </article>
-
-            </div>
-
-            <div class="pagination">
-                <span>Showing 1 to 6 of 28 announcements</span>
-
-                <div>
+                <div id="announcementPagination">
                     <button>‹</button>
                     <button class="selected">1</button>
                     <button>2</button>
@@ -326,9 +136,9 @@
 
                 <label>
                     Rows per page
-                    <select>
-                        <option>10</option>
-                        <option>20</option>
+                    <select id="announcementPageSize" onchange="changeAnnouncementPageSize(this.value)">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
                         <option>30</option>
                     </select>
                 </label>
@@ -397,57 +207,6 @@
                 </div>
             </div>
 
-            <div class="card side-card">
-                <div class="side-heading">
-                    <h2>Announcement Categories</h2>
-                    <a href="#">Manage</a>
-                </div>
-
-                <div class="category">
-                    <span>General News</span>
-                    <b>8</b>
-                </div>
-
-                <div class="category">
-                    <span>Health Reminders</span>
-                    <b>7</b>
-                </div>
-
-                <div class="category">
-                    <span>Events</span>
-                    <b>6</b>
-                </div>
-
-                <div class="category">
-                    <span>Programs & Services</span>
-                    <b>4</b>
-                </div>
-
-                <div class="category">
-                    <span>Emergency Alerts</span>
-                    <b>3</b>
-                </div>
-            </div>
-
-            <div class="card side-card">
-                <div class="side-heading">
-                    <h2>Stay Connected</h2>
-                </div>
-
-                <p class="connected-text">Stay updated with our channels.</p>
-
-                <div class="social-buttons">
-                    <button>
-                        <i class="fa-solid fa-comment-sms"></i>
-                        SMS Notifications
-                    </button>
-
-                    <button>
-                        <i class="fa-brands fa-facebook"></i>
-                        Follow us on Facebook
-                    </button>
-                </div>
-            </div>
 
         </aside>
 
@@ -465,67 +224,66 @@
 
         <div class="modal-header">
             <h2>New Announcement</h2>
-            <button onclick="closeModal()">×</button>
+            <button onclick="closeAnnouncementModal()">×</button>
         </div>
 
-        <form onsubmit="saveAnnouncement(event)">
+                <form onsubmit="saveAnnouncement(event)">
+            <input type="hidden" id="annId">
 
             <label>Title</label>
-            <input type="text" required placeholder="Announcement title">
+            <input type="text" id="annTitle" required placeholder="Announcement title">
 
             <label>Category</label>
-            <select required>
+            <select id="annCategory" required>
                 <option value="">Select category</option>
                 <option>General News</option>
-                <option>Health Reminder</option>
+                <option>Health Reminders</option>
                 <option>Events</option>
-                <option>Programs & Services</option>
-                <option>Emergency Alert</option>
+                <option>Programs &amp; Services</option>
+                <option>Emergency Alerts</option>
             </select>
 
+            <label>Priority</label>
+            <select id="annPriority" required>
+                <option>Low</option>
+                <option selected>Medium</option>
+                <option>High</option>
+                <option>Urgent</option>
+            </select>
+
+            <label>Status</label>
+            <select id="annStatus" required>
+                <option>Draft</option>
+                <option>Scheduled</option>
+                <option selected>Active</option>
+                <option>Expired</option>
+                <option>Archived</option>
+            </select>
+
+            <label>Posted By</label>
+            <input type="text" id="annPostedBy" placeholder="Admin">
+
+            <label>Date Posted</label>
+            <input type="date" id="annDatePosted" required>
+
+            <label>Expiry Date</label>
+            <input type="date" id="annExpiryDate">
+
             <label>Message</label>
-            <textarea required rows="5" placeholder="Write announcement..."></textarea>
+            <textarea id="annMessage" required rows="5" placeholder="Write announcement..."></textarea>
 
             <div class="modal-actions">
-                <button type="button" onclick="closeModal()">Cancel</button>
+                <button type="button" onclick="closeAnnouncementModal()">Cancel</button>
                 <button type="submit">Publish Announcement</button>
             </div>
-
         </form>
 
     </div>
 </div>
 
-<script>
-function openModal() {
-    document.getElementById("announcementModal").classList.add("show");
-}
 
-function closeModal() {
-    document.getElementById("announcementModal").classList.remove("show");
-}
 
-function saveAnnouncement(event) {
-    event.preventDefault();
-    alert("Announcement created successfully.");
-    closeModal();
-}
-
-function searchAnnouncements() {
-    const search = document
-        .getElementById("searchAnnouncement")
-        .value
-        .toLowerCase();
-
-    document.querySelectorAll(".announcement-item").forEach(function(item) {
-        item.style.display =
-            item.innerText.toLowerCase().includes(search)
-            ? "grid"
-            : "none";
-    });
-}
-</script>
-
+<script src="announcements.js"></script>
 <script src="sidebar.js"></script>
 <script src="auth-guard.js"></script>
 </body>

@@ -17,7 +17,7 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     background: var(--bg);
     color: var(--text);
-    font-size: 12px;
+    font-size: 14px;
     overflow-x: hidden;
 }
 
@@ -53,7 +53,7 @@ button {
 
 .page-header p {
     margin-top: 3px;
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
 }
 
@@ -76,7 +76,7 @@ button {
 
 .admin-text small {
     display: block;
-    font-size: 8px;
+    font-size: 10px;
 }
 
 .admin-text strong {
@@ -149,18 +149,18 @@ button {
 
 .summary-card small {
     display: block;
-    font-size: 7px;
+    font-size: 10px;
     font-weight: 700;
 }
 
 .summary-card strong {
     display: block;
-    font-size: 29px;
+    font-size: 32px;
     margin: 2px 0;
 }
 
 .summary-card span {
-    font-size: 8px;
+    font-size: 11px;
 }
 
 .purple .summary-icon {
@@ -230,10 +230,10 @@ button {
 
 .tabs button {
     min-width: 125px;
-    padding: 12px 10px;
+    padding: 14px 12px;
     border: 0;
     background: white;
-    font-size: 8px;
+    font-size: 12px;
     font-weight: 700;
     color: #30394d;
     white-space: nowrap;
@@ -255,15 +255,15 @@ button {
 .announcement-tools select {
     min-width: 0;
     border: 1px solid #bdc9d8;
-    padding: 7px;
-    font-size: 8px;
+    padding: 9px;
+    font-size: 12px;
     outline: none;
 }
 
 .filter-button,
 .new-button {
     border: 0;
-    font-size: 8px;
+    font-size: 12px;
     font-weight: 700;
 }
 
@@ -280,10 +280,10 @@ button {
 .announcement-item {
     display: grid;
     grid-template-columns: 65px minmax(0, 1fr) 80px 60px 15px;
-    gap: 10px;
+    gap: 14px;
     align-items: center;
-    margin: 0 11px 6px;
-    padding: 10px;
+    margin: 0 11px 10px;
+    padding: 14px;
     border: 1px solid #d5dce5;
     background: #fff;
     min-width: 0;
@@ -333,13 +333,13 @@ button {
 }
 
 .announcement-content h2 {
-    font-size: 14px;
+    font-size: 17px;
     margin-bottom: 4px;
 }
 
 .announcement-content p {
-    font-size: 8px;
-    line-height: 1.4;
+    font-size: 12px;
+    line-height: 1.5;
     color: #4f5968;
 }
 
@@ -348,7 +348,7 @@ button {
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 6px;
-    font-size: 7px;
+    font-size: 11px;
 }
 
 .announcement-meta b {
@@ -364,14 +364,14 @@ button {
 .announcement-status span {
     display: block;
     padding: 5px;
-    font-size: 7px;
+    font-size: 11px;
     font-weight: 700;
 }
 
 .announcement-status small {
     display: block;
     margin-top: 7px;
-    font-size: 7px;
+    font-size: 10px;
 }
 
 .active-status {
@@ -392,7 +392,7 @@ button {
 .priority {
     padding: 5px;
     text-align: center;
-    font-size: 7px;
+    font-size: 11px;
 }
 
 .priority.high {
@@ -421,7 +421,7 @@ button {
     justify-content: space-between;
     align-items: center;
     padding: 12px;
-    font-size: 7px;
+    font-size: 12px;
 }
 
 .pagination button {
@@ -601,7 +601,7 @@ button {
 }
 
 .modal-header h2 {
-    font-size: 15px;
+    font-size: 18px;
 }
 
 .modal-header button {
@@ -617,7 +617,7 @@ button {
 .modal label {
     display: block;
     margin-top: 9px;
-    font-size: 9px;
+    font-size: 12px;
     font-weight: 700;
 }
 
@@ -626,9 +626,9 @@ button {
 .modal textarea {
     width: 100%;
     margin-top: 4px;
-    padding: 8px;
+    padding: 10px;
     border: 1px solid #bdc9d8;
-    font-size: 9px;
+    font-size: 13px;
 }
 
 .modal-actions {
@@ -639,9 +639,9 @@ button {
 }
 
 .modal-actions button {
-    padding: 8px 12px;
+    padding: 10px 16px;
     border: 0;
-    font-size: 9px;
+    font-size: 12px;
     font-weight: 700;
 }
 
@@ -829,4 +829,57 @@ button {
         width: 100%;
         padding: 0;
     }
+}
+
+.announcement-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+}
+
+.announcement-actions .more-button {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #d0d8e2;
+    border-radius: 4px;
+    background: white;
+    color: #536071;
+    font-size: 10px;
+}
+
+.announcement-actions .more-button:hover {
+    background: #f0f5ff;
+    color: #0757b8;
+}
+
+.priority.urgent {
+    background: #ffe6e8;
+    color: #df2638;
+}
+
+.empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: #657083;
+}
+
+.empty-state i {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.pagination button.active {
+    background: #0757b8;
+    color: white;
+    border-color: #0757b8;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
