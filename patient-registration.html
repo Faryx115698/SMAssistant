@@ -16,7 +16,6 @@
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
 
-    <link rel="stylesheet" href="admin-profile.css">
 </head>
 
 <body>
@@ -41,12 +40,20 @@
 
             <div class="header-right">
 
-                <div class="admin-profile">
-                    <div class="logged-admin admin-text">
-                        <small>You are logged in as</small>
-                        <strong><span class="admin-name">ADMIN</span></strong>
-                    </div>
-                    <div class="admin-photo" aria-hidden="true"></div>
+                <div class="logged-admin">
+
+                    <span>
+                        You are logged in as:
+                    </span>
+
+                    <strong>
+                        <span class="admin-name">ADMIN</span>
+                    </strong>
+
+                </div>
+
+                <div class="admin-photo">
+                    <img src="logo.png" alt="Admin">
                 </div>
 
             </div>
@@ -337,11 +344,6 @@
                                     <input type="number" step="0.01" name="weight" value="" placeholder="kg">
                                 </label>
 
-                                <label>
-                                    Temperature
-                                    <input type="number" step="0.1" name="temperature" value="" placeholder="°C">
-                                </label>
-
                                 <label class="span-2">
                                     Allergies
                                     <textarea name="allergies" placeholder="Enter known allergies"></textarea>
@@ -624,11 +626,6 @@
                                     <label>
                                         Weight
                                         <input type="number" step="0.01" name="weight" id="hWeight" value="" placeholder="kg" readonly>
-                                    </label>
-
-                                    <label>
-                                        Temperature
-                                        <input type="number" step="0.1" name="temperature" id="hTemperature" value="" placeholder="°C" readonly>
                                     </label>
 
                                     <label class="wide-health-field">

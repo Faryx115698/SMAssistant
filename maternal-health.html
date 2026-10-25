@@ -40,7 +40,7 @@
             <div>
                 <h3>REGISTERED PREGNANT</h3>
                 <strong id="maternalTotal">—</strong>
-                <small>Total this year</small>
+                <small>Total registered</small>
             </div>
         </div>
         <div class="stat-card green">
@@ -71,8 +71,8 @@
             <i class="fa-solid fa-baby stat-icon"></i>
             <div>
                 <h3>DELIVERIES THIS YEAR</h3>
-                <strong>48</strong>
-                <small>Total deliveries recorded</small>
+                <strong id="maternalDeliveries">—</strong>
+                <small>Recorded this year</small>
             </div>
         </div>
     
@@ -88,8 +88,15 @@
                         <h2>Maternal Patients</h2>
                         <form class="patient-search"><input name="search" value=""
                             placeholder="Search by name or ID..." aria-label="Search maternal patients"><button type="button" aria-label="Search"><i
-                                class="fa-solid fa-magnifying-glass"></i></button></form><button class="filter-btn"><i
-                            class="fa-solid fa-filter"></i> Filter</button>
+                                class="fa-solid fa-magnifying-glass"></i></button></form>
+                        <label class="patient-risk-filter">Risk
+                            <select id="maternalRiskFilter" aria-label="Filter maternal patients by risk">
+                                <option value="">All risk levels</option>
+                                <option>Low Risk</option>
+                                <option>Moderate Risk</option>
+                                <option>High Risk</option>
+                            </select>
+                        </label>
                     </div>
                     <div class="patients-scroll" id="maternalPatientList" aria-live="polite">
                         <p class="empty">Loading maternal patients...</p>
@@ -129,7 +136,12 @@
                         </div>
                     </div>
                     <div class="card anc-card">
-                        <h2>Antenatal Care (ANC) Visits</h2>
+                        <div class="maternal-section-heading">
+                            <h2>Antenatal Care (ANC) Visits</h2>
+                            <button type="button" class="maternal-action-button" onclick="openMaternalVisitModal()">
+                                <i class="fa-solid fa-plus"></i> Add ANC Visit
+                            </button>
+                        </div>
                         <div class="table-wrap">
                             <table>
                                 <thead>
@@ -164,7 +176,12 @@
                                 <span class="appointment-eyebrow">YOUR CARE PLAN</span>
                                 <h2>Upcoming Appointments</h2>
                             </div>
-                            <a href="appointment.html">View Calendar <i class="fa-solid fa-arrow-right"></i></a>
+                            <div class="appointment-actions">
+                                <button type="button" class="maternal-action-button" onclick="openMaternalAppointmentModal()">
+                                    <i class="fa-solid fa-plus"></i> Schedule
+                                </button>
+                                <a href="appointment-schedule.html">View Calendar <i class="fa-solid fa-arrow-right"></i></a>
+                            </div>
                         </div>
                         <div id="maternalAppointments" aria-live="polite">
                             <p class="empty">Select a patient to view appointments.</p>
@@ -184,6 +201,9 @@
                             <input type="search" id="ancSearch" placeholder="Search name, ID, or ANC number..."
                                 aria-label="Search ANC patients">
                         </label>
+                        <button type="button" class="maternal-action-button" onclick="openMaternalVisitModal()">
+                            <i class="fa-solid fa-plus"></i> Add ANC Visit
+                        </button>
                     </div>
                     <div class="care-table-wrap">
                         <table class="care-table">
@@ -246,6 +266,9 @@
                             <input type="search" id="pncSearch" placeholder="Search by name or ID..."
                                 aria-label="Search PNC patients">
                         </label>
+                        <button type="button" class="maternal-action-button" onclick="openAddPncRecordModal()">
+                            <i class="fa-solid fa-plus"></i> Add PNC Record
+                        </button>
                     </div>
                     <div class="care-table-wrap">
                         <table class="care-table">
@@ -313,6 +336,39 @@
                         <p><span>Risk level</span><b id="overviewRisk" class="low-risk">—</b></p>
                     </div>
                 </div>
+            </div>
+        </section>
+        <section class="tab-content" id="birth">
+            <div class="card care-list-card birth-records-card">
+                <div class="care-list-header">
+                    <div>
+                        <h2>Birth Records</h2>
+                        <p>Record delivery outcomes for a selected maternal patient.</p>
+                    </div>
+                    <button type="button" class="maternal-action-button" onclick="openMaternalBirthModal()">
+                        <i class="fa-solid fa-plus"></i> Add Birth Record
+                    </button>
+                </div>
+                <div class="care-table-wrap">
+                    <table class="care-table">
+                        <thead>
+                            <tr>
+                                <th>Mother</th>
+                                <th>Patient ID</th>
+                                <th>Delivery Date</th>
+                                <th>Mode</th>
+                                <th>Outcome</th>
+                                <th>Infant Sex</th>
+                                <th>Birth Weight</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="maternalBirthRows">
+                            <tr><td colspan="8">Loading birth records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="care-list-count" id="birthListCount"></p>
             </div>
         </section>
         
@@ -391,6 +447,77 @@
             </form>
         </div>
     </div>
+    <div class="modal" id="pncModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2 id="pncModalTitle">Add PNC Record</h2>
+                <button type="button" onclick="closeModal('pncModal')">&times;</button>
+            </div>
+            <form id="maternalPncForm">
+                <input type="hidden" name="record_id">
+                <input type="hidden" name="maternal_id" class="selected-maternal-id">
+                <div class="form-grid">
+                    <label>PNC Number<input name="pnc_number" placeholder="PNC-2026-0001"></label>
+                    <label>Weeks Postpartum<input type="number" name="weeks_postpartum" min="0"></label>
+                    <label>Last Visit<input type="date" name="last_visit"></label>
+                    <label>Next Visit<input type="date" name="next_visit"></label>
+                    <label>Risk Level<select name="risk_level">
+                        <option>Low Risk</option>
+                        <option>Moderate Risk</option>
+                        <option>High Risk</option>
+                    </select></label>
+                    <label>Status<select name="status">
+                        <option>Active</option>
+                        <option>Completed</option>
+                        <option>Inactive</option>
+                    </select></label>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="closeModal('pncModal')">Cancel</button>
+                    <button type="submit" class="save" id="savePncButton">Save PNC Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="birthModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h2>Add Birth Record</h2>
+                <button type="button" onclick="closeModal('birthModal')">&times;</button>
+            </div>
+            <form id="maternalBirthForm">
+                <input type="hidden" name="maternal_id" class="selected-maternal-id">
+                <div class="form-grid">
+                    <label>Delivery Date<input type="date" name="delivery_date" required></label>
+                    <label>Delivery Mode<select name="delivery_mode" required>
+                        <option value="">Select mode</option>
+                        <option>Vaginal</option>
+                        <option>Cesarean section</option>
+                        <option>Assisted vaginal</option>
+                        <option>Other</option>
+                    </select></label>
+                    <label>Outcome<select name="outcome" required>
+                        <option value="">Select outcome</option>
+                        <option>Live birth</option>
+                        <option>Stillbirth</option>
+                        <option>Other</option>
+                    </select></label>
+                    <label>Infant Sex<select name="infant_sex">
+                        <option value="">Not recorded</option>
+                        <option>Female</option>
+                        <option>Male</option>
+                        <option>Unknown</option>
+                    </select></label>
+                    <label>Birth Weight (kg)<input type="number" name="birth_weight_kg" min="0" max="20" step="0.01"></label>
+                    <label class="full">Notes<textarea name="notes" rows="3"></textarea></label>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" onclick="closeModal('birthModal')">Cancel</button>
+                    <button type="submit" class="save">Save Birth Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script>
         function openModal(id) {
             document.getElementById(id).classList.add("show");
@@ -409,15 +536,84 @@
             openModal("patientModal");
         }
 
+        function openMaternalVisitModal() {
+            if (!selectedMaternalPatientId) {
+                alert("Select or add a maternal patient before recording an ANC visit.");
+                return;
+            }
+            document.getElementById("maternalVisitForm").reset();
+            document.querySelectorAll(".selected-maternal-id").forEach(input => {
+                input.value = selectedMaternalPatientId;
+            });
+            openModal("visitModal");
+        }
+
+        function openMaternalAppointmentModal() {
+            if (!selectedMaternalPatientId) {
+                alert("Select or add a maternal patient before scheduling an appointment.");
+                return;
+            }
+            document.getElementById("maternalAppointmentForm").reset();
+            document.querySelectorAll(".selected-maternal-id").forEach(input => {
+                input.value = selectedMaternalPatientId;
+            });
+            openModal("appointmentModal");
+        }
+
+        function openAddPncRecordModal() {
+            if (!selectedMaternalPatientId) {
+                alert("Select or add a maternal patient before recording postnatal care.");
+                return;
+            }
+            const form = document.getElementById("maternalPncForm");
+            form.reset();
+            form.elements.record_id.value = "";
+            form.elements.maternal_id.value = selectedMaternalPatientId;
+            document.getElementById("pncModalTitle").textContent = "Add PNC Record";
+            document.getElementById("savePncButton").textContent = "Save PNC Record";
+            openModal("pncModal");
+        }
+
+        function openMaternalBirthModal() {
+            if (!selectedMaternalPatientId) {
+                alert("Select a maternal patient before adding a birth record.");
+                return;
+            }
+            const form = document.getElementById("maternalBirthForm");
+            form.reset();
+            form.elements.maternal_id.value = selectedMaternalPatientId;
+            openModal("birthModal");
+        }
+
+        function editPncRecord(recordId) {
+            const record = maternalPncRecords.find(item => String(item.id) === String(recordId));
+            if (!record) {
+                alert("That PNC record is no longer available. Refresh the page and try again.");
+                return;
+            }
+            const form = document.getElementById("maternalPncForm");
+            form.reset();
+            form.elements.record_id.value = record.id;
+            form.elements.maternal_id.value = record.maternal_id;
+            ["pnc_number", "weeks_postpartum", "last_visit", "next_visit", "risk_level", "status"].forEach(name => {
+                form.elements[name].value = record[name] == null ? "" : record[name];
+            });
+            document.getElementById("pncModalTitle").textContent = "Edit PNC Record";
+            document.getElementById("savePncButton").textContent = "Save Changes";
+            openModal("pncModal");
+        }
+
         document.querySelectorAll(".modal").forEach(modal => modal.addEventListener("click", event => {
             if (event.target === modal) modal.classList.remove("show");
         }));
 
         document.querySelectorAll(".record-tab").forEach(button => button.addEventListener("click", () => {
+            const panel = document.getElementById(button.dataset.tab);
+            if (!panel) return;
             document.querySelectorAll(".record-tab").forEach(tab => tab.classList.remove("active"));
             document.querySelectorAll(".tab-content").forEach(panel => panel.classList.remove("active"));
             button.classList.add("active");
-            document.getElementById(button.dataset.tab).classList.add("active");
+            panel.classList.add("active");
         }));
     </script>
 
@@ -428,9 +624,13 @@
     let currentMaternalPatient = null;
     let maternalAncVisits = [];
     let maternalPncRecords = [];
+    let maternalBirthRecords = [];
     let maternalAncAvailable = true;
     let maternalPncAvailable = true;
+    let maternalBirthAvailable = true;
     let maternalPncError = "";
+    let maternalBirthError = "";
+    let maternalBaseDataPromise = null;
     const careListFilters = {
         anc: { search: "", risk: "", status: "", from: "", to: "" },
         pnc: { search: "", risk: "", status: "", from: "", to: "" }
@@ -476,9 +676,11 @@
 
     function renderMaternalPatients() {
         const query = document.querySelector(".patient-search input").value.trim().toLowerCase();
+        const riskFilter = document.getElementById("maternalRiskFilter").value.toLowerCase();
         const shown = maternalPatients.filter(patient =>
-            String(patient.patient_name || "").toLowerCase().includes(query) ||
-            String(patient.patient_id || "").toLowerCase().includes(query)
+            (String(patient.patient_name || "").toLowerCase().includes(query) ||
+                String(patient.patient_id || "").toLowerCase().includes(query)) &&
+            (!riskFilter || String(patient.risk_level || "Low Risk").toLowerCase() === riskFilter)
         );
         const list = document.getElementById("maternalPatientList");
         if (!shown.length) {
@@ -583,9 +785,17 @@
             "<td>" + escapeMaternalHtml(displayDate(visit.next_visit)) + "</td><td>—</td></tr>"
         ).join("") : '<tr><td colspan="8">No ANC visits recorded for this patient.</td></tr>';
 
-        const appointmentList = appointments || [];
-        document.getElementById("maternalAppointments").innerHTML = appointmentList.length ?
-            appointmentList.map((appointment, index) => {
+        renderMaternalAppointments(appointments);
+    }
+
+    function renderMaternalAppointments(appointments) {
+        if (appointments === null) {
+            document.getElementById("maternalAppointments").innerHTML =
+                '<p class="empty">Loading appointments...</p>';
+            return;
+        }
+        document.getElementById("maternalAppointments").innerHTML = appointments.length ?
+            appointments.map(appointment => {
                 const time = appointment.appointment_time ? new Date("1970-01-01T" + appointment.appointment_time)
                     .toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Time not set";
                 const icon = String(appointment.appointment_type || "").toLowerCase().includes("ultrasound")
@@ -600,6 +810,35 @@
                     '</span></span><small class="appointment-status">' +
                     escapeMaternalHtml(appointment.status || "Scheduled") + "</small></div>";
             }).join("") : '<p class="empty">No upcoming appointments for this patient.</p>';
+    }
+
+    function renderMaternalBirthRecords() {
+        const rows = document.getElementById("maternalBirthRows");
+        if (!maternalBirthAvailable) {
+            rows.innerHTML = '<tr><td colspan="8">Birth records are unavailable. Run maternal-health-migration.sql in the Supabase SQL Editor.</td></tr>';
+            document.getElementById("birthListCount").textContent = "";
+            return;
+        }
+        if (!maternalBirthRecords.length) {
+            rows.innerHTML = '<tr><td colspan="8">No birth records have been recorded.</td></tr>';
+            document.getElementById("birthListCount").textContent = "0 birth records";
+            return;
+        }
+        rows.innerHTML = maternalBirthRecords.map(record => {
+            const patient = maternalPatients.find(item =>
+                String(item.maternal_id) === String(record.maternal_id)
+            );
+            return "<tr><td>" + escapeMaternalHtml(patient ? patient.patient_name : "Unknown patient") +
+                "</td><td>" + escapeMaternalHtml(patient ? patient.patient_id || "—" : "—") +
+                "</td><td>" + escapeMaternalHtml(displayDate(record.delivery_date)) +
+                "</td><td>" + escapeMaternalHtml(record.delivery_mode || "—") +
+                "</td><td>" + escapeMaternalHtml(record.outcome || "—") +
+                "</td><td>" + escapeMaternalHtml(record.infant_sex || "—") +
+                "</td><td>" + escapeMaternalHtml(record.birth_weight_kg == null ? "—" : record.birth_weight_kg + " kg") +
+                "</td><td>" + escapeMaternalHtml(record.notes || "—") + "</td></tr>";
+        }).join("");
+        document.getElementById("birthListCount").textContent =
+            maternalBirthRecords.length + " birth " + (maternalBirthRecords.length === 1 ? "record" : "records");
     }
 
     function renderCareList(type) {
@@ -678,7 +917,9 @@
                     '<td><span class="care-badge ' + riskClass + '">' + escapeMaternalHtml(risk) + "</span></td>" +
                     '<td><span class="care-badge care-status">' + escapeMaternalHtml(status) + "</span></td>" +
                     '<td><button type="button" class="care-view-button" data-view-maternal-id="' +
-                    escapeMaternalHtml(patient.maternal_id) + '">View</button></td></tr>';
+                    escapeMaternalHtml(patient.maternal_id) + '">View</button>' +
+                    (isAnc ? "" : '<button type="button" class="care-view-button care-edit-button" data-edit-pnc-id="' +
+                        escapeMaternalHtml(visit.id) + '">Edit</button>') + "</td></tr>";
             }).join("");
         }
         document.getElementById(type + "ListCount").textContent =
@@ -717,105 +958,133 @@
         await loadMaternalPatient(patientId);
     }
 
+    async function loadMaternalBaseData() {
+        if (!maternalBaseDataPromise) {
+            maternalBaseDataPromise = Promise.all([
+                window.sb.from("maternal_records").select("*").order("patient_name", { ascending: true }),
+                window.sb.from("maternal_anc_visits").select("*").order("visit_date", { ascending: false }),
+                window.sb.from("maternal_pnc_records").select("*").order("last_visit", { ascending: false }),
+                window.sb.from("maternal_birth_records").select("*").order("delivery_date", { ascending: false })
+            ]).then(([patientsResponse, visitsResponse, pncResponse, birthsResponse]) => {
+                if (patientsResponse.error) throw patientsResponse.error;
+
+                maternalPatients = (patientsResponse.data || []).map(patient => ({
+                    ...patient,
+                    maternal_id: patient.id
+                }));
+
+                if (visitsResponse.error) {
+                    maternalAncAvailable = false;
+                    maternalAncVisits = [];
+                    console.warn("ANC visit records are unavailable:", visitsResponse.error.message);
+                } else {
+                    maternalAncAvailable = true;
+                    maternalAncVisits = visitsResponse.data || [];
+                }
+
+                if (pncResponse.error) {
+                    maternalPncAvailable = false;
+                    maternalPncError = pncResponse.error.code
+                        ? pncResponse.error.code + ": " + pncResponse.error.message
+                        : pncResponse.error.message;
+                    maternalPncRecords = [];
+                    console.warn("PNC records are unavailable:", pncResponse.error.message);
+                } else {
+                    maternalPncAvailable = true;
+                    maternalPncError = "";
+                    maternalPncRecords = pncResponse.data || [];
+                }
+
+                if (birthsResponse.error) {
+                    maternalBirthAvailable = false;
+                    maternalBirthError = birthsResponse.error.message;
+                    maternalBirthRecords = [];
+                    console.warn("Birth records are unavailable:", birthsResponse.error.message);
+                } else {
+                    maternalBirthAvailable = true;
+                    maternalBirthError = "";
+                    maternalBirthRecords = birthsResponse.data || [];
+                }
+
+                document.getElementById("maternalTotal").textContent = maternalPatients.length;
+                document.getElementById("maternalHighRisk").textContent = maternalPatients.filter(patient =>
+                    String(patient.risk_level || "").toLowerCase() === "high risk"
+                ).length;
+                const currentMonth = new Date();
+                document.getElementById("maternalDue").textContent = maternalPatients.filter(patient => {
+                    if (!patient.edd) return false;
+                    const edd = new Date(String(patient.edd).slice(0, 10) + "T00:00:00");
+                    return edd.getFullYear() === currentMonth.getFullYear() &&
+                        edd.getMonth() === currentMonth.getMonth();
+                }).length;
+                const currentYear = new Date().getFullYear();
+                document.getElementById("maternalDeliveries").textContent = maternalBirthAvailable
+                    ? maternalBirthRecords.filter(record =>
+                        record.delivery_date && new Date(String(record.delivery_date).slice(0, 10) + "T00:00:00").getFullYear() === currentYear
+                    ).length
+                    : "—";
+
+                const visitCounts = new Map();
+                maternalAncVisits.forEach(visit => {
+                    const key = String(visit.maternal_id);
+                    visitCounts.set(key, (visitCounts.get(key) || 0) + 1);
+                });
+                const completeCount = maternalAncAvailable
+                    ? maternalPatients.filter(patient => (visitCounts.get(String(patient.maternal_id)) || 0) >= 4).length
+                    : null;
+                document.getElementById("maternalComplete").textContent =
+                    completeCount == null ? "—" : completeCount;
+                document.getElementById("maternalCompleteRate").textContent = maternalAncAvailable
+                    ? (maternalPatients.length ? Math.round(completeCount / maternalPatients.length * 100) : 0) + "% with ANC visits"
+                    : "ANC visit data unavailable";
+
+                renderCareList("anc");
+                renderCareList("pnc");
+                renderMaternalBirthRecords();
+            }).catch(error => {
+                maternalBaseDataPromise = null;
+                throw error;
+            });
+        }
+        return maternalBaseDataPromise;
+    }
+
     async function loadMaternalPatient(patientId) {
         const requestId = ++maternalPatientRequest;
         if (!window.sb || typeof isConfigured === "undefined" || !isConfigured) {
             throw new Error("Maternal records are unavailable because Supabase is not configured.");
         }
 
-        const patientsResponse = await window.sb.from("maternal_records").select("*").order("patient_name", { ascending: true });
-        if (patientsResponse.error) throw patientsResponse.error;
+        await loadMaternalBaseData();
         if (requestId !== maternalPatientRequest) return;
 
-        maternalPatients = (patientsResponse.data || []).map(patient => ({
-            ...patient,
-            maternal_id: patient.id
-        }));
         const selected = maternalPatients.find(patient =>
             patientId && String(patient.maternal_id) === String(patientId)
         ) || (patientId ? null : maternalPatients[0]) || null;
+        const visits = selected && maternalAncAvailable
+            ? maternalAncVisits.filter(visit => String(visit.maternal_id) === String(selected.maternal_id))
+            : [];
 
-        selectedMaternalPatientId = selected ? selected.maternal_id : null;
-        document.getElementById("maternalTotal").textContent = maternalPatients.length;
-        document.getElementById("maternalHighRisk").textContent = maternalPatients.filter(patient =>
-            String(patient.risk_level || "").toLowerCase() === "high risk"
-        ).length;
-
-        const currentMonth = new Date();
-        document.getElementById("maternalDue").textContent = maternalPatients.filter(patient => {
-            if (!patient.edd) return false;
-            const edd = new Date(String(patient.edd).slice(0, 10) + "T00:00:00");
-            return edd.getFullYear() === currentMonth.getFullYear() && edd.getMonth() === currentMonth.getMonth();
-        }).length;
-
-        let visits = [];
-        let allVisits = [];
-        let appointments = [];
-        let visitsAvailable = true;
-        let appointmentsAvailable = true;
-        const visitsResponse = await window.sb.from("maternal_anc_visits").select("*").order("visit_date", { ascending: false });
-        if (requestId !== maternalPatientRequest) return;
-        if (visitsResponse.error) {
-            visitsAvailable = false;
-            maternalAncAvailable = false;
-            maternalAncVisits = [];
-            console.warn("ANC visit records are unavailable:", visitsResponse.error.message);
-        } else {
-            maternalAncAvailable = true;
-            allVisits = visitsResponse.data || [];
-            maternalAncVisits = allVisits;
-            visits = selected ? allVisits.filter(visit =>
-                String(visit.maternal_id) === String(selected.maternal_id)
-            ) : [];
-        }
-        const pncResponse = await window.sb.from("maternal_pnc_records").select("*")
-            .order("last_visit", { ascending: false });
-        if (requestId !== maternalPatientRequest) return;
-        if (pncResponse.error) {
-            maternalPncAvailable = false;
-            maternalPncError = pncResponse.error.code
-                ? pncResponse.error.code + ": " + pncResponse.error.message
-                : pncResponse.error.message;
-            maternalPncRecords = [];
-            console.warn("PNC records are unavailable:", pncResponse.error.message);
-        } else {
-            maternalPncAvailable = true;
-            maternalPncError = "";
-            maternalPncRecords = pncResponse.data || [];
-        }
-        if (selected) {
-            const appointmentsResponse = await window.sb.from("maternal_appointments").select("*").eq("maternal_id", selected.maternal_id)
-                    .gte("appointment_date", new Date().toISOString().slice(0, 10))
-                    .order("appointment_date", { ascending: true }).order("appointment_time", { ascending: true }).limit(4);
-            if (requestId !== maternalPatientRequest) return;
-            if (appointmentsResponse.error) {
-                appointmentsAvailable = false;
-                console.warn("Maternal appointments are unavailable:", appointmentsResponse.error.message);
-            } else {
-                appointments = appointmentsResponse.data || [];
-            }
-        }
-
-        const completeCount = visitsAvailable
-            ? maternalPatients.filter(patient =>
-                allVisits.filter(visit => String(visit.maternal_id) === String(patient.maternal_id)).length >= 4
-            ).length
-            : null;
-        document.getElementById("maternalComplete").textContent = completeCount == null ? "—" : completeCount;
-        document.getElementById("maternalCompleteRate").textContent = visitsAvailable
-            ? (maternalPatients.length ? Math.round(completeCount / maternalPatients.length * 100) : 0) + "% with ANC visits"
-            : "ANC visit data unavailable";
-
-        renderMaternalPatient(selected, visits, appointments);
-        renderCareList("anc");
-        renderCareList("pnc");
-        if (!visitsAvailable) {
+        renderMaternalPatient(selected, visits, selected ? null : []);
+        if (!maternalAncAvailable) {
             document.getElementById("ancVisitRows").innerHTML =
                 '<tr><td colspan="8">ANC visit data is unavailable. Set up the maternal_anc_visits table in Supabase.</td></tr>';
         }
-        if (!appointmentsAvailable) {
+        if (!selected) return;
+
+        const appointmentsResponse = await window.sb.from("maternal_appointments").select("*")
+            .eq("maternal_id", selected.maternal_id)
+            .gte("appointment_date", new Date().toISOString().slice(0, 10))
+            .order("appointment_date", { ascending: true })
+            .order("appointment_time", { ascending: true })
+            .limit(4);
+        if (requestId !== maternalPatientRequest) return;
+        if (appointmentsResponse.error) {
+            console.warn("Maternal appointments are unavailable:", appointmentsResponse.error.message);
             document.getElementById("maternalAppointments").innerHTML =
                 '<p class="empty">Appointment data is unavailable. Set up the maternal_appointments table in Supabase.</p>';
+        } else {
+            renderMaternalAppointments(appointmentsResponse.data || []);
         }
     }
 
@@ -830,6 +1099,11 @@
     document.getElementById("ancSearch").addEventListener("input", () => applyCareFilters("anc"));
     document.getElementById("pncSearch").addEventListener("input", () => applyCareFilters("pnc"));
     document.addEventListener("click", function (event) {
+        const editPncButton = event.target.closest("[data-edit-pnc-id]");
+        if (editPncButton) {
+            editPncRecord(editPncButton.dataset.editPncId);
+            return;
+        }
         const viewButton = event.target.closest("[data-view-maternal-id]");
         if (viewButton) {
             openMaternalPatientFromList(viewButton.dataset.viewMaternalId).catch(showMaternalLoadError);
@@ -850,9 +1124,7 @@
     document.querySelector(".patient-search").addEventListener("submit", event => event.preventDefault());
     document.querySelector(".patient-search input").addEventListener("input", renderMaternalPatients);
     document.querySelector(".patient-search button").addEventListener("click", renderMaternalPatients);
-    document.querySelector(".filter-btn").addEventListener("click", function () {
-        document.querySelector(".patient-search input").focus();
-    });
+    document.getElementById("maternalRiskFilter").addEventListener("change", renderMaternalPatients);
 
     function requireSupabase() {
         if (!window.sb || typeof isConfigured === "undefined" || !isConfigured) {
@@ -873,27 +1145,29 @@
             try {
                 requireSupabase();
                 const record = getRecord(new FormData(form));
-                const recordId = form.elements.maternal_record_id
-                    ? Number(form.elements.maternal_record_id.value)
-                    : 0;
+                const recordIdField = form.elements.maternal_record_id || form.elements.record_id;
+                const recordId = recordIdField ? Number(recordIdField.value) : 0;
                 const query = recordId
                     ? window.sb.from(table).update(record).eq("id", recordId)
                     : window.sb.from(table).insert(record);
                 const { data, error } = await query.select("id").single();
                 if (error) throw error;
+                maternalBaseDataPromise = null;
+                const nextPatientId = table === "maternal_records"
+                    ? (!recordId && data && data.id ? data.id : recordId || reloadPatientId())
+                    : reloadPatientId();
                 closeModal(form.closest(".modal").id);
                 form.reset();
-                const nextPatientId = table === "maternal_records" && !recordId && data && data.id
-                    ? data.id
-                    : recordId || reloadPatientId();
                 await loadMaternalPatient(nextPatientId);
             } catch (error) {
                 console.error("Could not save maternal health record:", error);
                 const schemaMissing = error.code === "PGRST204" ||
                     String(error.message || "").includes("schema cache");
-                const message = schemaMissing
-                    ? "The maternal_records table is missing profile columns. Run maternal-health-migration.sql in the Supabase SQL Editor, then refresh this page and save again."
-                    : "Could not save this record: " + (error.message || "Unknown database error");
+                const message = table === "maternal_birth_records" && schemaMissing
+                    ? "The maternal_birth_records table is missing. Run maternal-health-migration.sql in the Supabase SQL Editor, then refresh this page and try again."
+                    : schemaMissing
+                        ? "The " + table + " table is missing required columns. Run maternal-health-migration.sql in the Supabase SQL Editor, then refresh this page and save again."
+                        : "Could not save this record: " + (error.message || "Unknown database error");
                 alert(message);
             } finally {
                 if (button) button.disabled = false;
@@ -951,6 +1225,40 @@
             appointment_type: fields.get("appointment_type")
         }),
         () => selectedMaternalPatientId
+    );
+
+    submitMaternalForm(
+        document.getElementById("maternalPncForm"),
+        "maternal_pnc_records",
+        fields => ({
+            maternal_id: Number(fields.get("maternal_id")),
+            pnc_number: optionalFormValue(fields, "pnc_number"),
+            weeks_postpartum: fields.get("weeks_postpartum")
+                ? Number(fields.get("weeks_postpartum"))
+                : null,
+            last_visit: optionalFormValue(fields, "last_visit"),
+            next_visit: optionalFormValue(fields, "next_visit"),
+            risk_level: fields.get("risk_level"),
+            status: fields.get("status")
+        }),
+        () => Number(document.getElementById("maternalPncForm").elements.maternal_id.value)
+    );
+
+    submitMaternalForm(
+        document.getElementById("maternalBirthForm"),
+        "maternal_birth_records",
+        fields => ({
+            maternal_id: Number(fields.get("maternal_id")),
+            delivery_date: fields.get("delivery_date"),
+            delivery_mode: fields.get("delivery_mode"),
+            outcome: fields.get("outcome"),
+            infant_sex: optionalFormValue(fields, "infant_sex"),
+            birth_weight_kg: fields.get("birth_weight_kg")
+                ? Number(fields.get("birth_weight_kg"))
+                : null,
+            notes: optionalFormValue(fields, "notes")
+        }),
+        () => Number(document.getElementById("maternalBirthForm").elements.maternal_id.value)
     );
 
     document.addEventListener("DOMContentLoaded", function () {

@@ -1,4 +1,4 @@
-// dashboard.js - Loads and renders dynamic dashboard metrics from Supabase (with fallback)
+﻿// dashboard.js - Loads and renders dynamic dashboard metrics from Supabase (with fallback)
 
 document.addEventListener("DOMContentLoaded", function () {
     loadDashboardData();
@@ -52,6 +52,8 @@ async function loadDashboardData() {
                 { count: patientCount },
                 { count: maternalCount },
                 { count: childCount },
+                { count: tbCount },
+                { count: healthEducationCount },
                 { data: appts },
                 { data: anns },
                 { data: items }
@@ -59,6 +61,8 @@ async function loadDashboardData() {
                 window.sb.from('patients').select('*', { count: 'exact', head: true }),
                 window.sb.from('maternal_records').select('*', { count: 'exact', head: true }),
                 window.sb.from('child_records').select('*', { count: 'exact', head: true }),
+                window.sb.from('tb_cases').select('*', { count: 'exact', head: true }),
+                window.sb.from('health_education_materials').select('*', { count: 'exact', head: true }).eq('published', true),
                 window.sb.from('appointments').select('*').limit(5),
                 window.sb.from('announcements').select('*').order('date_posted', { ascending: false }).limit(2),
                 window.sb.from('inventory').select('*')
@@ -74,14 +78,14 @@ async function loadDashboardData() {
                     patientCount: patientCount || 0,
                     maternalCount: maternalCount || 0,
                     childCount: childCount || 0,
-                    tbCount: 12,
+                    tbCount: tbCount || 0,
                     lowStockCount: lowStock,
                     medicineTotal: inventoryList.length,
                     adequateStockCount: adequateStock,
                     outOfStockCount: outStock,
                     todayIssuance: 24,
                     immunizationCount: 86,
-                    healthEducationCount: 12
+                    healthEducationCount: healthEducationCount || 0
                 },
                 appointments: appts || [],
                 announcements: anns || [],
@@ -191,7 +195,7 @@ function renderDashboardUI(data) {
                 </div>
             `).join("");
         } else {
-            apptContainer.innerHTML = `<div><b>—</b><span>No appointments today.</span></div>`;
+            apptContainer.innerHTML = `<div><b>â€”</b><span>No appointments today.</span></div>`;
         }
     }
 
@@ -261,3 +265,7 @@ function renderDashboardUI(data) {
     const pEdu = document.getElementById("progHealthEduCount");
     if (pEdu) pEdu.textContent = stats.healthEducationCount || 0;
 }
+
+
+
+

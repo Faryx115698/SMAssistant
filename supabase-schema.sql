@@ -711,6 +711,21 @@ CREATE TABLE IF NOT EXISTS public.maternal_pnc_records (
 ALTER TABLE public.maternal_pnc_records ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Maternal PNC records access" ON public.maternal_pnc_records FOR ALL TO authenticated USING (true);
 
+CREATE TABLE IF NOT EXISTS public.maternal_birth_records (
+    id BIGSERIAL PRIMARY KEY,
+    maternal_id BIGINT NOT NULL REFERENCES public.maternal_records(id) ON DELETE CASCADE,
+    delivery_date DATE NOT NULL,
+    delivery_mode TEXT NOT NULL,
+    outcome TEXT NOT NULL,
+    infant_sex TEXT,
+    birth_weight_kg NUMERIC(5, 2),
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.maternal_birth_records ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Maternal birth records access" ON public.maternal_birth_records FOR ALL TO authenticated USING (true);
+
 -- 11. INFANT & CHILD RECORDS
 CREATE TABLE IF NOT EXISTS public.child_records (
     id BIGSERIAL PRIMARY KEY,

@@ -554,6 +554,27 @@ svg {
     background: #f8fafc;
 }
 
+.patient-risk-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.patient-risk-filter select {
+    flex: 1;
+    min-width: 0;
+    min-height: 36px;
+    padding: 0 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background: #fff;
+    color: #334155;
+    font: inherit;
+}
+
 .patients-scroll {
     display: flex;
     flex-direction: column;
@@ -920,6 +941,92 @@ svg {
     color: #1e293b;
     font-size: 16px;
     line-height: 1.35;
+}
+
+.maternal-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.maternal-section-heading h2 {
+    margin: 0;
+}
+
+.maternal-action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 34px;
+    padding: 7px 11px;
+    border: 1px solid #0755a5;
+    border-radius: 5px;
+    background: #0755a5;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.maternal-action-button:hover {
+    border-color: #064785;
+    background: #064785;
+}
+
+.appointment-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.birth-records-placeholder {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 42px 20px;
+    color: #64748b;
+    text-align: center;
+}
+
+.birth-records-placeholder > i {
+    color: #0755a5;
+    font-size: 32px;
+}
+
+.birth-records-placeholder h2 {
+    color: #1e293b;
+    font-size: 18px;
+}
+
+.birth-records-placeholder p {
+    max-width: 560px;
+    line-height: 1.6;
+}
+
+.birth-records-card {
+    margin-top: 14px;
+}
+
+.birth-records-card .care-list-header > div {
+    display: grid;
+    gap: 5px;
+}
+
+.birth-records-card .care-list-header h2 {
+    color: #17345c;
+    font-size: 18px;
+}
+
+.birth-records-card .care-list-header p {
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .table-wrap {
@@ -1466,6 +1573,10 @@ svg {
 
 .care-view-button:hover {
     background: #eff6ff;
+}
+
+.care-edit-button {
+    margin-left: 5px;
 }
 
 .care-list-count {

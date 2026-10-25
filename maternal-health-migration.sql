@@ -65,4 +65,24 @@ CREATE POLICY "Maternal PNC records access"
     USING (true)
     WITH CHECK (true);
 
+CREATE TABLE IF NOT EXISTS public.maternal_birth_records (
+    id BIGSERIAL PRIMARY KEY,
+    maternal_id BIGINT NOT NULL REFERENCES public.maternal_records(id) ON DELETE CASCADE,
+    delivery_date DATE NOT NULL,
+    delivery_mode TEXT NOT NULL,
+    outcome TEXT NOT NULL,
+    infant_sex TEXT,
+    birth_weight_kg NUMERIC(5, 2),
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE public.maternal_birth_records ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Maternal birth records access" ON public.maternal_birth_records;
+CREATE POLICY "Maternal birth records access"
+    ON public.maternal_birth_records
+    FOR ALL TO authenticated
+    USING (true)
+    WITH CHECK (true);
+
 NOTIFY pgrst, 'reload schema';

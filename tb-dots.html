@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -45,7 +45,7 @@
                 <div class="stat-icon"><i class="fa-solid fa-lungs"></i></div>
                 <div>
                     <h3>Active TB Cases</h3>
-                    <strong id="statActive">16</strong>
+                    <strong id="statActive">0</strong>
                     <small>Currently on treatment</small>
                 </div>
             </div>
@@ -53,7 +53,7 @@
                 <div class="stat-icon"><i class="fa-solid fa-pills"></i></div>
                 <div>
                     <h3>Intensive Phase</h3>
-                    <strong id="statIntensive">9</strong>
+                    <strong id="statIntensive">0</strong>
                     <small>Daily HRZE Regimen</small>
                 </div>
             </div>
@@ -61,7 +61,7 @@
                 <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
                 <div>
                     <h3>Continuation Phase</h3>
-                    <strong id="statContinuation">7</strong>
+                    <strong id="statContinuation">0</strong>
                     <small>Daily HR Regimen</small>
                 </div>
             </div>
@@ -69,7 +69,7 @@
                 <div class="stat-icon"><i class="fa-solid fa-vial"></i></div>
                 <div>
                     <h3>Sputum Tests Due</h3>
-                    <strong id="statSputum">4</strong>
+                    <strong id="statSputum">0</strong>
                     <small>Follow-up smears</small>
                 </div>
             </div>
@@ -77,7 +77,7 @@
                 <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
                 <div>
                     <h3>Treatment Success</h3>
-                    <strong id="statSuccess">94%</strong>
+                    <strong id="statSuccess">0%</strong>
                     <small>Cured &amp; Completed</small>
                 </div>
             </div>
@@ -114,29 +114,29 @@
                     <div class="patient-profile-header">
                         <div>
                             <h2 id="detailName" style="font-size:20px; color:var(--navy);">Select a Patient</h2>
-                            <p id="detailCode" style="color:var(--muted); font-size:12px; margin-top:2px;">TB-2026-0000</p>
+                            <p id="detailCode" style="color:var(--muted); font-size:12px; margin-top:2px;">—</p>
                         </div>
                         <div>
-                            <span class="badge active" id="detailStatus">Active</span>
+                            <span class="badge" id="detailStatus">—</span>
                         </div>
                     </div>
 
                     <div class="profile-meta">
-                        <div><small>Category &amp; Type</small><b id="detailCat">Category I (New)</b></div>
-                        <div><small>Age &amp; Sex</small><b id="detailDemog">42 yrs • Male</b></div>
-                        <div><small>Treatment Start</small><b id="detailStart">Feb 10, 2026</b></div>
-                        <div><small>Weight</small><b id="detailWeight">58 kg</b></div>
-                        <div><small>Treatment Partner (BHW)</small><b id="detailBhw">BHW Elena Ramos</b></div>
-                        <div><small>Contact / Purok</small><b id="detailContact">0917-889-1234 (Purok 3)</b></div>
+                        <div><small>Category &amp; Type</small><b id="detailCat">—</b></div>
+                        <div><small>Age &amp; Sex</small><b id="detailDemog">—</b></div>
+                        <div><small>Treatment Start</small><b id="detailStart">—</b></div>
+                        <div><small>Weight</small><b id="detailWeight">—</b></div>
+                        <div><small>Treatment Partner (BHW)</small><b id="detailBhw">—</b></div>
+                        <div><small>Contact / Purok</small><b id="detailContact">—</b></div>
                     </div>
 
                     <div class="dots-progress">
                         <div class="dots-progress-header">
                             <span>DOTS Treatment Adherence Progress</span>
-                            <span id="detailProgressText">Month 3 of 6 (68% Complete)</span>
+                            <span id="detailProgressText">—</span>
                         </div>
                         <div class="progress-track">
-                            <div class="progress-fill" id="detailProgressBar" style="width: 68%;"></div>
+                            <div class="progress-fill" id="detailProgressBar" style="width: 0%;"></div>
                         </div>
                     </div>
 
@@ -234,7 +234,7 @@
             <div class="card">
                 <div class="card-header">
                     <h2>Household &amp; Close Contact Tracing</h2>
-                    <button class="btn-primary" onclick="alert('Contact screening logged.')">
+                    <button class="btn-primary" onclick="openContactModal()">
                         <i class="fa-solid fa-user-plus"></i> Screen New Contact
                     </button>
                 </div>
@@ -280,34 +280,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><b>Cat I Fixed-Dose Combination (FDC-4)</b></td>
-                                <td>Rifampicin (150mg) + Isoniazid (75mg) + Pyrazinamide (400mg) + Ethambutol (275mg)</td>
-                                <td>New Adult Patients (Intensive Phase)</td>
-                                <td><b>240 blister strips</b></td>
-                                <td><span class="badge active">Adequate</span></td>
-                            </tr>
-                            <tr>
-                                <td><b>Cat I Continuation FDC-2</b></td>
-                                <td>Rifampicin (150mg) + Isoniazid (75mg)</td>
-                                <td>Adult Patients (Months 3-6)</td>
-                                <td><b>410 blister strips</b></td>
-                                <td><span class="badge active">Adequate</span></td>
-                            </tr>
-                            <tr>
-                                <td><b>Pediatric FDC Kit</b></td>
-                                <td>Dispersible RHZ (50/75/150mg)</td>
-                                <td>Children under 15 years</td>
-                                <td><b>85 kits</b></td>
-                                <td><span class="badge active">Adequate</span></td>
-                            </tr>
-                            <tr>
-                                <td><b>Isoniazid Preventive Therapy (IPT)</b></td>
-                                <td>Isoniazid (300mg)</td>
-                                <td>High-risk asymptomatic contacts</td>
-                                <td><b>190 tablets</b></td>
-                                <td><span class="badge active">Adequate</span></td>
-                            </tr>
+                            <tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:18px;">Use Pharmacy Inventory for live TB drug stock.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -330,7 +303,7 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
                     <div class="form-group">
                         <label>Age *</label>
-                        <input type="number" id="tbAge" required value="35">
+                        <input type="number" id="tbAge" required value="">
                     </div>
                     <div class="form-group">
                         <label>Sex *</label>
@@ -351,16 +324,16 @@
                     </div>
                     <div class="form-group">
                         <label>Weight (kg) *</label>
-                        <input type="number" id="tbWeight" required value="55">
+                        <input type="number" id="tbWeight" required value="">
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Assigned BHW Supervisor *</label>
-                    <input type="text" id="tbBhw" required value="BHW Elena Ramos">
+                    <input type="text" id="tbBhw" required value="">
                 </div>
                 <div class="form-group">
                     <label>Address / Purok</label>
-                    <input type="text" id="tbAddress" value="Purok 2, Talimundoc, Orani">
+                    <input type="text" id="tbAddress" value="">
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-outline" onclick="closeEnrollModal()">Cancel</button>
@@ -389,7 +362,7 @@
                     </div>
                     <div class="form-group">
                         <label>Time Observed</label>
-                        <input type="time" id="intakeTime" required value="08:30">
+                        <input type="time" id="intakeTime" required value="">
                     </div>
                 </div>
                 <div class="form-group">
@@ -402,7 +375,7 @@
                 </div>
                 <div class="form-group">
                     <label>Direct Observation Supervisor</label>
-                    <input type="text" id="intakeSupervisor" required value="BHW Elena Ramos">
+                    <input type="text" id="intakeSupervisor" required value="">
                 </div>
                 <div class="form-actions">
                     <button type="button" class="btn-outline" onclick="closeIntakeModal()">Cancel</button>
@@ -412,6 +385,120 @@
         </div>
     </div>
 
+    <!-- Modal: Lab Result -->
+    <div class="modal-overlay" id="labModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Record Lab Result</h3>
+                <button class="modal-close" onclick="closeLabModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="labForm" onsubmit="handleLab(event)">
+                <div class="form-group">
+                    <label>Patient Name *</label>
+                    <input type="text" id="labPatientName" required value="">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Test Type *</label>
+                        <select id="labTestType">
+                            <option>Smear Microscopy</option>
+                            <option>GeneXpert MTB/RIF</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Timing</label>
+                        <input type="text" id="labTiming" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Test Date</label>
+                    <input type="date" id="labDate" required>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Smear Result</label>
+                        <input type="text" id="labSmear" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>GeneXpert MTB</label>
+                        <input type="text" id="labGeneXpert" value="">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Rifampicin Resistance</label>
+                        <input type="text" id="labRif" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Action Taken</label>
+                        <input type="text" id="labAction" value="">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeLabModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Lab Result</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Contact Screening -->
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Screen New Contact</h3>
+                <button class="modal-close" onclick="closeContactModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <form id="contactForm" onsubmit="handleContact(event)">
+                <div class="form-group">
+                    <label>Index TB Patient *</label>
+                    <input type="text" id="contactIndex" required value="">
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Contact Name *</label>
+                        <input type="text" id="contactName" required value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Relation</label>
+                        <input type="text" id="contactRel" value="">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="contactAge" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>Symptoms</label>
+                        <input type="text" id="contactSymp" value="">
+                    </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div class="form-group">
+                        <label>Chest X-Ray / TST</label>
+                        <input type="text" id="contactXray" value="">
+                    </div>
+                    <div class="form-group">
+                        <label>TPT Status</label>
+                        <input type="text" id="contactTpt" value="">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-outline" onclick="closeContactModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Contact</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
     <script src="tb-dots.js"></script>
 </body>
 </html>
+
+
+
+
+
+
