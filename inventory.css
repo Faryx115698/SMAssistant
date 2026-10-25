@@ -43,6 +43,7 @@ button {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 15px;
 }
 
 .page-header h1 {
@@ -89,6 +90,13 @@ button {
     white-space: nowrap;
 }
 
+.admin-photo {
+    width: 61px;
+    height: 61px;
+    object-fit: cover;
+    border: 2px solid #d7dee9;
+}
+
 th[data-sort] {
     cursor: pointer;
     user-select: none;
@@ -110,6 +118,7 @@ th[data-sort]:focus {
 .header-actions {
     display: flex;
     gap: 7px;
+    flex-wrap: wrap;
 }
 
 .header-button {
@@ -123,6 +132,14 @@ th[data-sort]:focus {
     font-size: 12px;
     font-weight: 700;
     text-decoration: none;
+    transition: background-color .2s ease, border-color .2s ease,
+        color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.header-button:hover {
+    border-color: #0757b8;
+    background: #eaf3ff;
+    color: #064e9e;
 }
 
 .header-button.primary {
@@ -131,9 +148,16 @@ th[data-sort]:focus {
     color: #fff;
 }
 
+.header-button.primary:hover {
+    border-color: #064e9e;
+    background: #064e9e;
+    box-shadow: 0 3px 8px rgba(7, 87, 184, .2);
+    transform: translateY(-1px);
+}
+
 .summary-cards {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 10px;
     margin-top: 13px;
 }
@@ -158,7 +182,7 @@ th[data-sort]:focus {
     display: block;
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: .12em;
     text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 4px;
@@ -219,6 +243,12 @@ th[data-sort]:focus {
     background: #f1f5f9;
     color: #334155;
     font-size: 20px;
+    transition: background-color .2s ease, color .2s ease;
+}
+
+.patient-combobox-control button:hover {
+    background: #e2edfb;
+    color: var(--blue);
 }
 
 #patientSelect {
@@ -329,6 +359,10 @@ th[data-sort]:focus {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    padding: 14px;
+    border: 1px solid #dfeafc;
+    border-radius: 8px;
+    background: #f7faff;
 }
 
 .issuance-full {
@@ -410,10 +444,13 @@ th[data-sort]:focus {
     display: flex;
     align-items: center;
     gap: 12px;
+    min-width: 0;
+    min-height: 105px;
     padding: 14px;
     background: #fff;
     border: 1px solid var(--border);
     border-radius: 6px;
+    background: #fff;
     box-shadow: 0 1px 4px rgba(0, 0, 0, .1);
 }
 
@@ -424,6 +461,9 @@ th[data-sort]:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
     border-radius: 50%;
 }
 
@@ -470,12 +510,14 @@ th[data-sort]:focus {
 .summary-card small {
     font-size: 11px;
     color: var(--muted);
+    font-size: 11px;
 }
 
 .card {
     background: #fff;
     border: 1px solid var(--border);
     border-radius: 7px;
+    background: #fff;
     box-shadow: 0 1px 4px rgba(0, 0, 0, .1);
 }
 
@@ -497,11 +539,19 @@ th[data-sort]:focus {
     color: #30394d;
     font-size: 14px;
     font-weight: 700;
+    transition: color .2s ease, background-color .2s ease,
+        border-color .2s ease;
+}
+
+.inventory-tab:hover {
+    background: #f1f7ff;
+    color: var(--blue);
 }
 
 .inventory-tab.active {
     color: #0757b8;
     border-bottom-color: #0757b8;
+    color: #0757b8;
 }
 
 .inventory-tab-panel {
@@ -561,15 +611,24 @@ th[data-sort]:focus {
     border-radius: 6px;
     outline: none;
     font-size: 14px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.search-input input:focus {
+    border-color: #0757b8;
+    box-shadow: 0 0 0 3px rgba(7, 87, 184, .1);
 }
 
 .search-input span {
     position: absolute;
     right: 12px;
     top: 9px;
+    right: 12px;
     color: #0757b8;
     font-size: 17px;
 }
+
+/* Clear Filters, Refresh, Category and Status controls */
 
 .filter-button,
 .refresh-button,
@@ -580,6 +639,11 @@ th[data-sort]:focus {
     color: #0757b8;
     font-size: 13px;
     font-weight: 700;
+    transition: background-color .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
 }
 
 .filter-button,
@@ -588,9 +652,65 @@ th[data-sort]:focus {
     padding: 0 14px;
 }
 
+/* Clear Filters hover */
+.filter-button:hover {
+    border-color: #0757b8;
+    background: #eaf3ff;
+    color: #064e9e;
+    box-shadow: 0 3px 8px rgba(7, 87, 184, .12);
+    transform: translateY(-1px);
+}
+
+/* Refresh hover */
+.refresh-button:hover {
+    border-color: #0757b8;
+    background: #0757b8;
+    color: #fff;
+    box-shadow: 0 3px 8px rgba(7, 87, 184, .18);
+    transform: translateY(-1px);
+}
+
+/* Category and Status dropdowns */
 .inventory-controls select {
     min-height: 42px;
     padding: 0 10px;
+    cursor: pointer;
+}
+
+.inventory-controls select:hover {
+    border-color: #0757b8;
+    background-color: #f0f7ff;
+    color: #064e9e;
+    box-shadow: 0 2px 6px rgba(7, 87, 184, .1);
+}
+
+/* Keyboard accessibility */
+.filter-button:focus-visible,
+.refresh-button:focus-visible,
+.inventory-controls select:focus-visible {
+    outline: 2px solid #0757b8;
+    outline-offset: 2px;
+}
+
+/* Pressed state */
+.filter-button:active,
+.refresh-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Disabled controls */
+.filter-button:disabled,
+.refresh-button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.archived-filter input {
+    accent-color: #0757b8;
+    cursor: pointer;
 }
 
 .table-wrapper {
@@ -671,11 +791,16 @@ td strong {
 }
 
 .actions button {
+    margin-right: 4px;
     border: 0;
     background: transparent;
     color: #0757b8;
     font-size: 11px;
-    margin-right: 4px;
+}
+
+.actions button:hover {
+    color: #064e9e;
+    text-decoration: underline;
 }
 
 .table-footer {
@@ -698,9 +823,18 @@ td strong {
     border: 1px solid #d2d9e3;
     background: #fff;
     font-size: 12px;
+    transition: background-color .2s ease, color .2s ease,
+        border-color .2s ease;
+}
+
+.pagination button:hover {
+    border-color: #0757b8;
+    background: #eaf3ff;
+    color: #0757b8;
 }
 
 .pagination button.active {
+    border-color: #0757b8;
     background: #0757b8;
     color: #fff;
 }
@@ -720,6 +854,7 @@ td strong {
 .side-card {
     padding: 15px;
     min-width: 0;
+    padding: 15px;
 }
 
 .side-card-header {
@@ -736,6 +871,12 @@ td strong {
 .side-card-header a {
     color: #0757b8;
     font-size: 12px;
+}
+
+.side-card-header a:hover,
+.side-link:hover {
+    color: #064e9e;
+    text-decoration: underline;
 }
 
 .alert-item {
@@ -767,7 +908,7 @@ td strong {
     font-size: 12px;
 }
 
-.alert-item>span:last-child {
+.alert-item > span:last-child {
     font-size: 12px;
     white-space: nowrap;
 }
@@ -784,9 +925,9 @@ td strong {
     display: grid;
 }
 
-.issuance-table>div {
+.issuance-table > div {
     display: grid;
-    grid-template-columns: 1fr 1fr 45px 50px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 45px 50px;
     gap: 5px;
     padding: 8px 0;
     border-bottom: 1px solid #dfe5ec;
@@ -823,6 +964,7 @@ td strong {
     overflow-y: auto;
     background: #fff;
     border-radius: 7px;
+    background: #fff;
 }
 
 .modal-header {
@@ -849,7 +991,7 @@ td strong {
 
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
 }
 
@@ -882,6 +1024,8 @@ td strong {
     border-radius: 6px;
     font-size: 13px;
     font-weight: 700;
+    transition: background-color .2s ease, color .2s ease,
+        border-color .2s ease;
 }
 
 .cancel-button {
@@ -889,10 +1033,19 @@ td strong {
     background: #fff;
 }
 
+.cancel-button:hover {
+    border-color: #94a3b8;
+    background: #f1f5f9;
+}
+
 .save-button {
     border: 0;
     background: #0759b7;
     color: #fff;
+}
+
+.save-button:hover {
+    background: #064e9e;
 }
 
 .inventory-notice {
@@ -927,18 +1080,7 @@ td strong {
     grid-column: 1 / -1;
 }
 
-.actions button {
-    padding: 6px 8px;
-    border: 1px solid #b7cce4;
-    border-radius: 4px;
-    background: #f4f8fc;
-    font-size: 11px;
-    font-weight: 700;
-}
-
-.actions button:hover {
-    background: #e7f1fc;
-}
+/* Responsive layouts */
 
 @media (max-width: 1300px) {
 
@@ -956,11 +1098,11 @@ td strong {
 @media (max-width: 1100px) {
 
     .summary-cards {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .inventory-side {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
 }
@@ -971,6 +1113,7 @@ td strong {
     .main-content {
         margin-left: 0;
         width: 100%;
+        margin-left: 0;
         padding: 70px 18px 20px;
     }
 
@@ -984,11 +1127,11 @@ td strong {
     }
 
     .summary-cards {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .inventory-side {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .inventory-controls {
@@ -1000,7 +1143,7 @@ td strong {
     }
 
     .issuance-history-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
 }
@@ -1018,11 +1161,11 @@ td strong {
 
     .issuance-grid,
     .issuance-form {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .inventory-controls {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .search-input {
@@ -1057,7 +1200,7 @@ td strong {
     }
 
     .summary-cards {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .summary-card {
@@ -1079,7 +1222,7 @@ td strong {
 
     .inventory-controls {
         display: grid;
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .search-input {
@@ -1088,7 +1231,7 @@ td strong {
 
     .filter-button,
     .refresh-button {
-        height: 34px;
+        min-height: 38px;
     }
 
     .table-footer {
@@ -1100,9 +1243,12 @@ td strong {
     }
 
     .form-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 
+    .form-grid .form-full {
+        grid-column: auto;
+    }
 }
 
 
@@ -1114,7 +1260,7 @@ td strong {
 
     .header-actions {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         width: 100%;
     }
 
