@@ -36,13 +36,21 @@ document.addEventListener("DOMContentLoaded", function () {
 async function fetchLivePatients() {
     if (window.sb && typeof isConfigured !== "undefined" && isConfigured) {
         try {
-            const { data, error } = await window.sb.from("patients").select("*").order("id", { ascending: true });
-            if (!error && data && data.length > 0) {
+            const [{ data: patientData, error: patientError }, { data: healthData, error: healthError }] = await Promise.all([
+                window.sb.from("patients").select("*").order("id", { ascending: true }),
+                window.sb.from("health_profiles").select("*")
+            ]);
+            const healthMap = {};
+            if (!healthError && healthData) {
+                healthData.forEach(hp => { healthMap[hp.patient_id] = hp; });
+            }
+            if (!patientError && patientData && patientData.length > 0) {
                 // Merge or update with Supabase data
                 const map = {};
                 patientsList.forEach(p => map[p.id] = p);
-                data.forEach(dbP => {
+                patientData.forEach(dbP => {
                     const existing = map[dbP.id] || {};
+                    const hp = healthMap[dbP.id] || {};
                     map[dbP.id] = {
                         ...existing,
                         id: dbP.id,
@@ -63,7 +71,12 @@ async function fetchLivePatients() {
                         email: dbP.email || existing.email || "",
                         address: dbP.address || existing.address || "",
                         status: dbP.status || "Active",
-                        created_at: dbP.created_at || existing.created_at || ""
+                        created_at: dbP.created_at || existing.created_at || "",
+                        blood_type: hp.blood_type || existing.blood_type || "",
+                        height: hp.height || existing.height || "",
+                        weight: hp.weight || existing.weight || "",
+                        allergies: hp.allergies || existing.allergies || "",
+                        conditions: hp.medical_conditions || existing.conditions || ""
                     };
                 });
                 patientsList = Object.values(map);
@@ -715,22 +728,48 @@ async function handleSaveHealthProfileForm() {
 
     if (window.sb && typeof isConfigured !== "undefined" && isConfigured) {
         try {
-            await window.sb.from("patients").update({
+            const payload = {
                 blood_type: patient.blood_type,
                 height: patient.height,
                 weight: patient.weight,
                 allergies: patient.allergies,
-                conditions: patient.conditions
-            }).eq("id", patient.id);
+                medical_conditions: patient.conditions
+            };
+            const { data: existing, error: checkError } = await window.sb.from("health_profiles").select("id").eq("patient_id", patient.id).limit(1);
+            if (checkError) throw checkError;
+            let saveError = null;
+            if (existing && existing.length > 0) {
+                const { error } = await window.sb.from("health_profiles").update(payload).eq("patient_id", patient.id);
+                saveError = error;
+            } else {
+                const { error } = await window.sb.from("health_profiles").insert({ patient_id: patient.id, ...payload });
+                saveError = error;
+            }
+            if (saveError) {
+                console.warn("Supabase health profile save error:", saveError);
+                if (isSupabaseTableMissing(saveError)) {
+                    showNotice("Health profile database table is missing in Supabase. Saved locally only — run health-profile-migration.sql in the Supabase SQL Editor to enable saving.", "error");
+                } else {
+                    showNotice(`Saved locally, but cloud sync failed: ${saveError.message}`, "error");
+                }
+            } else {
+                showNotice(`Health Profile for ${patient.first_name} ${patient.last_name} saved successfully!`);
+            }
         } catch (err) {
-            console.warn("Supabase update error:", err);
+            console.warn("Supabase health profile save error:", err);
+            if (isSupabaseTableMissing(err)) {
+                showNotice("Health profile database table is missing in Supabase. Saved locally only — run health-profile-migration.sql in the Supabase SQL Editor to enable saving.", "error");
+            } else {
+                showNotice(`Saved locally, but cloud sync failed: ${err.message || err}`, "error");
+            }
         }
+    } else {
+        showNotice(`Health Profile for ${patient.first_name} ${patient.last_name} saved successfully!`);
     }
 
     populatePatientData(patient.id);
     saveActivePatientToStorage(patient);
     setPatientEditMode(false);
-    showNotice(`Health Profile for ${patient.first_name} ${patient.last_name} saved successfully!`);
 }
 
 // Handle Save New Patient Form
@@ -752,6 +791,9 @@ async function handleSaveNewPatientForm() {
     const telephone = fd.get("telephone") || "";
     const email = fd.get("email") || "";
     const address = fd.get("address") || "";
+    const bloodType = fd.get("blood_type") || "";
+    const height = fd.get("height") || "";
+    const weight = fd.get("weight") || "";
     const allergies = fd.get("allergies") || "None";
     const conditions = fd.get("medical_conditions") || "None";
 
@@ -784,7 +826,10 @@ async function handleSaveNewPatientForm() {
         nextApptTime: "",
         programs: [],
         allergies: allergies,
-        conditions: conditions
+        conditions: conditions,
+        blood_type: bloodType,
+        height: height,
+        weight: weight
     };
 
     // Save to Supabase if configured
@@ -812,6 +857,18 @@ async function handleSaveNewPatientForm() {
             if (!error && data && data[0]) {
                 newPatient.id = data[0].id;
                 if (data[0].created_at) newPatient.created_at = data[0].created_at;
+                try {
+                    await window.sb.from("health_profiles").insert({
+                        patient_id: newPatient.id,
+                        blood_type: bloodType || "O+",
+                        height: height || null,
+                        weight: weight || null,
+                        allergies: allergies || "None known",
+                        medical_conditions: conditions || "None"
+                    });
+                } catch (hpErr) {
+                    console.warn("Supabase health profile insert error:", hpErr);
+                }
             }
         } catch (err) {
             console.warn("Supabase insert error:", err);
@@ -1003,6 +1060,12 @@ window.enableEditMode = enableEditMode;
 window.cancelEditMode = cancelEditMode;
 window.focusPersonalForm = focusPersonalForm;
 window.setPatientEditMode = setPatientEditMode;
+
+function isSupabaseTableMissing(err) {
+    const msg = String((err && (err.message || err.details || err.hint)) || err || "").toLowerCase();
+    return msg.includes("schema cache") || msg.includes("could not find the table") || (msg.includes("relation") && msg.includes("does not exist"));
+}
+
 
 // Tab Switching
 function initTabs() {
