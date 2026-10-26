@@ -372,6 +372,11 @@ function closeEnrollModal() {
     if (modal) modal.classList.remove("active");
 }
 
+function isSupabaseTableMissing(err) {
+    const msg = String((err && (err.message || err.details || err.hint)) || err || "").toLowerCase();
+    return msg.includes("schema cache") || msg.includes("could not find the table") || (msg.includes("relation") && msg.includes("does not exist"));
+}
+
 async function handleEnroll(e) {
     e.preventDefault();
     const name = document.getElementById("tbName").value.trim();
@@ -385,56 +390,66 @@ async function handleEnroll(e) {
     const totalMonths = cat.includes("Category II") ? 8 : 6;
     const code = `TB-2026-${String(samplePatients.length + 1).padStart(4, "0")}`;
 
+    const buildLocalPatient = () => ({
+        id: Date.now(),
+        code: code,
+        name: name,
+        age: parseInt(age, 10),
+        sex: sex,
+        category: cat,
+        phase: "Intensive",
+        startDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+        weight: weight + " kg",
+        bhw: bhw,
+        contact: "0917-000-0000",
+        address: address,
+        progressMonth: 1,
+        totalMonths: totalMonths,
+        progressPercent: 5,
+        status: "Active",
+        intakes: []
+    });
+
+    let persisted = false;
     try {
         if (window.sb && typeof isConfigured !== "undefined" && isConfigured) {
-            const { data, error } = await window.sb.from("tb_cases").insert([{
-                patient_id: null,
-                tb_code: code,
-                patient_name: name,
-                age: parseInt(age, 10),
-                sex: sex,
-                category: cat,
-                phase: "Intensive",
-                treatment_start: new Date().toISOString().split("T")[0],
-                weight: weight + " kg",
-                bhw: bhw,
-                contact: "0917-000-0000",
-                address: address,
-                progress_month: 1,
-                total_months: totalMonths,
-                progress_percent: 5,
-                status: "Active"
-            }]).select().single();
-            if (error) throw error;
-            const newPatient = mapCase(data, []);
-            samplePatients.unshift(newPatient);
+            try {
+                const { data, error } = await window.sb.from("tb_cases").insert([{
+                    patient_id: null,
+                    tb_code: code,
+                    patient_name: name,
+                    age: parseInt(age, 10),
+                    sex: sex,
+                    category: cat,
+                    phase: "Intensive",
+                    treatment_start: new Date().toISOString().split("T")[0],
+                    weight: weight + " kg",
+                    bhw: bhw,
+                    contact: "0917-000-0000",
+                    address: address,
+                    progress_month: 1,
+                    total_months: totalMonths,
+                    progress_percent: 5,
+                    status: "Active"
+                }]).select().single();
+                if (error) throw error;
+                const newPatient = mapCase(data, []);
+                samplePatients.unshift(newPatient);
+                persisted = true;
+            } catch (err) {
+                if (!isSupabaseTableMissing(err)) throw err;
+                console.warn("TB-DOTS Supabase table missing; falling back to local mode.", err);
+                showToast("TB-DOTS database table is missing in Supabase. Enrolled locally only — run tb-dots-migration.sql in the Supabase SQL Editor to enable saving.", "error");
+                samplePatients.unshift(buildLocalPatient());
+            }
         } else {
-            const newPatient = {
-                id: Date.now(),
-                code: code,
-                name: name,
-                age: parseInt(age, 10),
-                sex: sex,
-                category: cat,
-                phase: "Intensive",
-                startDate: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
-                weight: weight + " kg",
-                bhw: bhw,
-                contact: "0917-000-0000",
-                address: address,
-                progressMonth: 1,
-                totalMonths: totalMonths,
-                progressPercent: 5,
-                status: "Active",
-                intakes: []
-            };
-            samplePatients.unshift(newPatient);
+            samplePatients.unshift(buildLocalPatient());
         }
         selectPatient(samplePatients[0]);
         closeEnrollModal();
         renderMasterIntakes();
         updateSummaryStats();
-        showToast("Patient enrolled successfully.");
+        if (persisted) showToast("Patient enrolled successfully.");
     } catch (err) {
         console.error(err);
         showToast("Failed to enroll patient: " + (err.message || err), "error");
