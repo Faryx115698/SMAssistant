@@ -23,8 +23,8 @@ DROP POLICY IF EXISTS "Health education activities access" ON public.health_educ
 CREATE POLICY "Health education activities access"
     ON public.health_education_activities
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.health_education_participants (
     id BIGSERIAL PRIMARY KEY,
@@ -46,8 +46,8 @@ DROP POLICY IF EXISTS "Health education participants access" ON public.health_ed
 CREATE POLICY "Health education participants access"
     ON public.health_education_participants
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.health_education_materials (
     id BIGSERIAL PRIMARY KEY,
@@ -71,8 +71,8 @@ DROP POLICY IF EXISTS "Health education materials access" ON public.health_educa
 CREATE POLICY "Health education materials access"
     ON public.health_education_materials
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.health_education_activities TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.health_education_participants TO authenticated;
@@ -89,5 +89,4 @@ CREATE INDEX IF NOT EXISTS idx_health_education_materials_category
     ON public.health_education_materials (category);
 
 NOTIFY pgrst, 'reload schema';
-
 

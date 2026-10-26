@@ -840,6 +840,10 @@ textarea {
     border-color: #0755a5;
 }
 
+.record-actions button[hidden] {
+    display: none;
+}
+
 .record-actions button.edit-patient-btn.active-editing {
     background: #0755a5;
     color: #ffffff;

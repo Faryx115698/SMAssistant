@@ -3,6 +3,40 @@
 -- Run this script in your Supabase Project -> SQL Editor -> New query -> Run
 -- ==============================================================================
 
+CREATE OR REPLACE FUNCTION public.is_health_center_staff()
+RETURNS BOOLEAN
+LANGUAGE SQL
+STABLE
+AS $$
+    SELECT coalesce(auth.jwt() -> 'app_metadata' ->> 'staff_admin', 'false') = 'true'
+        OR replace(lower(coalesce(auth.jwt() -> 'app_metadata' ->> 'role', '')), ' ', '_')
+            IN ('admin', 'administrator', 'staff', 'nurse', 'doctor', 'health_worker', 'midwife', 'records_staff')
+        OR EXISTS (
+            SELECT 1
+            FROM jsonb_array_elements_text(
+                CASE WHEN jsonb_typeof(auth.jwt() -> 'app_metadata' -> 'roles') = 'array'
+                    THEN auth.jwt() -> 'app_metadata' -> 'roles'
+                    ELSE '[]'::jsonb
+                END
+            ) AS metadata_roles(role_name)
+            WHERE lower(metadata_roles.role_name) IN ('admin', 'administrator')
+        );
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_inventory_staff()
+RETURNS BOOLEAN
+LANGUAGE SQL
+STABLE
+AS $$
+    SELECT public.is_health_center_staff()
+        OR replace(lower(coalesce(auth.jwt() -> 'app_metadata' ->> 'role', '')), ' ', '_') = 'inventory_staff';
+$$;
+
+REVOKE ALL ON FUNCTION public.is_health_center_staff() FROM PUBLIC;
+REVOKE ALL ON FUNCTION public.is_inventory_staff() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.is_health_center_staff() TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_inventory_staff() TO authenticated;
+
 -- 1. PROFILES (Extends Supabase auth.users)
 CREATE TABLE IF NOT EXISTS public.profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -40,10 +74,36 @@ CREATE TABLE IF NOT EXISTS public.patients (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+CREATE OR REPLACE FUNCTION public.current_patient_id()
+RETURNS BIGINT
+LANGUAGE SQL
+STABLE
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
+    SELECT CASE WHEN count(*) = 1 THEN min(id) END
+    FROM public.patients
+    WHERE email IS NOT NULL
+      AND lower(email) = lower(auth.jwt() ->> 'email')
+      AND EXISTS (
+          SELECT 1 FROM auth.users u
+          WHERE u.id = auth.uid()
+            AND u.email_confirmed_at IS NOT NULL
+            AND lower(u.email) = lower(auth.jwt() ->> 'email')
+      )
+$$;
+
+REVOKE ALL ON FUNCTION public.current_patient_id() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.current_patient_id() TO authenticated;
+
 ALTER TABLE public.patients ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Patients viewable by authenticated users" ON public.patients FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Patients insertable by authenticated users" ON public.patients FOR INSERT TO authenticated WITH CHECK (true);
-CREATE POLICY "Patients updatable by authenticated users" ON public.patients FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "Patients can view their own record"
+    ON public.patients FOR SELECT TO authenticated
+    USING (id = public.current_patient_id() OR public.is_health_center_staff());
+CREATE POLICY "Staff can manage patient records"
+    ON public.patients FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- 3. HEALTH PROFILES
 CREATE TABLE IF NOT EXISTS public.health_profiles (
@@ -58,7 +118,13 @@ CREATE TABLE IF NOT EXISTS public.health_profiles (
 );
 
 ALTER TABLE public.health_profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Health profiles access" ON public.health_profiles FOR ALL TO authenticated USING (true);
+CREATE POLICY "Patients can view their own health profile"
+    ON public.health_profiles FOR SELECT TO authenticated
+    USING (patient_id = public.current_patient_id() OR public.is_health_center_staff());
+CREATE POLICY "Staff can manage health profiles"
+    ON public.health_profiles FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- 4. CONSULTATIONS & MEDICAL RECORDS
 CREATE TABLE IF NOT EXISTS public.consultations (
@@ -83,7 +149,13 @@ CREATE TABLE IF NOT EXISTS public.consultations (
 );
 
 ALTER TABLE public.consultations ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Consultations access" ON public.consultations FOR ALL TO authenticated USING (true);
+CREATE POLICY "Patients can view their consultations"
+    ON public.consultations FOR SELECT TO authenticated
+    USING (patient_id = public.current_patient_id() OR public.is_health_center_staff());
+CREATE POLICY "Staff can manage consultations"
+    ON public.consultations FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- 5. VITAL SIGNS
 CREATE TABLE IF NOT EXISTS public.vital_signs (
@@ -100,7 +172,20 @@ CREATE TABLE IF NOT EXISTS public.vital_signs (
 );
 
 ALTER TABLE public.vital_signs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Vitals access" ON public.vital_signs FOR ALL TO authenticated USING (true);
+CREATE POLICY "Patients can view vitals from their consultations"
+    ON public.vital_signs FOR SELECT TO authenticated
+    USING (
+        EXISTS (
+            SELECT 1 FROM public.consultations c
+            WHERE c.id = consultation_id
+              AND c.patient_id = public.current_patient_id()
+        )
+        OR public.is_health_center_staff()
+    );
+CREATE POLICY "Staff can manage vital signs"
+    ON public.vital_signs FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- 6. PRESCRIPTIONS
 CREATE TABLE IF NOT EXISTS public.prescriptions (
@@ -115,7 +200,20 @@ CREATE TABLE IF NOT EXISTS public.prescriptions (
 );
 
 ALTER TABLE public.prescriptions ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Prescriptions access" ON public.prescriptions FOR ALL TO authenticated USING (true);
+CREATE POLICY "Patients can view prescriptions from their consultations"
+    ON public.prescriptions FOR SELECT TO authenticated
+    USING (
+        EXISTS (
+            SELECT 1 FROM public.consultations c
+            WHERE c.id = consultation_id
+              AND c.patient_id = public.current_patient_id()
+        )
+        OR public.is_health_center_staff()
+    );
+CREATE POLICY "Staff can manage prescriptions"
+    ON public.prescriptions FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- 7. APPOINTMENTS
 CREATE TABLE IF NOT EXISTS public.appointments (
@@ -131,7 +229,20 @@ CREATE TABLE IF NOT EXISTS public.appointments (
 );
 
 ALTER TABLE public.appointments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Appointments access" ON public.appointments FOR ALL TO authenticated USING (true);
+CREATE POLICY "Patients can view their appointments"
+    ON public.appointments FOR SELECT TO authenticated
+    USING (patient_id = public.current_patient_id() OR public.is_health_center_staff());
+CREATE POLICY "Patients can request their own appointments"
+    ON public.appointments FOR INSERT TO authenticated
+    WITH CHECK (
+        patient_id = public.current_patient_id()
+        AND appointment_date >= CURRENT_DATE
+        AND (status IS NULL OR status = 'Scheduled')
+    );
+CREATE POLICY "Staff can manage appointments"
+    ON public.appointments FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- 8. INVENTORY
 CREATE TABLE IF NOT EXISTS public.inventory (
@@ -148,7 +259,9 @@ CREATE TABLE IF NOT EXISTS public.inventory (
 );
 
 ALTER TABLE public.inventory ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Inventory access" ON public.inventory FOR ALL TO authenticated USING (true);
+CREATE POLICY "Inventory access" ON public.inventory FOR ALL TO authenticated
+    USING (public.is_inventory_staff())
+    WITH CHECK (public.is_inventory_staff());
 
 CREATE OR REPLACE FUNCTION public.set_inventory_stock_status()
 RETURNS TRIGGER
@@ -196,7 +309,9 @@ CREATE TABLE IF NOT EXISTS public.inventory_issuances (
 ALTER TABLE public.inventory_issuances ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Inventory issuances access" ON public.inventory_issuances;
 CREATE POLICY "Inventory issuances access" ON public.inventory_issuances
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated
+    USING (public.is_inventory_staff())
+    WITH CHECK (public.is_inventory_staff());
 
 CREATE OR REPLACE FUNCTION public.issue_medicine(
     p_inventory_id BIGINT,
@@ -298,7 +413,9 @@ CREATE TABLE IF NOT EXISTS public.inventory_stock_receipts (
 ALTER TABLE public.inventory_stock_receipts ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Inventory stock receipts access" ON public.inventory_stock_receipts;
 CREATE POLICY "Inventory stock receipts access" ON public.inventory_stock_receipts
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated
+    USING (public.is_inventory_staff())
+    WITH CHECK (public.is_inventory_staff());
 GRANT SELECT, INSERT, UPDATE ON public.inventory TO authenticated;
 GRANT USAGE, SELECT ON SEQUENCE public.inventory_id_seq TO authenticated;
 GRANT SELECT, INSERT ON public.inventory_stock_receipts TO authenticated;
@@ -364,7 +481,9 @@ CREATE TABLE IF NOT EXISTS public.immunization_records (
 );
 
 ALTER TABLE public.immunization_records ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Immunization access" ON public.immunization_records FOR ALL TO authenticated USING (true);
+CREATE POLICY "Immunization access" ON public.immunization_records FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- 9A. IMMUNIZATION AUDIT, VACCINE LOTS, AND STOCK WORKFLOW
 -- Additive immunization workflow update for existing Supabase projects.
@@ -445,13 +564,13 @@ ALTER TABLE public.immunization_record_audit ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Vaccine lot read access" ON public.vaccine_inventory_lots;
 CREATE POLICY "Vaccine lot read access" ON public.vaccine_inventory_lots
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated USING (public.is_inventory_staff());
 DROP POLICY IF EXISTS "Vaccine movement read access" ON public.vaccine_stock_movements;
 CREATE POLICY "Vaccine movement read access" ON public.vaccine_stock_movements
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated USING (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Immunization audit read access" ON public.immunization_record_audit;
 CREATE POLICY "Immunization audit read access" ON public.immunization_record_audit
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated USING (public.is_health_center_staff());
 
 GRANT SELECT ON public.vaccine_inventory_lots TO authenticated;
 GRANT SELECT ON public.vaccine_stock_movements TO authenticated;
@@ -484,6 +603,9 @@ DECLARE
 BEGIN
     IF auth.uid() IS NULL THEN
         RAISE EXCEPTION 'Authentication is required to receive vaccine stock.';
+    END IF;
+    IF NOT public.is_inventory_staff() THEN
+        RAISE EXCEPTION 'Health center staff must receive vaccine stock.';
     END IF;
     IF NULLIF(BTRIM(p_vaccine), '') IS NULL OR NULLIF(BTRIM(p_lot_number), '') IS NULL THEN
         RAISE EXCEPTION 'Vaccine name and lot number are required.';
@@ -665,7 +787,9 @@ CREATE TABLE IF NOT EXISTS public.maternal_records (
 );
 
 ALTER TABLE public.maternal_records ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Maternal access" ON public.maternal_records FOR ALL TO authenticated USING (true);
+CREATE POLICY "Maternal access" ON public.maternal_records FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.maternal_anc_visits (
     id BIGSERIAL PRIMARY KEY,
@@ -681,7 +805,9 @@ CREATE TABLE IF NOT EXISTS public.maternal_anc_visits (
 );
 
 ALTER TABLE public.maternal_anc_visits ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Maternal ANC visits access" ON public.maternal_anc_visits FOR ALL TO authenticated USING (true);
+CREATE POLICY "Maternal ANC visits access" ON public.maternal_anc_visits FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.maternal_appointments (
     id BIGSERIAL PRIMARY KEY,
@@ -694,7 +820,9 @@ CREATE TABLE IF NOT EXISTS public.maternal_appointments (
 );
 
 ALTER TABLE public.maternal_appointments ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Maternal appointments access" ON public.maternal_appointments FOR ALL TO authenticated USING (true);
+CREATE POLICY "Maternal appointments access" ON public.maternal_appointments FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.maternal_pnc_records (
     id BIGSERIAL PRIMARY KEY,
@@ -709,7 +837,9 @@ CREATE TABLE IF NOT EXISTS public.maternal_pnc_records (
 );
 
 ALTER TABLE public.maternal_pnc_records ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Maternal PNC records access" ON public.maternal_pnc_records FOR ALL TO authenticated USING (true);
+CREATE POLICY "Maternal PNC records access" ON public.maternal_pnc_records FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.maternal_birth_records (
     id BIGSERIAL PRIMARY KEY,
@@ -724,7 +854,9 @@ CREATE TABLE IF NOT EXISTS public.maternal_birth_records (
 );
 
 ALTER TABLE public.maternal_birth_records ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Maternal birth records access" ON public.maternal_birth_records FOR ALL TO authenticated USING (true);
+CREATE POLICY "Maternal birth records access" ON public.maternal_birth_records FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- 11. INFANT & CHILD RECORDS
 CREATE TABLE IF NOT EXISTS public.child_records (
@@ -748,7 +880,9 @@ CREATE TABLE IF NOT EXISTS public.child_records (
 
 ALTER TABLE public.child_records ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Child records access" ON public.child_records;
-CREATE POLICY "Child records access" ON public.child_records FOR ALL TO authenticated USING (true);
+CREATE POLICY "Child records access" ON public.child_records FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- 11A. CHILD HEALTH VISITS, SCREENINGS, AUDIT, AND FOLLOW-UPS
 -- Additive child-health workflow for existing Supabase projects.
@@ -902,19 +1036,19 @@ ALTER TABLE public.child_health_audit ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Child health profiles access" ON public.child_records;
 CREATE POLICY "Child health profiles access" ON public.child_records
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated USING (public.is_health_center_staff()) WITH CHECK (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Child visits access" ON public.child_visits;
 CREATE POLICY "Child visits access" ON public.child_visits
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated USING (public.is_health_center_staff()) WITH CHECK (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Child nutrition assessments access" ON public.child_nutrition_assessments;
 CREATE POLICY "Child nutrition assessments access" ON public.child_nutrition_assessments
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated USING (public.is_health_center_staff()) WITH CHECK (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Child development screenings access" ON public.child_development_screenings;
 CREATE POLICY "Child development screenings access" ON public.child_development_screenings
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated USING (public.is_health_center_staff()) WITH CHECK (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Child health audit read access" ON public.child_health_audit;
 CREATE POLICY "Child health audit read access" ON public.child_health_audit
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated USING (public.is_health_center_staff());
 
 GRANT SELECT, INSERT, UPDATE ON public.child_records TO authenticated;
 GRANT SELECT, INSERT, UPDATE ON public.child_visits TO authenticated;
@@ -1029,7 +1163,10 @@ CREATE TABLE IF NOT EXISTS public.announcements (
 
 ALTER TABLE public.announcements ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Announcements viewable by all" ON public.announcements FOR SELECT USING (true);
-CREATE POLICY "Announcements insertable by auth users" ON public.announcements FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "Announcements manageable by health center staff"
+    ON public.announcements FOR ALL TO authenticated
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 -- ==============================================================================
 -- SAMPLE SEED DATA

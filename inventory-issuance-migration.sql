@@ -19,7 +19,9 @@ CREATE TABLE IF NOT EXISTS public.inventory_issuances (
 ALTER TABLE public.inventory_issuances ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Inventory issuances access" ON public.inventory_issuances;
 CREATE POLICY "Inventory issuances access" ON public.inventory_issuances
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated
+    USING (public.is_inventory_staff())
+    WITH CHECK (public.is_inventory_staff());
 GRANT SELECT, INSERT ON public.inventory_issuances TO authenticated;
 GRANT USAGE, SELECT ON SEQUENCE public.inventory_issuances_id_seq TO authenticated;
 

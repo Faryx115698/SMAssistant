@@ -7,6 +7,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!form || !email || !password) return;
 
+    const setupSection = document.getElementById("patientPasswordSetup");
+    if (new URLSearchParams(window.location.search).get("auth") === "setup" && setupSection) {
+        form.hidden = true;
+        setupSection.hidden = false;
+        initializePatientPasswordSetup();
+        return;
+    }
+
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -34,27 +42,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 if (!error && data.session) {
-                    const userRole = data.session.user?.user_metadata?.role || "Administrator";
-                    const isPatient = userRole.toLowerCase() === "patient" || userRole.toLowerCase() === "resident";
+                    const user = data.session.user;
+                    const userRole = String(user?.app_metadata?.role || user?.user_metadata?.role || "").toLowerCase();
+                    let isPatient = userRole === "patient" || userRole === "resident";
+                    if (!userRole && window.sb) {
+                        const { data: patientRecords, error: patientLookupError } = await window.sb
+                            .from("patients").select("id").limit(2);
+                        if (patientLookupError) throw patientLookupError;
+                        isPatient = Boolean(patientRecords && patientRecords.length === 1);
+                    }
                     showMessage("Login successful! Redirecting...", "success");
                     setTimeout(() => {
                         window.location.href = isPatient ? "patient-portal.html" : "dashboard.html";
-                    }, 500);
-                    return;
-                }
-
-                // If user not in Supabase yet, allow local admin & resident preview
-                const isPatientLogin = (emailVal.toLowerCase() === "patient" || emailVal.toLowerCase() === "resident" || emailVal.toLowerCase() === "juan");
-                if (isPatientLogin && (passwordVal === "patient123" || passwordVal === "resident123" || passwordVal === "patient" || passwordVal === "resident" || passwordVal === "123456" || passwordVal === "admin")) {
-                    localStorage.setItem("sm_user_session", JSON.stringify({
-                        name: "Juan D. Dela Cruz",
-                        role: "Patient",
-                        email: "juandelacruz@example.com",
-                        residentId: "PT-2026-0001"
-                    }));
-                    showMessage("Resident login successful! Redirecting to Resident Portal...", "success");
-                    setTimeout(() => {
-                        window.location.href = "patient-portal.html";
                     }, 500);
                     return;
                 }
@@ -80,25 +79,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             } catch (err) {
                 console.error("Auth error:", err);
+                showMessage(err.message || "Could not connect to the sign-in service. Please try again.", "error");
+                if (loginBtn) {
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = "Login";
+                }
+                return;
             }
         }
 
-        // 2. Local Fallback
-        const isPatientLocal = (emailVal.toLowerCase() === "patient" || emailVal.toLowerCase() === "resident" || emailVal.toLowerCase() === "juan");
-        if (isPatientLocal && (passwordVal === "patient123" || passwordVal === "resident123" || passwordVal === "patient" || passwordVal === "resident" || passwordVal === "123456" || passwordVal === "admin")) {
-            localStorage.setItem("sm_user_session", JSON.stringify({
-                name: "Juan D. Dela Cruz",
-                role: "Patient",
-                email: "juandelacruz@example.com",
-                residentId: "PT-2026-0001"
-            }));
-            showMessage("Resident login successful! Redirecting to Resident Portal...", "success");
-            setTimeout(() => {
-                window.location.href = "patient-portal.html";
-            }, 500);
-            return;
-        }
-
+        // Patient accounts must authenticate with Supabase; never use a shared demo password.
         if (emailVal === "admin" && (passwordVal === "admin123" || passwordVal === "admin")) {
             localStorage.setItem("sm_user_session", JSON.stringify({
                 name: "Admin Cyron",
@@ -126,15 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
         messageEl.style.display = "block";
     }
 
-    const demoPatientBtn = document.getElementById("demoPatientBtn");
-    if (demoPatientBtn) {
-        demoPatientBtn.addEventListener("click", function () {
-            email.value = "patient";
-            password.value = "patient123";
-            form.dispatchEvent(new Event("submit"));
-        });
-    }
-
     const demoAdminBtn = document.getElementById("demoAdminBtn");
     if (demoAdminBtn) {
         demoAdminBtn.addEventListener("click", function () {
@@ -142,5 +123,86 @@ document.addEventListener("DOMContentLoaded", function () {
             password.value = "admin123";
             form.dispatchEvent(new Event("submit"));
         });
+    }
+
+    async function initializePatientPasswordSetup() {
+        const setupForm = document.getElementById("patientPasswordSetupForm");
+        const setupMessage = document.getElementById("setupMessage");
+        const setupButton = document.getElementById("setupPasswordBtn");
+        if (!window.sb || typeof isConfigured === "undefined" || !isConfigured || !setupForm) {
+            showSetupMessage("Patient account setup is unavailable. Contact the health center.", "error");
+            return;
+        }
+
+        let sessionResult;
+        try {
+            sessionResult = await window.sb.auth.getSession();
+        } catch (sessionError) {
+            showSetupMessage(sessionError.message || "Could not validate this invitation. Ask the health center for help.", "error");
+            return;
+        }
+        const { data, error } = sessionResult;
+        if (error || !data.session) {
+            showSetupMessage("This invitation link is invalid or expired. Ask the health center to send a new invitation.", "error");
+            return;
+        }
+        if (String(data.session.user?.app_metadata?.role || "").toLowerCase() !== "patient") {
+            showSetupMessage("This link is not a valid patient invitation. Sign out and ask the health center to send a new link.", "error");
+            return;
+        }
+
+        setupForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const newPassword = document.getElementById("newPatientPassword").value;
+            const confirmPassword = document.getElementById("confirmPatientPassword").value;
+            if (newPassword.length < 10) {
+                showSetupMessage("Choose a password with at least 10 characters.", "error");
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                showSetupMessage("The passwords do not match.", "error");
+                return;
+            }
+
+            setupButton.disabled = true;
+            setupButton.textContent = "Saving...";
+            let passwordError;
+            try {
+                ({ error: passwordError } = await window.sb.auth.updateUser({ password: newPassword }));
+            } catch (updateError) {
+                setupButton.disabled = false;
+                setupButton.textContent = "Set Password";
+                showSetupMessage(updateError.message || "Could not set your password. Please try again.", "error");
+                return;
+            }
+            if (passwordError) {
+                setupButton.disabled = false;
+                setupButton.textContent = "Set Password";
+                showSetupMessage(passwordError.message, "error");
+                return;
+            }
+
+            let signOutError;
+            try {
+                ({ error: signOutError } = await window.sb.auth.signOut());
+            } catch (signOutException) {
+                showSetupMessage("Your password was set, but sign-out failed. Return to this page and sign in with your new password.", "error");
+                return;
+            }
+            if (signOutError) {
+                showSetupMessage("Your password was set, but sign-out failed. Return to this page and sign in with your new password.", "error");
+                return;
+            }
+            window.history.replaceState({}, document.title, window.location.pathname);
+            setupForm.hidden = true;
+            showSetupMessage("Password set successfully. You can now sign in to your patient portal.", "success");
+        });
+
+        function showSetupMessage(message, type) {
+            if (!setupMessage) return;
+            setupMessage.textContent = message;
+            setupMessage.className = `message ${type}`;
+            setupMessage.style.display = "block";
+        }
     }
 });

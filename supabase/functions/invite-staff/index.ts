@@ -116,6 +116,33 @@ Deno.serve(async (request: Request) => {
             return jsonResponse(502, { error: "Supabase could not send the invitation. Check the project's email/SMTP configuration and function logs." });
         }
 
+        const invitedUser = await inviteResponse.json();
+        if (!invitedUser || typeof invitedUser.id !== "string") {
+            console.error("Supabase created a staff invitation without returning a user ID.");
+            return jsonResponse(502, { error: "The invitation was sent, but staff access could not be configured. Contact the project owner." });
+        }
+
+        const metadataResponse = await fetch(
+            `${supabaseUrl}/auth/v1/admin/users/${encodeURIComponent(invitedUser.id)}`,
+            {
+                method: "PUT",
+                headers: {
+                    apikey: serviceRoleKey,
+                    Authorization: `Bearer ${serviceRoleKey}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    app_metadata: { role }
+                })
+            }
+        );
+        if (!metadataResponse.ok) {
+            console.error("Supabase invited the staff user but could not assign trusted staff metadata:", metadataResponse.status);
+            return jsonResponse(502, {
+                error: "The invitation was sent, but staff access could not be configured. Contact the project owner before the invitee signs in."
+            });
+        }
+
         return jsonResponse(200, { invited: true, email, fullName, role });
     } catch (error) {
         console.error("Could not reach Supabase Auth to invite staff:", error);

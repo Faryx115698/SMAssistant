@@ -26,8 +26,8 @@ DROP POLICY IF EXISTS "TB cases access" ON public.tb_cases;
 CREATE POLICY "TB cases access"
     ON public.tb_cases
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.tb_intakes (
     id BIGSERIAL PRIMARY KEY,
@@ -47,8 +47,8 @@ DROP POLICY IF EXISTS "TB intakes access" ON public.tb_intakes;
 CREATE POLICY "TB intakes access"
     ON public.tb_intakes
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.tb_lab_results (
     id BIGSERIAL PRIMARY KEY,
@@ -69,8 +69,8 @@ DROP POLICY IF EXISTS "TB lab results access" ON public.tb_lab_results;
 CREATE POLICY "TB lab results access"
     ON public.tb_lab_results
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.tb_contacts (
     id BIGSERIAL PRIMARY KEY,
@@ -90,8 +90,8 @@ DROP POLICY IF EXISTS "TB contacts access" ON public.tb_contacts;
 CREATE POLICY "TB contacts access"
     ON public.tb_contacts
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.tb_cases TO authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.tb_intakes TO authenticated;

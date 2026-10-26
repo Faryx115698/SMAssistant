@@ -203,7 +203,8 @@
                             </h2>
 
                             <p>
-                                Add a new patient and create their health profile.
+                                Add a patient record and email the patient a secure link to set their portal password.
+                                Their date of birth verifies the record and is never used as a password.
                             </p>
 
                         </div>
@@ -248,7 +249,7 @@
 
                                 <label>
                                     Date of Birth
-                                    <input type="date" name="birth_date" value="">
+                                    <input type="date" name="birth_date" value="" required>
                                 </label>
 
                                 <label>
@@ -298,7 +299,7 @@
 
                                 <label>
                                     Email Address
-                                    <input type="email" name="email" value="" placeholder="Optional">
+                                    <input type="email" name="email" value="" placeholder="Patient's login email" required>
                                 </label>
 
                                 <label class="span-2">
@@ -368,7 +369,7 @@
 
                                     <i class="fa-solid fa-user-plus"></i>
 
-                                    Save Patient
+                                    Save Patient & Send Invite
 
                                 </button>
 
@@ -424,6 +425,11 @@
                         </div>
 
                         <div class="record-actions">
+
+                            <button type="button" id="portalInviteBtn" hidden>
+                                <i class="fa-solid fa-envelope"></i>
+                                <span>Send portal invite</span>
+                            </button>
 
                             <button type="button" id="editPatientBtn" class="edit-patient-btn" title="Click to edit patient information">
                                 <i class="fa-solid fa-pen"></i>

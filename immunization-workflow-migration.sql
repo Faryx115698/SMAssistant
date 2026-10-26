@@ -76,13 +76,13 @@ ALTER TABLE public.immunization_record_audit ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Vaccine lot read access" ON public.vaccine_inventory_lots;
 CREATE POLICY "Vaccine lot read access" ON public.vaccine_inventory_lots
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated USING (public.is_inventory_staff());
 DROP POLICY IF EXISTS "Vaccine movement read access" ON public.vaccine_stock_movements;
 CREATE POLICY "Vaccine movement read access" ON public.vaccine_stock_movements
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated USING (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Immunization audit read access" ON public.immunization_record_audit;
 CREATE POLICY "Immunization audit read access" ON public.immunization_record_audit
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated USING (public.is_health_center_staff());
 
 GRANT SELECT ON public.vaccine_inventory_lots TO authenticated;
 GRANT SELECT ON public.vaccine_stock_movements TO authenticated;
@@ -115,6 +115,9 @@ DECLARE
 BEGIN
     IF auth.uid() IS NULL THEN
         RAISE EXCEPTION 'Authentication is required to receive vaccine stock.';
+    END IF;
+    IF NOT public.is_inventory_staff() THEN
+        RAISE EXCEPTION 'Health center staff must receive vaccine stock.';
     END IF;
     IF NULLIF(BTRIM(p_vaccine), '') IS NULL OR NULLIF(BTRIM(p_lot_number), '') IS NULL THEN
         RAISE EXCEPTION 'Vaccine name and lot number are required.';

@@ -13,11 +13,8 @@ CREATE TABLE IF NOT EXISTS public.health_profiles (
 
 ALTER TABLE public.health_profiles ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Health profiles access" ON public.health_profiles;
-CREATE POLICY "Health profiles access"
-    ON public.health_profiles
-    FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+-- Do not add a permissive authenticated-user policy. Run patient-portal-migration.sql
+-- to install patient-scoped read policies and trusted staff write access.
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.health_profiles TO authenticated;
 GRANT USAGE, SELECT ON SEQUENCE public.health_profiles_id_seq TO authenticated;

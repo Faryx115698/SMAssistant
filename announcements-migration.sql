@@ -41,17 +41,18 @@ ALTER TABLE public.announcements ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Announcements viewable by all" ON public.announcements;
 DROP POLICY IF EXISTS "Announcements insertable by auth users" ON public.announcements;
 DROP POLICY IF EXISTS "Announcements manageable by auth users" ON public.announcements;
+DROP POLICY IF EXISTS "Announcements manageable by health center staff" ON public.announcements;
 
 CREATE POLICY "Announcements viewable by all"
     ON public.announcements
     FOR SELECT
     USING (true);
 
-CREATE POLICY "Announcements manageable by auth users"
+CREATE POLICY "Announcements manageable by health center staff"
     ON public.announcements
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 GRANT SELECT ON public.announcements TO anon;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.announcements TO authenticated;

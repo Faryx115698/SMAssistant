@@ -69,6 +69,7 @@ async function fetchLivePatients() {
                         contact_number: dbP.contact_number || existing.contact_number || "",
                         telephone: dbP.telephone || existing.telephone || "",
                         email: dbP.email || existing.email || "",
+                        portal_invited_at: dbP.portal_invited_at || existing.portal_invited_at || null,
                         address: dbP.address || existing.address || "",
                         status: dbP.status || "Active",
                         created_at: dbP.created_at || existing.created_at || "",
@@ -249,6 +250,14 @@ function populatePatientData(patientId) {
     setVal("pTelephone", patient.telephone);
     setVal("pEmail", patient.email);
     setVal("pAddress", patient.address);
+
+    const portalInviteBtn = document.getElementById("portalInviteBtn");
+    if (portalInviteBtn) {
+        portalInviteBtn.hidden = !patient.email || !patient.birth_date || Boolean(patient.portal_invited_at);
+        portalInviteBtn.disabled = false;
+        const label = portalInviteBtn.querySelector("span");
+        if (label) label.textContent = "Send portal invite";
+    }
 
     // 3. Health Profile Form Inputs
     setVal("hBloodType", patient.blood_type || "");
@@ -479,6 +488,14 @@ function initEventListeners() {
         });
     }
 
+    const portalInviteBtn = document.getElementById("portalInviteBtn");
+    if (portalInviteBtn) {
+        portalInviteBtn.addEventListener("click", async function () {
+            const patient = patientsList.find(item => item.id === selectedPatientId);
+            if (patient) await sendPatientPortalInvite(patient, portalInviteBtn);
+        });
+    }
+
     // 5e. Pulse Edit button when user clicks locked form fields in view mode
     if (personalForm) {
         personalForm.addEventListener("click", function (e) {
@@ -510,7 +527,21 @@ function initEventListeners() {
     if (newPatientForm) {
         newPatientForm.addEventListener("submit", async function (e) {
             e.preventDefault();
-            await handleSaveNewPatientForm();
+            const submitButton = newPatientForm.querySelector("button[type='submit']");
+            if (submitButton?.disabled) return;
+            const idleMarkup = submitButton ? submitButton.innerHTML : "";
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = "Saving...";
+            }
+            try {
+                await handleSaveNewPatientForm();
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = idleMarkup;
+                }
+            }
         });
     }
 
@@ -659,6 +690,7 @@ function applyFilters() {
 async function handleSavePersonalForm() {
     const patient = patientsList.find(p => p.id === selectedPatientId);
     if (!patient) return;
+    const originalEmail = String(patient.email || "").trim().toLowerCase();
 
     // Update patient object in memory
     patient.first_name = document.getElementById("pFirstName").value;
@@ -676,6 +708,8 @@ async function handleSavePersonalForm() {
     patient.telephone = document.getElementById("pTelephone").value;
     patient.email = document.getElementById("pEmail").value;
     patient.address = document.getElementById("pAddress").value;
+    const emailChanged = originalEmail !== String(patient.email || "").trim().toLowerCase();
+    if (emailChanged) patient.portal_invited_at = null;
 
     // Sync to Supabase if available
     if (window.sb && typeof isConfigured !== "undefined" && isConfigured) {
@@ -694,7 +728,8 @@ async function handleSavePersonalForm() {
                 contact_number: patient.contact_number,
                 telephone: patient.telephone,
                 email: patient.email,
-                address: patient.address
+                address: patient.address,
+                ...(emailChanged ? { portal_invited_at: null } : {})
             }).eq("id", patient.id);
         } catch (err) {
             console.warn("Supabase update error:", err);
@@ -775,6 +810,10 @@ async function handleSaveHealthProfileForm() {
 // Handle Save New Patient Form
 async function handleSaveNewPatientForm() {
     const form = document.getElementById("newPatientForm");
+    if (!window.sb || typeof isConfigured === "undefined" || !isConfigured) {
+        showNotice("Patient registration requires a configured Supabase connection. No patient was saved.", "error");
+        return;
+    }
     const fd = new FormData(form);
 
     const firstName = fd.get("first_name") || "";
@@ -789,13 +828,21 @@ async function handleSaveNewPatientForm() {
     const occupation = fd.get("occupation") || "";
     const contact = fd.get("contact_number") || "";
     const telephone = fd.get("telephone") || "";
-    const email = fd.get("email") || "";
+    const email = String(fd.get("email") || "").trim().toLowerCase();
     const address = fd.get("address") || "";
     const bloodType = fd.get("blood_type") || "";
     const height = fd.get("height") || "";
     const weight = fd.get("weight") || "";
     const allergies = fd.get("allergies") || "None";
     const conditions = fd.get("medical_conditions") || "None";
+
+    const parsedBirthDate = new Date(`${birthDate}T00:00:00`);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (!email || !birthDate || Number.isNaN(parsedBirthDate.getTime()) || parsedBirthDate > today) {
+        showNotice("Enter a valid patient email address and a date of birth that is not in the future.", "error");
+        return;
+    }
 
     const nextId = patientsList.length > 0 ? Math.max(...patientsList.map(p => p.id)) + 1 : 1;
     const newCode = `PR-2026-${String(nextId).padStart(4, "0")}`;
@@ -832,47 +879,56 @@ async function handleSaveNewPatientForm() {
         weight: weight
     };
 
-    // Save to Supabase if configured
-    if (window.sb && typeof isConfigured !== "undefined" && isConfigured) {
-        try {
-            const { data, error } = await window.sb.from("patients").insert([{
-                patient_code: newCode,
-                first_name: firstName,
-                middle_name: middleName,
-                last_name: lastName,
-                suffix: suffix,
-                birth_date: birthDate || null,
-                sex: sex,
-                civil_status: civilStatus,
-                nationality: nationality,
-                religion: religion,
-                occupation: occupation,
-                contact_number: contact,
-                telephone: telephone,
-                email: email,
-                address: address,
-                status: "Active"
-            }]).select();
+    let patientInsert;
+    try {
+        patientInsert = await window.sb.from("patients").insert([{
+            patient_code: newCode,
+            first_name: firstName,
+            middle_name: middleName,
+            last_name: lastName,
+            suffix: suffix,
+            birth_date: birthDate,
+            sex: sex,
+            civil_status: civilStatus,
+            nationality: nationality,
+            religion: religion,
+            occupation: occupation,
+            contact_number: contact,
+            telephone: telephone,
+            email: email,
+            address: address,
+            status: "Active"
+        }]).select().single();
+    } catch (err) {
+        showNotice(`Could not save the patient record: ${err.message || err}`, "error");
+        return;
+    }
+    if (patientInsert.error || !patientInsert.data) {
+        showNotice(`Could not save the patient record: ${patientInsert.error?.message || "Supabase did not return the saved patient record."}`, "error");
+        return;
+    }
+    newPatient.id = patientInsert.data.id;
+    newPatient.patient_code = patientInsert.data.patient_code || newCode;
+    newPatient.portal_invited_at = patientInsert.data.portal_invited_at || null;
+    if (patientInsert.data.created_at) newPatient.created_at = patientInsert.data.created_at;
 
-            if (!error && data && data[0]) {
-                newPatient.id = data[0].id;
-                if (data[0].created_at) newPatient.created_at = data[0].created_at;
-                try {
-                    await window.sb.from("health_profiles").insert({
-                        patient_id: newPatient.id,
-                        blood_type: bloodType || "O+",
-                        height: height || null,
-                        weight: weight || null,
-                        allergies: allergies || "None known",
-                        medical_conditions: conditions || "None"
-                    });
-                } catch (hpErr) {
-                    console.warn("Supabase health profile insert error:", hpErr);
-                }
-            }
-        } catch (err) {
-            console.warn("Supabase insert error:", err);
-        }
+    let healthProfileWarning = "";
+    let healthProfileError;
+    try {
+        ({ error: healthProfileError } = await window.sb.from("health_profiles").insert({
+            patient_id: newPatient.id,
+            blood_type: bloodType || "O+",
+            height: height || null,
+            weight: weight || null,
+            allergies: allergies || "None known",
+            medical_conditions: conditions || "None"
+        }));
+    } catch (error) {
+        healthProfileError = error;
+    }
+    if (healthProfileError) {
+        console.error("Could not save the new patient's health profile:", healthProfileError);
+        healthProfileWarning = ` Health profile could not be saved: ${healthProfileError.message}`;
     }
 
     patientsList.unshift(newPatient);
@@ -881,7 +937,69 @@ async function handleSaveNewPatientForm() {
     updateCounterCards();
     applyFilters();
     showSelectedPatientView(newPatient.id);
-    showNotice(`New patient ${firstName} ${lastName} (${newCode}) registered successfully!`);
+    showNotice(`Patient ${firstName} ${lastName} (${newPatient.patient_code}) saved. Sending the portal invitation...`, "info");
+    await sendPatientPortalInvite(newPatient, document.getElementById("portalInviteBtn"), healthProfileWarning.trim());
+}
+
+async function sendPatientPortalInvite(patient, button, existingWarning = "") {
+    if (!patient.email || !patient.birth_date) {
+        showNotice("A patient email and date of birth are required to send a portal invitation.", "error");
+        return false;
+    }
+    if (patient.portal_invited_at) {
+        showNotice("A portal invitation has already been sent to this patient's email.", "info");
+        return false;
+    }
+
+    const label = button && button.querySelector("span");
+    if (button) button.disabled = true;
+    if (label) label.textContent = "Sending...";
+    try {
+        const redirectTo = new URL("login.html?auth=setup", window.location.href).href;
+        const { data, error } = await window.sb.functions.invoke("invite-patient", {
+            body: {
+                patientId: patient.id,
+                email: patient.email,
+                birthDate: patient.birth_date,
+                redirectTo
+            }
+        });
+        if (error) throw new Error(await getPatientInviteError(error));
+        if (!data || data.invited !== true) {
+            throw new Error("The invitation service did not confirm that an invitation was sent.");
+        }
+
+        patient.portal_invited_at = data.invitedAt || new Date().toISOString();
+        if (button) {
+            button.hidden = true;
+            button.disabled = false;
+        }
+        const warnings = [existingWarning, data.warning].filter(Boolean);
+        showNotice(
+            `Portal setup invitation sent to ${patient.email}.${warnings.length ? ` ${warnings.join(" ")}` : ""}`,
+            warnings.length ? "error" : "success"
+        );
+        return true;
+    } catch (error) {
+        console.error("Could not send patient portal invitation:", error);
+        if (button) button.disabled = false;
+        if (label) label.textContent = "Send portal invite";
+        showNotice(`Patient record saved, but the portal invitation was not sent: ${error.message}${existingWarning ? ` ${existingWarning}` : ""}`, "error");
+        return false;
+    }
+}
+
+async function getPatientInviteError(error) {
+    const response = error.context;
+    if (response && typeof response.clone === "function") {
+        try {
+            const body = await response.clone().json();
+            if (body && typeof body.error === "string") return body.error;
+        } catch {
+            // Keep the Supabase Functions error below when no JSON response is available.
+        }
+    }
+    return error.message || "Could not send the patient portal invitation.";
 }
 
 function showNotice(msg, type = "success") {

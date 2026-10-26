@@ -149,19 +149,19 @@ ALTER TABLE public.child_health_audit ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "Child health profiles access" ON public.child_records;
 CREATE POLICY "Child health profiles access" ON public.child_records
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated USING (public.is_health_center_staff()) WITH CHECK (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Child visits access" ON public.child_visits;
 CREATE POLICY "Child visits access" ON public.child_visits
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated USING (public.is_health_center_staff()) WITH CHECK (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Child nutrition assessments access" ON public.child_nutrition_assessments;
 CREATE POLICY "Child nutrition assessments access" ON public.child_nutrition_assessments
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated USING (public.is_health_center_staff()) WITH CHECK (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Child development screenings access" ON public.child_development_screenings;
 CREATE POLICY "Child development screenings access" ON public.child_development_screenings
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated USING (public.is_health_center_staff()) WITH CHECK (public.is_health_center_staff());
 DROP POLICY IF EXISTS "Child health audit read access" ON public.child_health_audit;
 CREATE POLICY "Child health audit read access" ON public.child_health_audit
-    FOR SELECT TO authenticated USING (true);
+    FOR SELECT TO authenticated USING (public.is_health_center_staff());
 
 GRANT SELECT, INSERT, UPDATE ON public.child_records TO authenticated;
 GRANT SELECT, INSERT, UPDATE ON public.child_visits TO authenticated;

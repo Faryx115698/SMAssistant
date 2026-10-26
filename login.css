@@ -247,10 +247,25 @@ form,
     z-index: 2;
 }
 
+.setup-help {
+    position: relative;
+    z-index: 2;
+    margin: 12px 0 18px;
+    color: #f1f1f5;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
 .message.error {
     color: #ffdddd;
     background: rgba(170, 30, 30, 0.45);
     border: 1px solid rgba(255, 120, 120, 0.35);
+}
+
+.message.success {
+    color: #dcffe7;
+    background: rgba(22, 110, 58, 0.55);
+    border: 1px solid rgba(120, 255, 160, 0.35);
 }
 
 .login-button {

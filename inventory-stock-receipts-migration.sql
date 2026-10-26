@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS public.inventory_stock_receipts (
 ALTER TABLE public.inventory_stock_receipts ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Inventory stock receipts access" ON public.inventory_stock_receipts;
 CREATE POLICY "Inventory stock receipts access" ON public.inventory_stock_receipts
-    FOR ALL TO authenticated USING (true) WITH CHECK (true);
+    FOR ALL TO authenticated
+    USING (public.is_inventory_staff())
+    WITH CHECK (public.is_inventory_staff());
 GRANT SELECT, INSERT, UPDATE ON public.inventory TO authenticated;
 GRANT USAGE, SELECT ON SEQUENCE public.inventory_id_seq TO authenticated;
 GRANT SELECT, INSERT ON public.inventory_stock_receipts TO authenticated;

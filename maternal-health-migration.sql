@@ -24,8 +24,8 @@ DROP POLICY IF EXISTS "Maternal ANC visits access" ON public.maternal_anc_visits
 CREATE POLICY "Maternal ANC visits access"
     ON public.maternal_anc_visits
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.maternal_appointments (
     id BIGSERIAL PRIMARY KEY,
@@ -42,8 +42,8 @@ DROP POLICY IF EXISTS "Maternal appointments access" ON public.maternal_appointm
 CREATE POLICY "Maternal appointments access"
     ON public.maternal_appointments
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.maternal_pnc_records (
     id BIGSERIAL PRIMARY KEY,
@@ -62,8 +62,8 @@ DROP POLICY IF EXISTS "Maternal PNC records access" ON public.maternal_pnc_recor
 CREATE POLICY "Maternal PNC records access"
     ON public.maternal_pnc_records
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 CREATE TABLE IF NOT EXISTS public.maternal_birth_records (
     id BIGSERIAL PRIMARY KEY,
@@ -82,7 +82,7 @@ DROP POLICY IF EXISTS "Maternal birth records access" ON public.maternal_birth_r
 CREATE POLICY "Maternal birth records access"
     ON public.maternal_birth_records
     FOR ALL TO authenticated
-    USING (true)
-    WITH CHECK (true);
+    USING (public.is_health_center_staff())
+    WITH CHECK (public.is_health_center_staff());
 
 NOTIFY pgrst, 'reload schema';

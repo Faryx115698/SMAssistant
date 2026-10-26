@@ -56,6 +56,11 @@
                     <span>Medical Records</span>
                 </button>
 
+                <button type="button" class="nav-item" data-tab="appointments">
+                    <i class="fa-regular fa-calendar-check"></i>
+                    <span>Appointments</span>
+                </button>
+
                 <button type="button" class="nav-item" data-tab="prescriptions">
                     <i class="fa-solid fa-pills"></i>
                     <span>My Prescriptions</span>
@@ -79,7 +84,7 @@
                 <button type="button" class="nav-item" data-tab="notifications">
                     <i class="fa-solid fa-bell"></i>
                     <span>Notifications</span>
-                    <span class="nav-badge" id="sidebarNotifBadge">3</span>
+                    <span class="nav-badge" id="sidebarNotifBadge" style="display: none;">0</span>
                 </button>
 
                 <button type="button" class="nav-item" data-tab="ai-moto">
@@ -101,8 +106,8 @@
             <!-- Registered Resident Card Bottom -->
             <div class="sidebar-resident-card">
                 <span class="card-role">Registered Resident</span>
-                <div class="resident-name" id="sidebarResidentName">Juan D. Dela Cruz</div>
-                <div class="resident-id" id="sidebarResidentId">ID: PT-2026-0001</div>
+                <div class="resident-name" id="sidebarResidentName">Loading patient account...</div>
+                <div class="resident-id" id="sidebarResidentId"></div>
             </div>
         </aside>
 
@@ -129,7 +134,7 @@
                     </button>
 
                     <div class="header-user-badge">
-                        <div class="header-user-name" id="headerResidentName">Juan D. Dela Cruz</div>
+                        <div class="header-user-name" id="headerResidentName">Loading...</div>
                         <div class="header-user-status">Active Resident Account</div>
                     </div>
 
@@ -141,7 +146,46 @@
             </header>
 
             <!-- Content Body Area (Tabs) -->
-            <main class="content-body" id="mainContent">
+            <main class="content-body portal-loading" id="mainContent">
+
+                <section class="tab-pane" id="pane-appointments">
+                    <div class="page-header-box">
+                        <h2>Appointments</h2>
+                        <p>Request an appointment with the health center and review your upcoming schedule.</p>
+                    </div>
+                    <div class="ui-card">
+                        <form id="appointmentRequestForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label class="form-label" for="appointmentService">Service</label>
+                                    <select class="form-select" id="appointmentService" required>
+                                        <option value="General Consultation">General Consultation</option>
+                                        <option value="Prenatal Check Up">Prenatal Check Up</option>
+                                        <option value="Child Health Check Up">Child Health Check Up</option>
+                                        <option value="Immunization">Immunization</option>
+                                        <option value="Blood Pressure Monitoring">Blood Pressure Monitoring</option>
+                                        <option value="Dental Check Up">Dental Check Up</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="appointmentDate">Preferred Date</label>
+                                    <input class="form-input" type="date" id="appointmentDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="appointmentTime">Preferred Time</label>
+                                    <input class="form-input" type="time" id="appointmentTime" required>
+                                </div>
+                                <div class="form-group form-group-full">
+                                    <label class="form-label" for="appointmentPurpose">Reason / Notes (Optional)</label>
+                                    <textarea class="form-textarea" id="appointmentPurpose" maxlength="500"></textarea>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary-submit">Request Appointment</button>
+                        </form>
+                    </div>
+                    <h3 class="status-tracker-header">Upcoming Appointments</h3>
+                    <div id="appointmentList"></div>
+                </section>
 
                 <!-- ----------------------------------------------------------
                      TAB 1: REQUEST HEALTH CERTIFICATE (#certificate)
@@ -157,7 +201,7 @@
                             <div class="form-grid">
                                 <div class="form-group form-group-full">
                                     <label class="form-label" for="certFullName">Full Name</label>
-                                    <input type="text" id="certFullName" class="form-input" value="Juan D. Dela Cruz" readonly>
+                                    <input type="text" id="certFullName" class="form-input" readonly>
                                 </div>
 
                                 <div class="form-group">
@@ -192,17 +236,6 @@
                     <!-- Request Status Tracker -->
                     <h3 class="status-tracker-header">Request Status Tracker</h3>
                     <div id="trackerList">
-                        <div class="tracker-card">
-                            <div class="tracker-info">
-                                <span class="tracker-badge badge-processing">In Processing</span>
-                                <div class="tracker-title">Employment Health Clearance</div>
-                                <div class="tracker-date">Requested on: October 12, 2026</div>
-                            </div>
-                            <button type="button" class="track-details-btn" onclick="openTrackerModal('CR-2026-084', 'Employment Health Clearance', 'October 12, 2026', 'In Processing')">
-                                <span>Track Details</span>
-                                <i class="fa-solid fa-chevron-right"></i>
-                            </button>
-                        </div>
                     </div>
                 </section>
 
@@ -269,6 +302,8 @@
                             </button>
                         </div>
                     </div>
+                    <h3 class="status-tracker-header">My Program Registrations</h3>
+                    <div id="programRegistrationList"></div>
                 </section>
 
 
@@ -292,14 +327,12 @@
                             </button>
                         </div>
 
-                        <div class="ai-moto-chat" id="residentAiChat">
-                            <div class="ai-message">Hi Juan! I can help with health reminders, medicine questions, and wellness guidance.</div>
-                            <div class="user-message">Can you remind me when to take my blood pressure medicine?</div>
-                            <div class="ai-message">Take it as prescribed by your doctor and follow the time given in your prescription. If you miss a dose, continue with your next scheduled dose and avoid taking two doses together unless advised by a clinician.</div>
+                        <div class="ai-moto-chat" id="residentAiChat" aria-live="polite">
+                            <div class="ai-message">Ask a general health-education question. Do not include names, contact details, or personal medical information. AI Moto cannot diagnose or provide individual treatment advice.</div>
                         </div>
 
                         <form class="ai-moto-form" id="residentAiMotoForm">
-                            <textarea id="residentAiInput" rows="3" placeholder="Ask AI Moto about your health or care questions..."></textarea>
+                            <textarea id="residentAiInput" rows="3" maxlength="1000" placeholder="Ask a general health-education question..."></textarea>
                             <button type="submit" class="btn-primary-submit ai-submit-btn">Send</button>
                         </form>
                     </div>
@@ -318,7 +351,7 @@
                         <div class="settings-item">
                             <div class="settings-info">
                                 <h4>SMS Reminders &amp; Alerts</h4>
-                                <p>Receive SMS notifications for scheduled visits</p>
+                                <p>Save your preference for text alerts if the health center SMS service is enabled</p>
                             </div>
                             <input type="checkbox" id="prefSms" class="custom-checkbox" checked>
                         </div>
@@ -326,7 +359,7 @@
                         <div class="settings-item">
                             <div class="settings-info">
                                 <h4>Barangay Emergency Alerts</h4>
-                                <p>Receive health emergency broadcasts on mobile</p>
+                                <p>Save your preference for emergency notices from the health center</p>
                             </div>
                             <input type="checkbox" id="prefEmergency" class="custom-checkbox" checked>
                         </div>
@@ -334,7 +367,7 @@
                         <div class="settings-item">
                             <div class="settings-info">
                                 <h4>Email Prescriptions &amp; Records</h4>
-                                <p>Receive digital copies of your consultations and prescriptions via email</p>
+                                <p>Save your preference for email updates if the health center email service is enabled</p>
                             </div>
                             <input type="checkbox" id="prefEmail" class="custom-checkbox" checked>
                         </div>
@@ -369,79 +402,7 @@
                         </button>
                     </div>
 
-                    <div class="rx-grid">
-                        <!-- Prescription Card 1 -->
-                        <div class="rx-card" id="rxCard-1">
-                            <div class="rx-card-top">
-                                <h3 class="rx-name">Amlodipine Besylate 5mg</h3>
-                                <span class="rx-badge-active">Active</span>
-                            </div>
-                            <div class="rx-dosage">1 Tablet Daily (Morning) - Blood Pressure Control</div>
-                            <div class="rx-details-list">
-                                <span>Prescribed By: <strong>Dr. Maria Santos, M.D.</strong></span>
-                                <span>Remaining Supply: <strong id="supply-1">12 Days</strong></span>
-                                <span>Last Dispensed: <strong>September 18, 2026</strong></span>
-                            </div>
-                            <div class="rx-actions">
-                                <button type="button" class="btn-refill-card" onclick="openRefillModal('Amlodipine Besylate 5mg', 'Dr. Maria Santos, M.D.', '12 Days')">
-                                    <i class="fa-solid fa-arrows-rotate"></i>
-                                    <span>Request Refill</span>
-                                </button>
-                                <button type="button" class="btn-rx-pdf" onclick="openRxPdfModal('Amlodipine Besylate 5mg', '1 Tablet Daily in the morning with water', 'Dr. Maria Santos, M.D.', 'PRC-0089241', 'September 18, 2026')">
-                                    <i class="fa-solid fa-file-pdf"></i>
-                                    <span>Rx PDF</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Prescription Card 2 -->
-                        <div class="rx-card" id="rxCard-2">
-                            <div class="rx-card-top">
-                                <h3 class="rx-name">Ascorbic Acid + Zinc 500mg</h3>
-                                <span class="rx-badge-active">Active</span>
-                            </div>
-                            <div class="rx-dosage">1 Capsule Daily - Immunity Maintenance</div>
-                            <div class="rx-details-list">
-                                <span>Prescribed By: <strong>Nurse Corazon Ramos</strong></span>
-                                <span>Remaining Supply: <strong id="supply-2">25 Days</strong></span>
-                                <span>Last Dispensed: <strong>October 01, 2026</strong></span>
-                            </div>
-                            <div class="rx-actions">
-                                <button type="button" class="btn-refill-card" onclick="openRefillModal('Ascorbic Acid + Zinc 500mg', 'Nurse Corazon Ramos', '25 Days')">
-                                    <i class="fa-solid fa-arrows-rotate"></i>
-                                    <span>Request Refill</span>
-                                </button>
-                                <button type="button" class="btn-rx-pdf" onclick="openRxPdfModal('Ascorbic Acid + Zinc 500mg', '1 Capsule Daily after meals', 'Nurse Corazon Ramos', 'PRC-0056123', 'October 01, 2026')">
-                                    <i class="fa-solid fa-file-pdf"></i>
-                                    <span>Rx PDF</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Prescription Card 3 -->
-                        <div class="rx-card" id="rxCard-3">
-                            <div class="rx-card-top">
-                                <h3 class="rx-name">Metformin Hydrochloride 500mg</h3>
-                                <span class="rx-badge-active">Active</span>
-                            </div>
-                            <div class="rx-dosage">1 Tablet Daily (Evening) - Blood Sugar Management</div>
-                            <div class="rx-details-list">
-                                <span>Prescribed By: <strong>Dr. Maria Santos, M.D.</strong></span>
-                                <span>Remaining Supply: <strong id="supply-3">18 Days</strong></span>
-                                <span>Last Dispensed: <strong>September 22, 2026</strong></span>
-                            </div>
-                            <div class="rx-actions">
-                                <button type="button" class="btn-refill-card" onclick="openRefillModal('Metformin Hydrochloride 500mg', 'Dr. Maria Santos, M.D.', '18 Days')">
-                                    <i class="fa-solid fa-arrows-rotate"></i>
-                                    <span>Request Refill</span>
-                                </button>
-                                <button type="button" class="btn-rx-pdf" onclick="openRxPdfModal('Metformin Hydrochloride 500mg', '1 Tablet Daily with dinner', 'Dr. Maria Santos, M.D.', 'PRC-0089241', 'September 22, 2026')">
-                                    <i class="fa-solid fa-file-pdf"></i>
-                                    <span>Rx PDF</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="rx-grid" id="prescriptionList"></div>
                 </section>
 
 
@@ -453,12 +414,10 @@
                     <div class="profile-summary-card">
                         <div>
                             <div class="profile-name-row">
-                                <h2 class="profile-resident-name" id="recordResidentName">Juan D. Dela Cruz</h2>
-                                <span class="profile-id-pill" id="recordResidentId">ID: PT-2026-0001</span>
+                                <h2 class="profile-resident-name" id="recordResidentName">Loading...</h2>
+                                <span class="profile-id-pill" id="recordResidentId"></span>
                             </div>
-                            <div class="profile-meta-details">
-                                PhilHealth No: 12-029481928-1 &nbsp;|&nbsp; Age: 38 &nbsp;|&nbsp; Gender: Male &nbsp;|&nbsp; Blood Type: O+
-                            </div>
+                            <div class="profile-meta-details" id="recordPatientMeta"></div>
                         </div>
                         <button type="button" class="btn-download-records" onclick="openDownloadModal()">
                             <i class="fa-solid fa-download"></i>
@@ -468,31 +427,7 @@
 
                     <!-- Latest Vitals Log -->
                     <h3 class="section-subheading">Latest Vitals Log</h3>
-                    <div class="vitals-grid">
-                        <div class="vital-stat-card">
-                            <span class="vital-label">Blood Pressure</span>
-                            <div class="vital-value">120 / 80 <small>mmHg</small></div>
-                            <div class="vital-status status-green">● Normal Range</div>
-                        </div>
-
-                        <div class="vital-stat-card">
-                            <span class="vital-label">Heart Rate</span>
-                            <div class="vital-value">72 <small>bpm</small></div>
-                            <div class="vital-status status-green">● Normal</div>
-                        </div>
-
-                        <div class="vital-stat-card">
-                            <span class="vital-label">Body Weight</span>
-                            <div class="vital-value">68.5 <small>kg</small></div>
-                            <div class="vital-status status-blue">BMI: 22.4 (Ideal)</div>
-                        </div>
-
-                        <div class="vital-stat-card">
-                            <span class="vital-label">Fasting Blood Sugar</span>
-                            <div class="vital-value">95 <small>mg/dL</small></div>
-                            <div class="vital-status status-green">● Normal</div>
-                        </div>
-                    </div>
+                    <div class="vitals-grid" id="vitalsGrid"></div>
 
                     <!-- Consultation History Log -->
                     <h3 class="section-subheading">Consultation History Log</h3>
@@ -507,44 +442,7 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Sep 18, 2026</td>
-                                    <td><strong>Annual Health Examination &amp; Vital Signs Assessment</strong></td>
-                                    <td>Dr. Maria Santos, M.D.</td>
-                                    <td><span class="badge-status badge-status-completed">Completed</span></td>
-                                    <td>
-                                        <button type="button" class="btn-view-summary" onclick="openConsultationSummaryModal('Sep 18, 2026', 'Annual Health Examination & Vital Signs Assessment', 'Dr. Maria Santos, M.D.', 'Patient presents with normal vitals. BP 120/80 mmHg, clear lungs, normal cardiovascular sounds. Maintain regular exercise and balanced low-sodium diet. Prescribed maintenance Amlodipine 5mg.')">
-                                            <i class="fa-regular fa-eye"></i>
-                                            <span>View Summary</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Aug 05, 2026</td>
-                                    <td><strong>Hypertension Routine BP Monitoring</strong></td>
-                                    <td>Nurse Corazon Ramos</td>
-                                    <td><span class="badge-status badge-status-stable">Stable</span></td>
-                                    <td>
-                                        <button type="button" class="btn-view-summary" onclick="openConsultationSummaryModal('Aug 05, 2026', 'Hypertension Routine BP Monitoring', 'Nurse Corazon Ramos', 'Follow-up blood pressure check. BP recorded at 124/82 mmHg. Patient adheres well to medication schedule. Encouraged continued hydration and 30-minute daily walking.')">
-                                            <i class="fa-regular fa-eye"></i>
-                                            <span>View Summary</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Jun 12, 2026</td>
-                                    <td><strong>Community Influenza Vaccine Drive</strong></td>
-                                    <td>Field Health Unit 2</td>
-                                    <td><span class="badge-status badge-status-completed">Completed</span></td>
-                                    <td>
-                                        <button type="button" class="btn-view-summary" onclick="openConsultationSummaryModal('Jun 12, 2026', 'Community Influenza Vaccine Drive', 'Field Health Unit 2', 'Administered Quadrivalent Seasonal Influenza Vaccine (Lot #FL-2026-89) at left deltoid. No immediate adverse reaction noted after 20 minutes observation.')">
-                                            <i class="fa-regular fa-eye"></i>
-                                            <span>View Summary</span>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
+                            <tbody id="consultationHistory"></tbody>
                         </table>
                     </div>
                 </section>
@@ -557,7 +455,7 @@
                     <!-- Top Midnight Navy Banner -->
                     <div class="dash-hero-card">
                         <span class="badge-mabuhay">MABUHAY!</span>
-                        <h2 class="dash-hero-title">Welcome back, <span id="dashWelcomeFullName">Juan D. Dela Cruz</span>!</h2>
+                        <h2 class="dash-hero-title">Welcome back, <span id="dashWelcomeFullName">...</span>!</h2>
                         <p class="dash-hero-subtitle">
                             Access your official medical records, request health clearance certificates, monitor prescription refills, and join local community health programs in Barangay Talimundoc.
                         </p>
@@ -569,8 +467,8 @@
                         <div class="dash-stat-card">
                             <div class="dash-stat-info">
                                 <span class="dash-stat-label">Upcoming Appointment</span>
-                                <div class="dash-stat-value">Oct 24, 2026</div>
-                                <a href="#records" class="dash-stat-link" onclick="switchTab('records')">Dental Checkup &amp; Cleaning</a>
+                                <div class="dash-stat-value" id="dashboardAppointmentDate">Loading...</div>
+                                <a href="#appointments" class="dash-stat-link" onclick="switchTab('appointments')" id="dashboardAppointmentService">Appointments</a>
                             </div>
                             <div class="dash-stat-icon icon-blue">
                                 <i class="fa-regular fa-calendar-days"></i>
@@ -581,8 +479,8 @@
                         <div class="dash-stat-card">
                             <div class="dash-stat-info">
                                 <span class="dash-stat-label">Active Prescriptions</span>
-                                <div class="dash-stat-value">2</div>
-                                <div class="dash-stat-sub">1 Refill ready for pickup</div>
+                                <div class="dash-stat-value" id="dashboardPrescriptionCount">0</div>
+                                <div class="dash-stat-sub">Prescriptions in your record</div>
                             </div>
                             <div class="dash-stat-icon icon-purple">
                                 <i class="fa-solid fa-pills"></i>
@@ -593,8 +491,8 @@
                         <div class="dash-stat-card">
                             <div class="dash-stat-info">
                                 <span class="dash-stat-label">Pending Requests</span>
-                                <div class="dash-stat-value">1</div>
-                                <div class="dash-stat-sub text-amber">Employment Medical Clearance</div>
+                                <div class="dash-stat-value" id="dashboardPendingCount">0</div>
+                                <div class="dash-stat-sub text-amber" id="dashboardPendingText">Requests awaiting an update</div>
                             </div>
                             <div class="dash-stat-icon icon-amber">
                                 <i class="fa-regular fa-circle-check"></i>
@@ -605,8 +503,8 @@
                         <div class="dash-stat-card">
                             <div class="dash-stat-info">
                                 <span class="dash-stat-label">Unread Bulletins</span>
-                                <div class="dash-stat-value">2</div>
-                                <div class="dash-stat-sub text-green">Dengue Vaccine &amp; Flu Drives</div>
+                                <div class="dash-stat-value" id="dashboardAnnouncementCount">0</div>
+                                <div class="dash-stat-sub text-green" id="dashboardAnnouncementText">Current health center updates</div>
                             </div>
                             <div class="dash-stat-icon icon-green">
                                 <i class="fa-regular fa-bell"></i>
@@ -626,6 +524,10 @@
                                 <button type="button" class="btn-dash-primary" onclick="switchTab('certificate')">
                                     <i class="fa-solid fa-plus"></i>
                                     <span>Request Medical Certificate</span>
+                                </button>
+                                <button type="button" class="btn-dash-secondary" onclick="switchTab('appointments')">
+                                    <i class="fa-regular fa-calendar-plus"></i>
+                                    <span>Request Appointment</span>
                                 </button>
                                 <button type="button" class="btn-dash-secondary" onclick="openNewRefillModal()">
                                     <i class="fa-solid fa-arrows-rotate"></i>
@@ -648,43 +550,7 @@
                                 <a href="#records" class="view-all-link" onclick="switchTab('records')">View All Records</a>
                             </div>
 
-                            <div class="consultation-list">
-                                <!-- Item 1 -->
-                                <div class="consultation-row">
-                                    <div class="consult-info">
-                                        <h4>General Routine Checkup</h4>
-                                        <p>Attending Physician: Dr. Maria Santos, M.D.</p>
-                                    </div>
-                                    <div class="consult-meta">
-                                        <span class="consult-date">September 18, 2026</span>
-                                        <span class="badge-status badge-status-completed">Completed</span>
-                                    </div>
-                                </div>
-
-                                <!-- Item 2 -->
-                                <div class="consultation-row">
-                                    <div class="consult-info">
-                                        <h4>Hypertension Follow-Up</h4>
-                                        <p>Attending Nurse: Nurse Corazon Ramos</p>
-                                    </div>
-                                    <div class="consult-meta">
-                                        <span class="consult-date">August 05, 2026</span>
-                                        <span class="badge-status badge-status-completed">Completed</span>
-                                    </div>
-                                </div>
-
-                                <!-- Item 3 -->
-                                <div class="consultation-row">
-                                    <div class="consult-info">
-                                        <h4>Barangay Flu Drive &amp; Deworming</h4>
-                                        <p>Field Health Unit 2</p>
-                                    </div>
-                                    <div class="consult-meta">
-                                        <span class="consult-date">June 12, 2026</span>
-                                        <span class="badge-status badge-status-completed">Completed</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="consultation-list" id="recentConsultations"></div>
                         </div>
                     </div>
                 </section>
@@ -698,25 +564,7 @@
                         <h2 style="font-size: 20px; font-weight: 800;">Community Health Bulletins</h2>
                     </div>
 
-                    <div class="bulletins-stack">
-                        <!-- Bulletin 1 (Blue bar) -->
-                        <div class="bulletin-card bar-blue">
-                            <div class="bulletin-date date-blue">October 10, 2026</div>
-                            <h3 class="bulletin-title">Scheduled Facility Maintenance</h3>
-                            <p class="bulletin-desc">
-                                The dental clinic will run on generator power this Thursday morning. Emergency consultations remain available 24/7.
-                            </p>
-                        </div>
-
-                        <!-- Bulletin 2 (Green bar) -->
-                        <div class="bulletin-card bar-green">
-                            <div class="bulletin-date date-green">October 01, 2026</div>
-                            <h3 class="bulletin-title">Free Vitamin Supplement Distribution</h3>
-                            <p class="bulletin-desc">
-                                All registered residents with valid Resident IDs may claim free Vitamin C and Multivitamins at the desk.
-                            </p>
-                        </div>
-                    </div>
+                    <div class="bulletins-stack" id="bulletinList"></div>
                 </section>
 
 
@@ -726,32 +574,10 @@
                 <section class="tab-pane" id="pane-notifications">
                     <div class="page-header-box" style="margin-bottom: 20px;">
                         <h2 style="font-size: 20px; font-weight: 800;">Notifications &amp; Alerts</h2>
+                        <button type="button" class="btn-rx-pdf" id="btnMarkAllRead">Mark all as read</button>
                     </div>
 
                     <div class="notif-alerts-list" id="notifAlertsList">
-                        <!-- Notification 1 -->
-                        <div class="notif-alert-card">
-                            <div class="notif-alert-icon icon-blue">
-                                <i class="fa-regular fa-calendar-check"></i>
-                            </div>
-                            <div class="notif-alert-content">
-                                <h4 class="notif-alert-title">Appointment Confirmed</h4>
-                                <p class="notif-alert-sub">Dental Checkup scheduled for Oct 24, 2026.</p>
-                            </div>
-                            <div class="notif-alert-time">2 hours ago</div>
-                        </div>
-
-                        <!-- Notification 2 -->
-                        <div class="notif-alert-card">
-                            <div class="notif-alert-icon icon-green">
-                                <i class="fa-regular fa-circle-check"></i>
-                            </div>
-                            <div class="notif-alert-content">
-                                <h4 class="notif-alert-title">Certificate Status Update</h4>
-                                <p class="notif-alert-sub">Your requested certificate is undergoing review.</p>
-                            </div>
-                            <div class="notif-alert-time">1 day ago</div>
-                        </div>
                     </div>
                 </section>
 
@@ -773,37 +599,65 @@
                             <!-- Box 1: FULL NAME -->
                             <div class="profile-box">
                                 <span class="profile-box-label">Full Name</span>
-                                <div class="profile-box-val" id="profileBoxName">Juan D. Dela Cruz</div>
+                                <div class="profile-box-val" id="profileBoxName">Loading...</div>
                             </div>
 
                             <!-- Box 2: PATIENT ID -->
                             <div class="profile-box">
                                 <span class="profile-box-label">Patient ID</span>
-                                <div class="profile-box-val" id="profileBoxId">PT-2026-0001</div>
+                                <div class="profile-box-val" id="profileBoxId">...</div>
                             </div>
 
                             <!-- Box 3: PHILHEALTH NO. -->
                             <div class="profile-box">
-                                <span class="profile-box-label">PhilHealth No.</span>
-                                <div class="profile-box-val">12-029481928-1</div>
+                                <span class="profile-box-label">Birth Date</span>
+                                <div class="profile-box-val" id="profileBirthDate">Not recorded</div>
                             </div>
 
                             <!-- Box 4: CIVIL STATUS -->
                             <div class="profile-box">
                                 <span class="profile-box-label">Civil Status</span>
-                                <div class="profile-box-val">Married</div>
+                                <div class="profile-box-val" id="profileCivilStatus">Not recorded</div>
                             </div>
 
                             <!-- Box 5: BARANGAY ADDRESS -->
                             <div class="profile-box">
                                 <span class="profile-box-label">Barangay Address</span>
-                                <div class="profile-box-val">Purok 3, Barangay Talimundoc</div>
+                                <div class="profile-box-val" id="profileAddress">Not recorded</div>
                             </div>
 
                             <!-- Box 6: EMERGENCY CONTACT -->
                             <div class="profile-box">
-                                <span class="profile-box-label">Emergency Contact</span>
-                                <div class="profile-box-val">Maria Dela Cruz (+63 917 888 9999)</div>
+                                <span class="profile-box-label">Contact Number</span>
+                                <div class="profile-box-val" id="profileContact">Not recorded</div>
+                            </div>
+                            <div class="profile-box">
+                                <span class="profile-box-label">Sex</span>
+                                <div class="profile-box-val" id="profileSex">Not recorded</div>
+                            </div>
+                            <div class="profile-box">
+                                <span class="profile-box-label">Email</span>
+                                <div class="profile-box-val" id="profileEmail">Not recorded</div>
+                            </div>
+                            <div class="profile-box">
+                                <span class="profile-box-label">Blood Type</span>
+                                <div class="profile-box-val" id="profileBloodType">Not recorded</div>
+                            </div>
+                            <div class="profile-box">
+                                <span class="profile-box-label">Height</span>
+                                <div class="profile-box-val" id="profileHeight">Not recorded</div>
+                            </div>
+                            <div class="profile-box">
+                                <span class="profile-box-label">Weight</span>
+                                <div class="profile-box-val" id="profileWeight">Not recorded</div>
+                            </div>
+                            <div class="profile-box">
+                                <span class="profile-box-label">Allergies</span>
+                                <div class="profile-box-val" id="profileAllergies">Not recorded</div>
+                            </div>
+                            <div class="profile-box">
+                                <span class="profile-box-label">Medical Conditions</span>
+                                <div class="profile-box-val" id="profileConditions">Not recorded</div>
                             </div>
                         </div>
                     </div>
@@ -831,33 +685,7 @@
                 <div style="font-size: 13px; color: var(--text-muted);" id="modalTrackerRef">Reference No: CR-2026-084</div>
                 <div style="font-size: 16px; font-weight: 700; color: var(--text-primary); margin-top: 2px;" id="modalTrackerName">Employment Health Clearance</div>
             </div>
-            <!-- Progress Timeline -->
-            <div style="display: flex; flex-direction: column; gap: 14px; border-left: 2px solid var(--primary); padding-left: 18px; margin: 18px 0 20px 8px;">
-                <div>
-                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13.5px; color: var(--accent-emerald);">
-                        <i class="fa-solid fa-circle-check"></i> Request Submitted
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-muted);">October 12, 2026 - 10:14 AM</div>
-                </div>
-                <div>
-                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13.5px; color: var(--accent-emerald);">
-                        <i class="fa-solid fa-circle-check"></i> Barangay Resident Record Verified
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-muted);">October 13, 2026 - 02:30 PM</div>
-                </div>
-                <div>
-                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 13.5px; color: var(--primary);">
-                        <i class="fa-solid fa-spinner fa-spin"></i> Health Officer Clinical Assessment
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-muted);">In progress with Dr. Maria Santos</div>
-                </div>
-                <div>
-                    <div style="display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 13.5px; color: var(--text-muted);">
-                        <i class="fa-regular fa-circle"></i> Official Seal &amp; Ready for Pick-up
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-muted);">Pending completion</div>
-                </div>
-            </div>
+            <div id="modalTrackerStatus" style="margin: 18px 0 20px; color: var(--text-secondary);"></div>
             <button type="button" class="btn-primary-submit" onclick="closeModal('modalTracker')">
                 Close Tracker
             </button>
@@ -874,6 +702,7 @@
                 </button>
             </div>
             <form id="refillRequestForm">
+                <input type="hidden" id="modalRefillPrescriptionId">
                 <div class="form-group" style="margin-bottom: 14px;">
                     <label class="form-label">Medication Name</label>
                     <input type="text" id="modalRefillMed" class="form-input" readonly>
@@ -919,8 +748,8 @@
                 </div>
 
                 <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 14px;">
-                    <div><strong>Patient:</strong> Juan D. Dela Cruz (Age 38, M)</div>
-                    <div><strong>Date:</strong> <span id="rxPdfDate">Sep 18, 2026</span></div>
+                    <div><strong>Patient:</strong> <span id="rxPdfPatientName">Patient</span></div>
+                    <div><strong>Date:</strong> <span id="rxPdfDate"></span></div>
                 </div>
 
                 <div style="font-size: 28px; font-weight: bold; font-family: serif; color: #2563eb; margin: 10px 0 6px;">
@@ -928,18 +757,18 @@
                 </div>
 
                 <div style="padding-left: 20px; margin-bottom: 20px;">
-                    <h4 style="font-size: 17px; margin: 0; color: #0f172a;" id="rxPdfMedName">Amlodipine Besylate 5mg</h4>
-                    <p style="font-size: 14px; margin-top: 4px; color: #334155;" id="rxPdfInstructions">1 Tablet Daily in the morning with water</p>
+                    <h4 style="font-size: 17px; margin: 0; color: #0f172a;" id="rxPdfMedName"></h4>
+                    <p style="font-size: 14px; margin-top: 4px; color: #334155;" id="rxPdfInstructions"></p>
                     <p style="font-size: 12px; margin-top: 2px; color: #64748b;">Dispense #30 (Thirty) Tablets - Refill authorized</p>
                 </div>
 
                 <div style="text-align: right; margin-top: 30px; border-top: 1px solid #cbd5e1; padding-top: 10px;">
-                    <div style="font-weight: bold; font-size: 14px;" id="rxPdfDoctor">Dr. Maria Santos, M.D.</div>
-                    <div style="font-size: 11px; color: #64748b;">License No: <span id="rxPdfPrc">PRC-0089241</span> &bull; PTR: 9028129</div>
+                    <div style="font-weight: bold; font-size: 14px;" id="rxPdfDoctor"></div>
+                    <div style="font-size: 11px; color: #64748b;">License No: <span id="rxPdfPrc"></span></div>
                 </div>
             </div>
             <div style="display: flex; gap: 10px;">
-                <button type="button" class="btn-primary-submit" onclick="window.print()">
+                <button type="button" class="btn-primary-submit" onclick="printPatientDocument()">
                     <i class="fa-solid fa-print"></i>
                     <span>Print Prescription</span>
                 </button>
@@ -962,21 +791,19 @@
             <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
                 <div>
                     <span class="form-label">Consultation Date</span>
-                    <strong style="font-size: 15px;" id="modalConsultDate">Sep 18, 2026</strong>
+                    <strong style="font-size: 15px;" id="modalConsultDate"></strong>
                 </div>
                 <div>
                     <span class="form-label">Diagnosis / Assessment</span>
-                    <strong style="font-size: 15px; color: var(--primary);" id="modalConsultDiagnosis">Annual Health Examination</strong>
+                    <strong style="font-size: 15px; color: var(--primary);" id="modalConsultDiagnosis"></strong>
                 </div>
                 <div>
                     <span class="form-label">Attending Medical Personnel</span>
-                    <strong style="font-size: 14px;" id="modalConsultDoctor">Dr. Maria Santos, M.D.</strong>
+                    <strong style="font-size: 14px;" id="modalConsultDoctor"></strong>
                 </div>
                 <div>
                     <span class="form-label">Clinical Notes &amp; Recommendations</span>
-                    <div style="background: var(--bg-subtle); padding: 14px; border-radius: 6px; font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; border: 1px solid var(--border-color);" id="modalConsultNotes">
-                        Notes details...
-                    </div>
+                    <div style="background: var(--bg-subtle); padding: 14px; border-radius: 6px; font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; border: 1px solid var(--border-color);" id="modalConsultNotes"></div>
                 </div>
             </div>
             <button type="button" class="btn-primary-submit" onclick="closeModal('modalConsultSummary')">
@@ -1002,14 +829,16 @@
                 <div class="form-group" style="margin-bottom: 12px;">
                     <label class="form-label">Date &amp; Venue</label>
                     <input type="text" id="progModalMeta" class="form-input" readonly>
+                    <input type="hidden" id="progModalDate">
+                    <input type="hidden" id="progModalVenue">
                 </div>
                 <div class="form-group" style="margin-bottom: 12px;">
                     <label class="form-label">Participant Resident</label>
-                    <input type="text" id="progModalResident" class="form-input" value="Juan D. Dela Cruz (ID: PT-2026-0001)" readonly>
+                    <input type="text" id="progModalResident" class="form-input" readonly>
                 </div>
                 <div class="form-group" style="margin-bottom: 18px;">
-                    <label class="form-label">Mobile Number for SMS Ticket Confirmation</label>
-                    <input type="tel" id="progModalPhone" class="form-input" value="0918-123-4567" required>
+                    <label class="form-label">Contact Number for Program Updates</label>
+                    <input type="tel" id="progModalPhone" class="form-input" required>
                 </div>
                 <button type="submit" class="btn-primary-submit">
                     <i class="fa-solid fa-check"></i>
@@ -1023,13 +852,13 @@
     <div class="modal-backdrop" id="modalDownload">
         <div class="modal-box">
             <div class="modal-header">
-                <h3 class="modal-title">Download Official Records</h3>
+                <h3 class="modal-title">Print or Save Records</h3>
                 <button type="button" class="modal-close-btn" onclick="closeModal('modalDownload')">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 18px;">
-                Choose which documents you wish to generate for <strong>Juan D. Dela Cruz</strong> (ID: PT-2026-0001):
+                Choose which records you wish to print for <strong id="downloadPatientName">your account</strong>:
             </p>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
                 <button type="button" class="quick-action-btn" style="width: 100%;" onclick="triggerDownloadRecord('Official Health Passport & Vitals Log (PDF)')">
@@ -1037,7 +866,7 @@
                         <i class="fa-solid fa-file-pdf" style="font-size: 24px; color: var(--accent-red);"></i>
                         <div>
                             <div style="font-weight: 700; font-size: 14px;">Complete Medical History &amp; Vitals (PDF)</div>
-                            <div style="font-size: 12px; color: var(--text-muted);">Includes vitals history, consultations, and immunizations</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Includes your recorded vital signs and consultation history</div>
                         </div>
                     </div>
                 </button>
@@ -1046,8 +875,8 @@
                     <div style="display: flex; align-items: center; gap: 12px;">
                         <i class="fa-solid fa-file-medical" style="font-size: 24px; color: var(--primary);"></i>
                         <div>
-                            <div style="font-weight: 700; font-size: 14px;">Prescription Records &amp; Refill History</div>
-                            <div style="font-size: 12px; color: var(--text-muted);">Active and past medications dispensed</div>
+                            <div style="font-weight: 700; font-size: 14px;">Prescription Records</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Print your prescriptions or save them as PDF</div>
                         </div>
                     </div>
                 </button>
