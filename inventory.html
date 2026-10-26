@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medicine Inventory and Issuance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="inventory.css">
+    <link rel="stylesheet" href="darkmode.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
@@ -53,22 +55,26 @@
                 <div class="header-actions">
 
                     <a class="header-button" href="ai-moto.html">
-                        + Ask AI Moto
+                        <i class="fas fa-robot" aria-hidden="true"></i>
+                        Ask AI Moto
                     </a>
 
                     <button class="header-button" id="importStockButton" type="button"
                         title="CSV columns: name, category, unit, stock, reorder, expiry">
-                        ⇩ Import Stock
+                        <i class="fa-solid fa-file-import" aria-hidden="true"></i>
+                        Import Stock
                     </button>
 
                     <input id="importStockFile" type="file" accept=".csv,text/csv" hidden>
 
                     <button class="header-button primary" id="addMedicineButton" type="button">
-                        + Add Medicine
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                        Add Medicine
                     </button>
 
                     <button class="header-button" id="inventoryReportButton" type="button">
-                        ▰ Reports
+                        <i class="fa-solid fa-chart-column" aria-hidden="true"></i>
+                        Reports
                     </button>
 
                 </div>
@@ -85,8 +91,7 @@
             <div class="summary-card">
 
                 <div class="summary-icon blue">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB+UlEQVR4nO2Xyy4EQRSGPwu3hcvCiMvG5Q3Egh0Llw3BY+BFREjEM4gncBdWxEJsWLASJGyYBYlESFoqOZ1UOhHVrU5Po76k0j2V6v+ff+pUdQ0EAoVjHLgDIk/tVjRz59ZjCDtM7sTmRdVzJgT5ghDkp/yZxT7uOUzFtl9ftV2xtWGoAgaAJY9BjJbRzI1h4CJRFgc/0DtMaJ0DQygzCbyJ4b31K5oZyop5dhBYBh5E23hMoEQn8CpGC0C9gkc9sCgexqtDwYNVMVhDn3XxWtEQvxHxPvTpF69rDfEPEa9FnzrxetcQjyrUvPPnguRFFIIoCncDY3L9lUFKwH6i5veAFiU/J9IKt8q5yTzzBGwAZfm8o+DnTBphO4S5tlnHnCfp7/LolwpX4ZIVIg5igsVsSf+IJ7/UuArvWwHOE2HarfIq9Iz0yphHKadkicX32578MuEiPCZjNq0+O0wcqOTJLxMuwj3WLmUWNlJOyRLz5ZcJV+FdGVeWmSlnCFGIIC3ynrBfgtuO5VSoIDFmVxp12J18+TkTDo0ZicIfq/8WJC+iEOQbnkW4AX2axMt4eudExKfQZ0a8jjXE50X8EmhGj2bgSrxmNQxqgDMrzDTQ6FHfaM1YIU6BapTosMJotlM5NatiZmZO6vfF45c3WkdSTmozEQiQjk+se83s7UYGPQAAAABJRU5ErkJggg=="
-                        alt="supplement-bottle--v1">
+                    <i class="fa-solid fa-pills" aria-hidden="true"></i>
                 </div>
 
                 <div>
@@ -101,8 +106,7 @@
             <div class="summary-card">
 
                 <div class="summary-icon green">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABpUlEQVR4nO3WPWgVQRQF4C8mgnY2/pFEC/9AsIoGBCtBUgVsbQK2NiLYCWJpYyGYQCCVCCIxNiZF7EVB0okiQooUYuFfgiIajDJwHwzD22ci+3iFe+AWO3fmnjN7z84ODRo0+HcMYRZr+F0RKTeHI90g/9iBuIw0d7BOAbNR+HFRuEXYQsrNx9iDOgWsRdFyV6WAhOEY+1KngNUoOtQrAXNRdL4QUQpIuYUYS22rDUfxYYsmPKxmDIaxWu1oF6ux89rJ/x+cxjReRR/f4k44u2vYi6tBWtXbzzjfDfJ7+JkRvcNNnMQenMLDyG3E2xnFbmyvQ8DdKP4S4xiomHe5EJpHFXbiIqY6CRiLIq/jeRcu4QWe4Uw291D4YSnOhI1Y21fUTH/CW/iUiTxRJWAA77NT7nubHT7CsU67QH94ZDETluI5JrCj0+Lb2YJfeIILuIGvMZ5e/2T4Isc+XMNKVuMbZjBikxjFMq7jQJHbH8Zbzy4cifAs7uNHRvwGV6KNW8a2v+SPx12gbM96tOhcGy907aB6Gr5Jn+tBPUBfXWdAgwZ6gT9fW6Ge45gC9QAAAABJRU5ErkJggg=="
-                        alt="hand-with-a-pill">
+                    <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>
                 </div>
 
                 <div>
@@ -117,8 +121,7 @@
             <div class="summary-card">
 
                 <div class="summary-icon orange">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEYElEQVR4nO2ZX4hVVRTGfzPNTBhE5PTHzLCmGjOIrIth9hhGRVAPpZQWRslAgQ8R/oOih0qDeijLxoeCyoxKi4z+Kb0o9p4pBJWi9aCm1Ys6o1M3lnx75uNw7szcuffOucL94HDv/vZe6+x199prr70utNBCCy1UifOA24E1wFZgH/AXcFpPfN+rvtXAPKCdJsJVwDrgD6Bc5fM7sBaY0cgJXgi8Dtxfof8SoB8YtIn9ArwJPAzcAkwFOvV0i4u+t4BfTS50bNCYPDwAbNScqkK8+Du9ZEtO/yPAcfWfAT6Qq1SLcMVN0hG6jgGLcsZtVf+3mtu4sVGCh4Ee4zutL56vgOuoHb3AN6Y3VqfD+ns0l9Q3LiyUwEmgZPwFmnj0nQAep/54QrrjHV8CU6xvLnBKfQ+OpWga8LcG92VWIhlxWL7eKJSAI2aMr8xT4iMCXjaakvdMQSVXCzdoNHrNmAgMjq/FvzPaL/GfXKons7GTO1W7ErvN73dVKVvSXMpy94TYkwPAv8DNeYKfSOiVTIg9Jn4ieyJ7blSLZZI7qlCe8Jr4j7IC1wBDsvQK4/slEMtJAYZgx8B6RnCl5hpznmk8z2nw+8bN0EF1poYQWw9DZtmPHAYkbJLOSImG8bPIBcatExeHHQUaEvhQ8i8zgnvERU53FleLOK7ED32m3GkiJ3a9DZkv+UOWaHbYURH5HkvV+DyTOqTciSYwpA3YLx23Gf+FuMdQkheNZ2zAGnHR1wyGBN6WjlWM4Flxb0Rjuxr35iRpkak2iyGLpeNT4+6zZJLf1PDItFfcnCYy5Fbp2JPJAIa3QErH/cBJXKX7QRGGXCodfxrX7Vy6GHXZgDyuaEPOl444TxK6nDutRuc5bMhgNP5R46Jz0LUutrR+eLP35mz2Wu8du8yInTXqKuVs9ht8s3+vxl0NCL/1xJKc8Hu3uB3oDlzW4ZKwusKlpkj0a04rjVvhmfHSHEvn2ZJFelA02oADmlPc3RM+E/doNK61DZPux+0qnpWVdxWNOzSXg5Y0dlrSGInvWewTcacJrxUXef9EUctV17FZOl4yboG4n3zgCzmT9otVb4Hhd7YuVlEKmp6T+T7vg2fqMn9KJaGEFAiieFaUITs8wxWu13yH8urGWyTwqnHdVnyI4tlknyN9kj2iwy9hvfiP84TmqBw0oOVMWGTlIK88NhpzK1QWb7Ry0E1jFeh2Z/672GC/zGQU6GapBJR1qZjTD+LfHU3BNIXhGLjc+A5VH5MxpQavxFG9a1umZLrc6guXj7eIHeVRxxQz5qSKZ/VGn7nTtkwRG6vIPzRehU8DT+bwHUpb0gbeLjeoFbMtOpXlTr4SCctUyK4bFtryD6nuNL/KdKZNJ/Zm6UhuO+ZfBvXGVIXBAfsl96vasVh37G5dfrr0vaS+fsudynKnWAUPsZOO6UodDuUcgGM9kTu9mDmxC0e7imerlEnvUXQZ1BPff1TfSkWnpvp7uoUWWqD58T/RqMU2+JXILQAAAABJRU5ErkJggg=="
-                        alt="break--v1">
+                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
                 </div>
 
                 <div>
@@ -133,8 +136,7 @@
             <div class="summary-card">
 
                 <div class="summary-icon red">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAACEUlEQVR4nO2YvUoDQRDHf4maQmN54CuoT+BHYWEpqCjxGVREEVux0/gaYp7ESqz8gPjVxl60SOXKwASWyOXuEnRH3T8sHHszu/vjdmZnD6KifkRXgPsl7bIXiPtlLVWZBkbkIsh/AakAp8BLgf3dAk7U1wxIfYCAPbYE0lK/mQI+s96XMQNyrX6yuLyaUx/xNQOyMcDWWrcEIjooGOxiu09/cjH9GpOLIMbkIogxuQhiTC6CGJOLIMbkIogxub8CMg9c/AUQUQnDICNADWgAD8C7tnvtq+X96xISZBl4ynGzfAZWLYKU9XfSh859A2wDk8AoMAZMA7v6rrPGuvqaATn15j3M2Puy8E2g7cGYAFnxvoS0WyDJ4bfgwcgYQUFGvJg4VAhXAGZL7Z90rGAgNS8mSrr42wIwQ579ekiQhs4lgd1RUhBmT23PQ4I86lySnegTZlrt5JwJBvKmc0mK7VbipdomMJEyxrjayFjBQaop75McMFV9/xoS5EHnmuphk2RsMxNbqxPscmLTJ8yO9p9ZSb+ppUYPGPG50741uuS+uTW9EqSiBaDTsiNL3TBH+ixbdLjb+PIHYBa9+Va1r61lRxEYp+XNEkZU92C29MROU9n7Ej2LxhDqlPF+4binGanqlfE7Xkx8ZJXxISVVbJ6LlcSEme2UJqlipQCU2kkSgxyactWVZ0mxkp2+BLZ4fgILfNQk48TkkQAAAABJRU5ErkJggg=="
-                        alt="out-of-stock">
+                    <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i>
                 </div>
 
                 <div>
@@ -149,8 +151,7 @@
             <div class="summary-card">
 
                 <div class="summary-icon purple">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABXUlEQVR4nO2Wu0oDQRSGvxTae0nAxgeR2NkHJD6LbTQBfRDxHVTQwgQLySaF4BPYJ6sQLZKVgVkYhjPZmdndYOEPfzNn93w758xl4Y+pBQyACfClnQB9HatFZ0AKZA6rWLcO6GoNNPeqSnjLMdMjoC2Mz4GmkOdAt+jJFzxwzC6XFLsUoO86tvAFTyPAiQMaBE4jwKnHh0selgWrPudKAsDPJnhSstRqcb7FlLofAb6wcpjwRdnt1AaOhfEZsO/IMwLuCFA34AA5DUnsC5+vgc7qgOZq6sNhDHxqj3VPpfL+ayO69VyQmfYSuKkCvAyAZga8UA3gFXgB9oS4fYR2gBPLHWGnFGrLeHgqwM1kP0APOLfc07FocA43t1RomTMbPIq81kqDhwEvPVYJ9i21ugp3Nw1OLGit4Ibuv/pr3BHitYGL9B0B/SjM6qGHCPBVFeBD4F44IFwzvQa2fwF8qYKAKjUWOwAAAABJRU5ErkJggg=="
-                        alt="transaction">
+                    <i class="fa-solid fa-receipt" aria-hidden="true"></i>
                 </div>
 
                 <div>
@@ -194,7 +195,7 @@
 
                             <input type="text" id="medicineSearch" placeholder="Search medicine name...">
 
-                            <span>⌕</span>
+                            <span aria-hidden="true"><i class="fa-solid fa-magnifying-glass"></i></span>
 
                         </div>
 
@@ -399,7 +400,9 @@
 
                 <h2 id="medicineModalTitle">Add Medicine</h2>
 
-                <button onclick="closeMedicineModal()">×</button>
+                <button type="button" onclick="closeMedicineModal()" aria-label="Close">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
 
             </div>
 
@@ -475,7 +478,9 @@
         <div class="modal-box">
             <div class="modal-header">
                 <h2>Receive Stock</h2>
-                <button type="button" id="closeRestockModal" aria-label="Close">×</button>
+                <button type="button" id="closeRestockModal" aria-label="Close">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
             </div>
             <form id="restockForm">
                 <p class="inventory-form-message" id="restockFormMessage" role="alert"></p>

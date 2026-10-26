@@ -14,10 +14,13 @@
 
 body {
     margin: 0;
-    background: var(--moto-background);
+    background:
+        radial-gradient(ellipse at 90% 0%, rgb(190 221 255 / 28%), transparent 34%),
+        var(--moto-background);
     color: var(--moto-ink);
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 15px;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 button,
@@ -34,36 +37,38 @@ a {
     width: calc(100% - 260px);
     min-height: 100vh;
     margin-left: 260px;
-    padding: 34px clamp(20px, 4vw, 56px) 28px;
+    padding: 20px clamp(24px, 3vw, 40px) 28px;
 }
 
 .page-header {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 24px;
+    gap: 20px;
     max-width: 1280px;
-    margin: 0 auto 28px;
+    margin: 0 auto 16px;
 }
 
 .eyebrow {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     color: var(--moto-primary);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: .09em;
 }
 
 .page-header h1 {
     margin: 0;
-    font-size: clamp(28px, 3vw, 36px);
+    color: #0d1b3e;
+    font-size: clamp(1.8rem, 2vw, 2.5rem);
+    line-height: 1.2;
     letter-spacing: -.035em;
 }
 
 .page-description {
     margin: 9px 0 0;
     color: var(--moto-muted);
-    font-size: 15px;
+    font-size: .9rem;
     line-height: 1.55;
 }
 
@@ -101,16 +106,16 @@ a {
     display: grid;
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
-    gap: 20px;
+    gap: 16px;
     max-width: 1280px;
     margin: 0 auto;
 }
 
 .card {
     border: 1px solid var(--moto-border);
-    border-radius: 14px;
+    border-radius: 12px;
     background: var(--moto-surface);
-    box-shadow: 0 4px 18px rgb(27 45 75 / 5%);
+    box-shadow: 0 5px 18px rgb(25 54 91 / 5.5%);
 }
 
 .chat-card {
@@ -161,8 +166,8 @@ a {
     margin-top: 22px;
     padding: 18px;
     border: 1px solid #dce6f2;
-    border-radius: 14px;
-    background: linear-gradient(145deg, #f1f6fc, #f7f9fd 58%, #edf3fa);
+    border-radius: 12px;
+    background: linear-gradient(145deg, #f4f8fd, #f9fbfe 58%, #eef4fb);
     box-shadow: inset 0 1px 3px rgb(30 58 95 / 5%);
     scrollbar-color: #b7c8dd transparent;
     scrollbar-width: thin;
@@ -173,7 +178,7 @@ a {
     max-width: min(88%, 620px);
     padding: 13px 16px;
     border: 1px solid #dce5ef;
-    border-radius: 4px 15px 15px 15px;
+    border-radius: 6px 14px 14px 14px;
     background: #fff;
     box-shadow: 0 3px 10px rgb(25 48 80 / 6%);
 }
@@ -181,7 +186,7 @@ a {
 .chat-message.user {
     justify-self: end;
     border-color: #1763b5;
-    border-radius: 15px 4px 15px 15px;
+    border-radius: 14px 6px 14px 14px;
     background: linear-gradient(135deg, #1763b5, #124b91);
     box-shadow: 0 4px 12px rgb(18 75 145 / 20%);
 }
@@ -512,7 +517,7 @@ html.dark-mode .disclaimer {
     .main-content {
         width: 100%;
         margin-left: 0;
-        padding: 76px 20px 24px;
+        padding: 70px 24px 24px;
     }
 }
 

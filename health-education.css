@@ -25,7 +25,8 @@ html {
 body {
     background: var(--bg);
     color: var(--text);
-    font: 13px 'Segoe UI', Arial, sans-serif;
+    font: 14px 'Segoe UI', Arial, sans-serif;
+    line-height: 1.5;
     overflow-x: hidden;
 }
 
@@ -60,7 +61,7 @@ svg {
     min-width: 0;
     min-height: 100vh;
     margin-left: 260px;
-    padding: 22px 26px 30px;
+    padding: 20px 24px 28px;
 }
 
 .page-header {
@@ -68,7 +69,7 @@ svg {
     align-items: flex-start;
     justify-content: space-between;
     gap: 20px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
 .page-header > div:first-child {
@@ -78,14 +79,14 @@ svg {
 .page-header h1 {
     margin-bottom: 4px;
     color: var(--navy);
-    font-size: 28px;
+    font-size: clamp(1.8rem, 2vw, 2.5rem);
     font-weight: 700;
-    line-height: 1.25;
+    line-height: 1.2;
 }
 
 .page-header p {
     color: var(--muted);
-    font-size: 13px;
+    font-size: 0.9rem;
     line-height: 1.5;
 }
 
@@ -217,10 +218,10 @@ svg {
 .summary-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 14px;
+    gap: 12px;
     width: 100%;
     min-width: 0;
-    margin: 0 0 24px;
+    margin: 0 0 20px;
 }
 
 .stat-card {
@@ -229,13 +230,13 @@ svg {
     align-items: center;
     gap: 12px;
     min-width: 0;
-    min-height: 100px;
-    padding: 15px 12px 15px 16px;
+    min-height: 96px;
+    padding: 14px 12px 14px 14px;
     overflow: hidden;
     border: 1px solid var(--border);
-    border-radius: 13px;
+    border-radius: 12px;
     background: #fff;
-    box-shadow: 0 3px 10px rgba(21, 43, 77, .055);
+    box-shadow: 0 2px 8px rgba(21, 43, 77, .04);
     transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
 }
 
@@ -280,22 +281,7 @@ svg {
 .stat-card.active-filter {
     border-color: #0755a5;
     background: #f0f7ff;
-    box-shadow: 0 0 0 2px #0755a5, 0 4px 12px rgba(7, 85, 165, .16);
-}
-
-.stat-card.active-filter::after {
-    position: absolute;
-    top: 6px;
-    right: 8px;
-    padding: 2px 5px;
-    border-radius: 4px;
-    background: #dbeafe;
-    color: #0755a5;
-    content: 'Filtered';
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: .3px;
-    text-transform: uppercase;
+    box-shadow: 0 0 0 1px rgba(7, 85, 165, .2);
 }
 
 .stat-icon {
@@ -368,10 +354,10 @@ svg {
     display: block;
     margin-bottom: 3px;
     color: #2a3447;
-    font-size: 10px;
+    font-size: 0.68rem;
     font-weight: 700;
     line-height: 1.35;
-    letter-spacing: .2px;
+    letter-spacing: .08em;
     text-transform: uppercase;
     overflow-wrap: anywhere;
 }
@@ -379,7 +365,7 @@ svg {
 .stat-card strong {
     display: block;
     color: #10264e;
-    font-size: 26px;
+    font-size: clamp(1.5rem, 2vw, 2rem);
     font-weight: 800;
     line-height: 1.08;
     overflow-wrap: anywhere;
@@ -389,7 +375,7 @@ svg {
     display: block;
     margin-top: 4px;
     color: #64748b;
-    font-size: 10px;
+    font-size: 0.7rem;
     line-height: 1.35;
     overflow-wrap: anywhere;
 }
@@ -473,7 +459,7 @@ svg {
 .record-tabs {
     display: flex;
     gap: 8px;
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     padding-bottom: 2px;
     overflow-x: auto;
     border-bottom: 1px solid var(--border);
@@ -482,12 +468,12 @@ svg {
 .record-tab {
     position: relative;
     flex: 0 0 auto;
-    padding: 10px 18px;
+    padding: 9px 14px;
     border: 1px solid transparent;
     border-radius: 8px 8px 0 0;
     background: transparent;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 0.82rem;
     font-weight: 600;
     white-space: nowrap;
     transition: background .2s ease, color .2s ease;
@@ -535,11 +521,11 @@ svg {
 
 .card {
     min-width: 0;
-    padding: 20px;
+    padding: 16px;
     border: 1px solid var(--border);
     border-radius: 12px;
     background: #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .025);
 }
 
 .card-header {
@@ -588,7 +574,7 @@ svg {
 .search-bar {
     display: flex;
     gap: 8px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .search-bar input {
@@ -600,7 +586,7 @@ svg {
     border: 1px solid var(--border);
     border-radius: 8px;
     background: #f8fafc;
-    font-size: 13px;
+    font-size: 0.85rem;
 }
 
 .search-bar input:focus {
@@ -613,8 +599,8 @@ svg {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 14px;
 }
 
 .filter-controls input,
@@ -680,9 +666,9 @@ svg {
 .list-item {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 10px;
     min-width: 0;
-    padding: 12px 14px;
+    padding: 12px 12px;
     border: 1px solid var(--border);
     border-radius: 10px;
     background: #fff;
@@ -708,7 +694,7 @@ svg {
 .list-item strong {
     display: block;
     color: var(--navy);
-    font-size: 14px;
+    font-size: 0.95rem;
     line-height: 1.4;
     overflow-wrap: anywhere;
 }
@@ -717,7 +703,7 @@ svg {
     display: block;
     margin-top: 3px;
     color: var(--muted);
-    font-size: 11px;
+    font-size: 0.74rem;
     line-height: 1.4;
 }
 
@@ -773,7 +759,7 @@ svg {
 .iec-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
+    gap: 12px;
     width: 100%;
     min-width: 0;
 }
@@ -784,13 +770,13 @@ svg {
 .iec-card {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     min-width: 0;
-    padding: 16px;
+    padding: 14px;
     border: 1px solid var(--border);
     border-radius: 10px;
     background: #fff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .03);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .025);
     transition: transform .18s ease, box-shadow .18s ease;
 }
 
@@ -807,7 +793,7 @@ svg {
 .material-card h3,
 .iec-card h3 {
     color: var(--navy);
-    font-size: 15px;
+    font-size: 1rem;
     line-height: 1.4;
     overflow-wrap: anywhere;
 }
@@ -817,8 +803,8 @@ svg {
 .material-card p,
 .iec-card p {
     color: var(--muted);
-    font-size: 12px;
-    line-height: 1.6;
+    font-size: 0.82rem;
+    line-height: 1.55;
     overflow-wrap: anywhere;
 }
 

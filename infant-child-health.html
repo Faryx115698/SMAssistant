@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Infants and Child Health</title>
     <link rel="stylesheet" href="infant-child-health.css">
+    <link rel="stylesheet" href="darkmode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="admin-profile.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -19,24 +20,31 @@
         <header class="page-header">
             <div>
                 <h1>Infants and Child Health</h1>
-                <p>Record child health visits, measurements, nutrition assessments, and staff-entered screening follow-ups.</p>
+                <p>Record child health visits, measurements, nutrition assessments, and staff-entered screening
+                    follow-ups.</p>
             </div>
             <div class="header-right">
                 <div class="admin-profile">
-                    <div class="admin-text"><small>You are logged in as</small><strong><span class="admin-name">ADMIN</span></strong></div>
-                    <div class="admin-photo"><img src="icons/admin.png" alt="Admin"></div>
+                    <div class="admin-text"><small>You are logged in as</small><strong><span
+                                class="admin-name">ADMIN</span></strong></div>
+                    <div class="admin-photo"><img src="logo.png" alt="Admin"></div>
                 </div>
-                <button class="ask-ai" type="button" onclick="window.location.href='ai-moto.html'"><i class="fa-solid fa-wand-magic-sparkles"></i> Ask AI Moto</button>
+                <button class="ask-ai" type="button" onclick="window.location.href='ai-moto.html'"><i
+                        class="fas fa-robot"></i></i> Ask AI Moto</button>
             </div>
         </header>
 
         <div id="pageMessage" class="message" role="status" hidden></div>
 
         <section class="summary-cards" aria-label="Child health summary">
-            <article class="summary-card"><span>Child health profiles</span><strong id="statChildren">—</strong><small>Linked to patient registry</small></article>
-            <article class="summary-card"><span>Visits this month</span><strong id="statVisits">—</strong><small>Recorded visits</small></article>
-            <article class="summary-card"><span>Follow-ups due</span><strong id="statFollowups">—</strong><small>Overdue or next 30 days</small></article>
-            <article class="summary-card"><span>Nutrition programs</span><strong id="statNutrition">—</strong><small>Currently enrolled</small></article>
+            <article class="summary-card"><span>Child health profiles</span><strong
+                    id="statChildren">—</strong><small>Linked to patient registry</small></article>
+            <article class="summary-card"><span>Visits this month</span><strong
+                    id="statVisits">—</strong><small>Recorded visits</small></article>
+            <article class="summary-card"><span>Follow-ups due</span><strong id="statFollowups">—</strong><small>Overdue
+                    or next 30 days</small></article>
+            <article class="summary-card"><span>Nutrition programs</span><strong
+                    id="statNutrition">—</strong><small>Currently enrolled</small></article>
         </section>
 
         <nav class="tabs" aria-label="Child health sections">
@@ -51,11 +59,18 @@
         <section id="records" class="tab active">
             <div class="layout">
                 <aside class="child-list card">
-                    <div class="section-heading"><h2>Children</h2><button class="primary-button" type="button" onclick="openChildForm()"><i class="fa-solid fa-link"></i> Link patient</button></div>
+                    <div class="section-heading">
+                        <h2>Children</h2><button class="primary-button" type="button" onclick="openChildForm()"><i
+                                class="fa-solid fa-link"></i> Link patient</button>
+                    </div>
                     <label class="search-label" for="childSearch">Search by name or patient ID</label>
                     <input id="childSearch" class="search-input" type="search" placeholder="Search children">
                     <label class="search-label" for="childStatusFilter">Profile status</label>
-                    <select id="childStatusFilter" class="search-input"><option value="">All profiles</option><option value="Active" selected>Active</option><option value="Archived">Archived</option></select>
+                    <select id="childStatusFilter" class="search-input">
+                        <option value="">All profiles</option>
+                        <option value="Active" selected>Active</option>
+                        <option value="Archived">Archived</option>
+                    </select>
                     <p id="childListMessage" class="inline-message">Loading child health profiles...</p>
                     <div id="childrenList" class="children-list"></div>
                 </aside>
@@ -64,37 +79,91 @@
                         <div class="empty-state">Select a child profile to view their record.</div>
                     </section>
                     <section class="visits card">
-                        <div class="section-heading"><div><h2>Well-child visits</h2><p>Measurements are recorded as entered; no diagnosis or growth classification is inferred.</p></div><button id="addVisitButton" class="primary-button" type="button" onclick="openVisitForm()" disabled><i class="fa-solid fa-plus"></i> Record visit</button></div>
+                        <div class="section-heading">
+                            <div>
+                                <h2>Well-child visits</h2>
+                                <p>Measurements are recorded as entered; no diagnosis or growth classification is
+                                    inferred.</p>
+                            </div><button id="addVisitButton" class="primary-button" type="button"
+                                onclick="openVisitForm()" disabled><i class="fa-solid fa-plus"></i> Record
+                                visit</button>
+                        </div>
                         <div class="table-wrap">
                             <table>
-                                <thead><tr><th>Date</th><th>Age</th><th>Visit type</th><th>Weight (kg)</th><th>Height/length (cm)</th><th>Head circumference (cm)</th><th>Follow-up</th><th>Action</th></tr></thead>
-                                <tbody id="visitTableBody"><tr><td colspan="8" class="empty-state">Select a child.</td></tr></tbody>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Age</th>
+                                        <th>Visit type</th>
+                                        <th>Weight (kg)</th>
+                                        <th>Height/length (cm)</th>
+                                        <th>Head circumference (cm)</th>
+                                        <th>Follow-up</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="visitTableBody">
+                                    <tr>
+                                        <td colspan="8" class="empty-state">Select a child.</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </section>
                     <section class="milestones card">
-                        <div class="section-heading"><div><h2>Recent development screenings</h2><p>Staff-recorded observations and follow-up—not a diagnosis.</p></div><button id="addScreeningButton" class="secondary-button" type="button" onclick="openScreeningForm()" disabled>Record screening</button></div>
-                        <div id="screeningSummary" class="screening-summary"><p class="empty-state">Select a child.</p></div>
+                        <div class="section-heading">
+                            <div>
+                                <h2>Recent development screenings</h2>
+                                <p>Staff-recorded observations and follow-up—not a diagnosis.</p>
+                            </div><button id="addScreeningButton" class="secondary-button" type="button"
+                                onclick="openScreeningForm()" disabled>Record screening</button>
+                        </div>
+                        <div id="screeningSummary" class="screening-summary">
+                            <p class="empty-state">Select a child.</p>
+                        </div>
                     </section>
                 </div>
                 <aside class="right">
                     <section class="side card">
-                        <div class="section-heading"><div><h2>Recorded measurements</h2><small id="growthChartCaption">Select a child</small></div></div>
+                        <div class="section-heading">
+                            <div>
+                                <h2>Recorded measurements</h2><small id="growthChartCaption">Select a child</small>
+                            </div>
+                        </div>
                         <div class="growth-buttons" role="group" aria-label="Measurement chart">
                             <button class="on" type="button" data-measure="weight_kg">Weight (kg)</button>
                             <button type="button" data-measure="height_cm">Height / length (cm)</button>
                             <button type="button" data-measure="head_circumference_cm">Head circumference (cm)</button>
                         </div>
-                        <div id="growthChart" class="chart-container"><p class="empty-state">Recorded measurements will appear here.</p></div>
-                        <p class="chart-note">Recorded values only. This chart does not display clinical reference curves or diagnose growth concerns.</p>
+                        <div id="growthChart" class="chart-container">
+                            <p class="empty-state">Recorded measurements will appear here.</p>
+                        </div>
+                        <p class="chart-note">Recorded values only. This chart does not display clinical reference
+                            curves or diagnose growth concerns.</p>
                     </section>
                     <section class="side card">
-                        <div class="section-heading"><div><h2>Upcoming follow-ups</h2><p>From staff-entered visit, nutrition, and screening dates.</p></div><button class="text-button" type="button" onclick="activateTab('reports')">View queue</button></div>
-                        <div id="childFollowupPreview"><p class="empty-state">Select a child.</p></div>
+                        <div class="section-heading">
+                            <div>
+                                <h2>Upcoming follow-ups</h2>
+                                <p>From staff-entered visit, nutrition, and screening dates.</p>
+                            </div><button class="text-button" type="button" onclick="activateTab('reports')">View
+                                queue</button>
+                        </div>
+                        <div id="childFollowupPreview">
+                            <p class="empty-state">Select a child.</p>
+                        </div>
                     </section>
                     <section class="side card">
-                        <div class="section-heading"><div><h2>Immunization</h2><p>Use the shared immunization record; no duplicate vaccine records are created here.</p></div></div>
-                        <div id="childImmunizationLink"><p class="empty-state">Select a linked child profile.</p></div>
+                        <div class="section-heading">
+                            <div>
+                                <h2>Immunization</h2>
+                                <p>Use the shared immunization record; no duplicate vaccine records are created here.
+                                </p>
+                            </div>
+                        </div>
+                        <div id="childImmunizationLink">
+                            <p class="empty-state">Select a linked child profile.</p>
+                        </div>
                     </section>
                 </aside>
             </div>
@@ -102,135 +171,262 @@
 
         <section id="growth" class="tab">
             <section class="content-card card">
-                <div class="section-heading"><div><h2>Growth monitoring</h2><p>Review dated measurements entered during visits. Values are shown without clinical interpretation.</p></div><button id="growthAddButton" class="primary-button" type="button" onclick="openVisitForm()" disabled>Record measurements</button></div>
-                <div id="growthHistory" class="table-wrap"><p class="empty-state">Select a child profile.</p></div>
+                <div class="section-heading">
+                    <div>
+                        <h2>Growth monitoring</h2>
+                        <p>Review dated measurements entered during visits. Values are shown without clinical
+                            interpretation.</p>
+                    </div><button id="growthAddButton" class="primary-button" type="button" onclick="openVisitForm()"
+                        disabled>Record measurements</button>
+                </div>
+                <div id="growthHistory" class="table-wrap">
+                    <p class="empty-state">Select a child profile.</p>
+                </div>
             </section>
         </section>
 
         <section id="nutrition" class="tab">
             <section class="content-card card">
-                <div class="section-heading"><div><h2>Nutrition assessments</h2><p>Record staff observations and program enrollment; these entries are not automated nutritional diagnoses.</p></div><button id="nutritionAddButton" class="primary-button" type="button" onclick="openNutritionForm()" disabled>Record assessment</button></div>
-                <div id="nutritionHistory" class="table-wrap"><p class="empty-state">Select a child profile.</p></div>
+                <div class="section-heading">
+                    <div>
+                        <h2>Nutrition assessments</h2>
+                        <p>Record staff observations and program enrollment; these entries are not automated nutritional
+                            diagnoses.</p>
+                    </div><button id="nutritionAddButton" class="primary-button" type="button"
+                        onclick="openNutritionForm()" disabled>Record assessment</button>
+                </div>
+                <div id="nutritionHistory" class="table-wrap">
+                    <p class="empty-state">Select a child profile.</p>
+                </div>
             </section>
         </section>
 
         <section id="milestones" class="tab">
             <section class="content-card card">
-                <div class="section-heading"><div><h2>Development screening records</h2><p>Document screening tool and version, staff observations, and referrals. This is not diagnostic guidance.</p></div><button id="screeningAddButton" class="primary-button" type="button" onclick="openScreeningForm()" disabled>Record screening</button></div>
-                <div id="screeningHistory" class="table-wrap"><p class="empty-state">Select a child profile.</p></div>
+                <div class="section-heading">
+                    <div>
+                        <h2>Development screening records</h2>
+                        <p>Document screening tool and version, staff observations, and referrals. This is not
+                            diagnostic guidance.</p>
+                    </div><button id="screeningAddButton" class="primary-button" type="button"
+                        onclick="openScreeningForm()" disabled>Record screening</button>
+                </div>
+                <div id="screeningHistory" class="table-wrap">
+                    <p class="empty-state">Select a child profile.</p>
+                </div>
             </section>
         </section>
 
         <section id="vitals" class="tab">
             <section class="content-card card">
-                <div class="section-heading"><div><h2>Health visits and measurements</h2><p>Visit vitals are linked to the child health profile. Blood pressure is entered only when clinically appropriate.</p></div><button id="vitalsAddButton" class="primary-button" type="button" onclick="openVisitForm()" disabled>Record visit</button></div>
-                <div id="vitalsHistory" class="table-wrap"><p class="empty-state">Select a child profile.</p></div>
+                <div class="section-heading">
+                    <div>
+                        <h2>Health visits and measurements</h2>
+                        <p>Visit vitals are linked to the child health profile. Blood pressure is entered only when
+                            clinically appropriate.</p>
+                    </div><button id="vitalsAddButton" class="primary-button" type="button" onclick="openVisitForm()"
+                        disabled>Record visit</button>
+                </div>
+                <div id="vitalsHistory" class="table-wrap">
+                    <p class="empty-state">Select a child profile.</p>
+                </div>
             </section>
         </section>
 
         <section id="reports" class="tab">
             <section class="content-card card">
-                <div class="section-heading"><div><h2>Follow-up queue</h2><p>Dates entered by staff; no messages are sent automatically.</p></div><button class="secondary-button" type="button" onclick="exportFollowups()">Export contact list</button></div>
+                <div class="section-heading">
+                    <div>
+                        <h2>Follow-up queue</h2>
+                        <p>Dates entered by staff; no messages are sent automatically.</p>
+                    </div><button class="secondary-button" type="button" onclick="exportFollowups()">Export contact
+                        list</button>
+                </div>
                 <div class="queue-controls">
                     <input id="followupSearch" type="search" placeholder="Search child, follow-up, or phone">
-                    <select id="followupStatus" aria-label="Follow-up status"><option value="">All follow-ups</option><option value="Overdue">Overdue</option><option value="Due Soon">Due within 30 days</option><option value="Scheduled">Scheduled later</option></select>
+                    <select id="followupStatus" aria-label="Follow-up status">
+                        <option value="">All follow-ups</option>
+                        <option value="Overdue">Overdue</option>
+                        <option value="Due Soon">Due within 30 days</option>
+                        <option value="Scheduled">Scheduled later</option>
+                    </select>
                 </div>
-                <div id="followupQueue" class="table-wrap"><p class="empty-state">Loading follow-ups...</p></div>
-                <div class="section-heading report-heading"><div><h2>Activity report</h2><p>Counts reflect saved child health records in the selected date range.</p></div><div class="report-controls"><label>From <input id="reportStart" type="date"></label><label>To <input id="reportEnd" type="date"></label><button class="secondary-button" type="button" onclick="renderReport()">Apply</button><button class="secondary-button" type="button" onclick="exportReport()">Export CSV</button><button class="secondary-button" type="button" onclick="window.print()">Print / Save PDF</button></div></div>
+                <div id="followupQueue" class="table-wrap">
+                    <p class="empty-state">Loading follow-ups...</p>
+                </div>
+                <div class="section-heading report-heading">
+                    <div>
+                        <h2>Activity report</h2>
+                        <p>Counts reflect saved child health records in the selected date range.</p>
+                    </div>
+                    <div class="report-controls"><label>From <input id="reportStart" type="date"></label><label>To
+                            <input id="reportEnd" type="date"></label><button class="secondary-button" type="button"
+                            onclick="renderReport()">Apply</button><button class="secondary-button" type="button"
+                            onclick="exportReport()">Export CSV</button><button class="secondary-button" type="button"
+                            onclick="window.print()">Print / Save PDF</button></div>
+                </div>
                 <div id="activityReport" class="report-grid"></div>
             </section>
         </section>
-        <p class="disclaimer"><i class="fa-solid fa-circle-info"></i> Follow clinic-approved child health procedures. This page records staff-entered information and does not make diagnoses or send reminders.</p>
+        <p class="disclaimer"><i class="fa-solid fa-circle-info"></i> Follow clinic-approved child health procedures.
+            This page records staff-entered information and does not make diagnoses or send reminders.</p>
     </main>
 
     <div class="modal" id="childModal" aria-hidden="true">
         <div class="modal-box">
-            <header><h2 id="childModalTitle">Link patient to child health</h2><button type="button" onclick="closeModal('childModal')" aria-label="Close">×</button></header>
+            <header>
+                <h2 id="childModalTitle">Link patient to child health</h2><button type="button"
+                    onclick="closeModal('childModal')" aria-label="Close">×</button>
+            </header>
             <form id="childForm">
                 <input type="hidden" name="child_record_id">
-                <label>Patient from registry *<select name="patient_id" required><option value="">Select a patient</option></select></label>
-                <p class="form-help">Child identity and date of birth come from the patient registry to avoid duplicate records.</p>
+                <label>Patient from registry *<select name="patient_id" required>
+                        <option value="">Select a patient</option>
+                    </select></label>
+                <p class="form-help">Child identity and date of birth come from the patient registry to avoid duplicate
+                    records.</p>
                 <div class="form-grid">
                     <label>Mother / guardian name<input name="mother_name" maxlength="150"></label>
                     <label>Mother / guardian contact<input name="mother_contact" maxlength="30"></label>
                     <label>Blood type<input name="blood_type" maxlength="10"></label>
-                    <label>Child health profile status<select name="status"><option>Active</option><option>Archived</option></select></label>
-                    <label>Birth weight (kg)<input name="birth_weight_kg" type="number" min="0.3" max="8" step="0.01"></label>
-                    <label class="full">Allergies / important notes<textarea name="allergies" rows="3" maxlength="2000"></textarea></label>
+                    <label>Child health profile status<select name="status">
+                            <option>Active</option>
+                            <option>Archived</option>
+                        </select></label>
+                    <label>Birth weight (kg)<input name="birth_weight_kg" type="number" min="0.3" max="8"
+                            step="0.01"></label>
+                    <label class="full">Allergies / important notes<textarea name="allergies" rows="3"
+                            maxlength="2000"></textarea></label>
                 </div>
                 <p class="form-message" id="childFormMessage" role="alert" hidden></p>
-                <div class="actions"><button type="button" onclick="closeModal('childModal')">Cancel</button><button class="save" type="submit">Save profile</button></div>
+                <div class="actions"><button type="button" onclick="closeModal('childModal')">Cancel</button><button
+                        class="save" type="submit">Save profile</button></div>
             </form>
         </div>
     </div>
 
     <div class="modal" id="visitModal" aria-hidden="true">
         <div class="modal-box">
-            <header><h2 id="visitModalTitle">Record well-child visit</h2><button type="button" onclick="closeModal('visitModal')" aria-label="Close">×</button></header>
+            <header>
+                <h2 id="visitModalTitle">Record well-child visit</h2><button type="button"
+                    onclick="closeModal('visitModal')" aria-label="Close">×</button>
+            </header>
             <form id="visitForm">
                 <input type="hidden" name="visit_id">
                 <div class="form-grid">
                     <label>Visit date *<input name="visit_date" type="date" required></label>
-                    <label>Visit type *<select name="visit_type" required><option value="">Select type</option><option>Well-child visit</option><option>Growth monitoring</option><option>Nutrition assessment</option><option>Development screening</option><option>Follow-up</option><option>Other</option></select></label>
+                    <label>Visit type *<select name="visit_type" required>
+                            <option value="">Select type</option>
+                            <option>Well-child visit</option>
+                            <option>Growth monitoring</option>
+                            <option>Nutrition assessment</option>
+                            <option>Development screening</option>
+                            <option>Follow-up</option>
+                            <option>Other</option>
+                        </select></label>
                     <label>Weight (kg)<input name="weight_kg" type="number" min="0.3" max="250" step="0.01"></label>
-                    <label>Length / height (cm)<input name="height_cm" type="number" min="20" max="250" step="0.1"></label>
-                    <label>Head circumference (cm)<input name="head_circumference_cm" type="number" min="20" max="80" step="0.1"></label>
-                    <label>Blood pressure (when appropriate)<input name="bp" maxlength="30" placeholder="e.g. 100/65"></label>
+                    <label>Length / height (cm)<input name="height_cm" type="number" min="20" max="250"
+                            step="0.1"></label>
+                    <label>Head circumference (cm)<input name="head_circumference_cm" type="number" min="20" max="80"
+                            step="0.1"></label>
+                    <label>Blood pressure (when appropriate)<input name="bp" maxlength="30"
+                            placeholder="e.g. 100/65"></label>
                     <label>Next follow-up date<input name="next_visit" type="date"></label>
-                    <label>Follow-up status<select name="follow_up_status"><option>Scheduled</option><option>Completed</option><option>Cancelled</option></select></label>
+                    <label>Follow-up status<select name="follow_up_status">
+                            <option>Scheduled</option>
+                            <option>Completed</option>
+                            <option>Cancelled</option>
+                        </select></label>
                     <label class="full">Visit notes<textarea name="notes" rows="4" maxlength="4000"></textarea></label>
                 </div>
-                <p class="form-help">Age at visit is calculated from the linked patient's birth date. Measurements are stored as entered, without automatic risk labels.</p>
+                <p class="form-help">Age at visit is calculated from the linked patient's birth date. Measurements are
+                    stored as entered, without automatic risk labels.</p>
                 <p class="form-message" id="visitFormMessage" role="alert" hidden></p>
-                <div class="actions"><button type="button" onclick="closeModal('visitModal')">Cancel</button><button class="save" type="submit">Save visit</button></div>
+                <div class="actions"><button type="button" onclick="closeModal('visitModal')">Cancel</button><button
+                        class="save" type="submit">Save visit</button></div>
             </form>
         </div>
     </div>
 
     <div class="modal" id="nutritionModal" aria-hidden="true">
         <div class="modal-box">
-            <header><h2>Nutrition assessment</h2><button type="button" onclick="closeModal('nutritionModal')" aria-label="Close">×</button></header>
+            <header>
+                <h2>Nutrition assessment</h2><button type="button" onclick="closeModal('nutritionModal')"
+                    aria-label="Close">×</button>
+            </header>
             <form id="nutritionForm">
                 <input type="hidden" name="assessment_id">
                 <div class="form-grid">
                     <label>Assessment date *<input name="assessment_date" type="date" required></label>
-                    <label>Program enrollment<select name="program_enrolled"><option value="false">Not enrolled / not recorded</option><option value="true">Enrolled</option></select></label>
+                    <label>Program enrollment<select name="program_enrolled">
+                            <option value="false">Not enrolled / not recorded</option>
+                            <option value="true">Enrolled</option>
+                        </select></label>
                     <label>Program name<input name="program_name" maxlength="150"></label>
                     <label>Next follow-up<input name="follow_up_date" type="date"></label>
-                    <label>Follow-up status<select name="follow_up_status"><option>Scheduled</option><option>Completed</option><option>Cancelled</option></select></label>
-                    <label class="full">Feeding / nutrition observations<textarea name="assessment" rows="3" maxlength="3000"></textarea></label>
+                    <label>Follow-up status<select name="follow_up_status">
+                            <option>Scheduled</option>
+                            <option>Completed</option>
+                            <option>Cancelled</option>
+                        </select></label>
+                    <label class="full">Feeding / nutrition observations<textarea name="assessment" rows="3"
+                            maxlength="3000"></textarea></label>
                     <label class="full">Staff notes<textarea name="notes" rows="3" maxlength="3000"></textarea></label>
                 </div>
                 <p class="form-message" id="nutritionFormMessage" role="alert" hidden></p>
-                <div class="actions"><button type="button" onclick="closeModal('nutritionModal')">Cancel</button><button class="save" type="submit">Save assessment</button></div>
+                <div class="actions"><button type="button" onclick="closeModal('nutritionModal')">Cancel</button><button
+                        class="save" type="submit">Save assessment</button></div>
             </form>
         </div>
     </div>
 
     <div class="modal" id="screeningModal" aria-hidden="true">
         <div class="modal-box">
-            <header><h2>Development screening</h2><button type="button" onclick="closeModal('screeningModal')" aria-label="Close">×</button></header>
+            <header>
+                <h2>Development screening</h2><button type="button" onclick="closeModal('screeningModal')"
+                    aria-label="Close">×</button>
+            </header>
             <form id="screeningForm">
                 <input type="hidden" name="screening_id">
                 <div class="form-grid">
                     <label>Screening date *<input name="screening_date" type="date" required></label>
-                    <label>Tool / protocol name *<input name="tool_name" required maxlength="150" placeholder="Clinic-approved tool"></label>
+                    <label>Tool / protocol name *<input name="tool_name" required maxlength="150"
+                            placeholder="Clinic-approved tool"></label>
                     <label>Tool version<input name="tool_version" maxlength="80"></label>
-                    <label>Staff-entered outcome<select name="outcome"><option>Recorded</option><option>Follow-up recommended</option><option>Referral made</option><option>Unable to complete</option></select></label>
-                    <label class="full">Domains / observations<textarea name="observations" rows="4" maxlength="4000" placeholder="Record the screening observations using your clinic's approved tool."></textarea></label>
-                    <label class="full">Referral / follow-up plan<textarea name="referral_notes" rows="3" maxlength="2000"></textarea></label>
+                    <label>Staff-entered outcome<select name="outcome">
+                            <option>Recorded</option>
+                            <option>Follow-up recommended</option>
+                            <option>Referral made</option>
+                            <option>Unable to complete</option>
+                        </select></label>
+                    <label class="full">Domains / observations<textarea name="observations" rows="4" maxlength="4000"
+                            placeholder="Record the screening observations using your clinic's approved tool."></textarea></label>
+                    <label class="full">Referral / follow-up plan<textarea name="referral_notes" rows="3"
+                            maxlength="2000"></textarea></label>
                     <label>Follow-up date<input name="follow_up_date" type="date"></label>
-                    <label>Follow-up status<select name="follow_up_status"><option>Scheduled</option><option>Completed</option><option>Cancelled</option></select></label>
+                    <label>Follow-up status<select name="follow_up_status">
+                            <option>Scheduled</option>
+                            <option>Completed</option>
+                            <option>Cancelled</option>
+                        </select></label>
                 </div>
-                <p class="form-help">This records screening information only. It does not assess development or provide a diagnosis.</p>
+                <p class="form-help">This records screening information only. It does not assess development or provide
+                    a diagnosis.</p>
                 <p class="form-message" id="screeningFormMessage" role="alert" hidden></p>
-                <div class="actions"><button type="button" onclick="closeModal('screeningModal')">Cancel</button><button class="save" type="submit">Save screening</button></div>
+                <div class="actions"><button type="button" onclick="closeModal('screeningModal')">Cancel</button><button
+                        class="save" type="submit">Save screening</button></div>
             </form>
         </div>
     </div>
 
     <div class="modal" id="visitDetailModal" aria-hidden="true">
-        <div class="modal-box"><header><h2>Visit details</h2><button type="button" onclick="closeModal('visitDetailModal')" aria-label="Close">×</button></header><div id="visitDetailContent" class="detail-content"></div></div>
+        <div class="modal-box">
+            <header>
+                <h2>Visit details</h2><button type="button" onclick="closeModal('visitDetailModal')"
+                    aria-label="Close">×</button>
+            </header>
+            <div id="visitDetailContent" class="detail-content"></div>
+        </div>
     </div>
     <script src="infant-child-health.js"></script>
     <script src="sidebar.js"></script>

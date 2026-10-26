@@ -53,6 +53,17 @@ html.dark-mode .page-title h1 {
     color: #f3f4f6 !important;
 }
 
+.page-header h1,
+.dashboard-header h1,
+.page-title h1,
+.header-title {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: clamp(28px, 2.2vw, 32px);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+}
+
 html.dark-mode .page-header p,
 html.dark-mode .dashboard-header p,
 html.dark-mode .page-title p {
@@ -175,6 +186,15 @@ html.dark-mode .settings-tab:hover {
 html.dark-mode .record-tab.active,
 html.dark-mode .settings-tab.active {
     color: #ffffff !important;
+}
+
+@media (max-width: 600px) {
+    .page-header h1,
+    .dashboard-header h1,
+    .page-title h1,
+    .header-title {
+        font-size: clamp(24px, 6vw, 28px);
+    }
 }
 
 
@@ -515,4 +535,101 @@ html.dark-mode .stat-card.active-filter {
 html.dark-mode .stat-card.active-filter::after {
     background: #0369a1 !important;
     color: #e0f2fe !important;
-}
+}
+
+html.dark-mode :is(.main-content, .content-body) :is(
+    h1, h2, h3, h4, h5, h6,
+    p, span, small, label, strong, b, em,
+    li, td, th, dt, dd, figcaption
+):not([class*="badge"]):not([class*="status"]) {
+    color: #e5e7eb !important;
+}
+
+html.dark-mode :is(.main-content, .content-body) :is(h1, h2, h3, h4, h5, h6) {
+    color: #f3f4f6 !important;
+}
+
+html.dark-mode .admin-profile {
+    background: #1f2937 !important;
+    border-color: #4b5563 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+html.dark-mode .admin-profile .admin-info > span,
+html.dark-mode .admin-profile .admin-text > small {
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .admin-profile .admin-info > strong,
+html.dark-mode .admin-profile .admin-text > strong {
+    color: #93c5fd !important;
+}
+
+html.dark-mode .admin-profile .admin-photo,
+html.dark-mode .admin-profile .profile-image {
+    background-color: #111827 !important;
+    border-color: #64748b !important;
+}
+
+.ask-ai,
+.ai-button,
+html.dark-mode .ask-ai,
+html.dark-mode .ai-button {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;
+    border-color: transparent !important;
+    color: #ffffff !important;
+}
+
+.ask-ai:hover,
+.ai-button:hover,
+html.dark-mode .ask-ai:hover,
+html.dark-mode .ai-button:hover {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3) !important;
+}
+
+.main-content :is(.ask-ai, .ai-button, .header-button[href="ai-moto.html"]),
+.main-content :is(.ask-ai, .ai-button, .header-button[href="ai-moto.html"]):hover,
+html.dark-mode .main-content :is(.ask-ai, .ai-button, .header-button[href="ai-moto.html"]),
+html.dark-mode .main-content :is(.ask-ai, .ai-button, .header-button[href="ai-moto.html"]):hover {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    min-height: 38px !important;
+    padding: 9px 15px !important;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;
+    background-color: #1e3a8a !important;
+    background-image: linear-gradient(135deg, #1e3a8a, #3b82f6) !important;
+    border-color: transparent !important;
+    border-radius: 24px !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+}
+
+.main-content :is(.ask-ai, .ai-button, .header-button[href="ai-moto.html"]) :is(i, svg),
+html.dark-mode .main-content :is(.ask-ai, .ai-button, .header-button[href="ai-moto.html"]) :is(i, svg) {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+    font-size: inherit !important;
+}
+
+.main-content :is(.ask-ai, .ai-button, .header-button[href="ai-moto.html"]) img {
+    width: 17px;
+    height: 17px;
+    filter: brightness(0) invert(1);
+}
+
+@media (max-width: 600px) {
+    .main-content :is(.ask-ai, .ai-button, .header-button[href="ai-moto.html"]),
+    html.dark-mode .main-content :is(.ask-ai, .ai-button, .header-button[href="ai-moto.html"]) {
+        min-height: 38px !important;
+        padding: 9px 12px !important;
+        font-size: 11px !important;
+    }
+}

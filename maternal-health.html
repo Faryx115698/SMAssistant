@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Maternal Health</title>
     <link rel="stylesheet" href="maternal-health.css">
+    <link rel="stylesheet" href="darkmode.css">
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
@@ -25,11 +26,11 @@
             <div class="header-right">
                 <div class="admin-profile">
                     <div class="admin-text"><small>You are logged in
-                            as</small><strong>ADMINISTRATOR</strong>
+                            as</small><strong>ADMIN</strong>
                     </div>
-                    <div class="admin-photo"><img src="icons/admin.png" alt="Admin"></div>
+                    <div class="admin-photo"><img src="logo.png" alt="Admin"></div>
                 </div><button class="ask-ai" onclick="location.href='ai-moto.html'"><i
-                        class="fa-solid fa-wand-magic-sparkles"></i> Ask AI Moto</button>
+                        class="fa-solid fa-robot"></i> Ask AI Moto</button>
             </div>
         </header>
         
@@ -168,8 +169,6 @@
                             <p id="patientNotes">Select a patient to view notes.</p><small id="patientNotesMeta"></small>
                         </div>
                     </div>
-                </section>
-                <aside class="right-column">
                     <div class="card side-card upcoming-appointments">
                         <div class="side-title">
                             <div>
@@ -187,7 +186,7 @@
                             <p class="empty">Select a patient to view appointments.</p>
                         </div>
                     </div>
-                </aside>
+                </section>
             </div>
         </section>
 

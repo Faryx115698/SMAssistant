@@ -10,6 +10,7 @@
     <title>Patient Registration and Record</title>
 
     <link rel="stylesheet" href="patient-registration.css">
+    <link rel="stylesheet" href="darkmode.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -40,44 +41,42 @@
 
             <div class="header-right">
 
-                <div class="logged-admin">
+                <div class="admin-profile">
+                    <div class="logged-admin">
 
-                    <span>
-                        You are logged in as:
-                    </span>
+                        <span>
+                            You are logged in as:
+                        </span>
 
-                    <strong>
-                        <span class="admin-name">ADMIN</span>
-                    </strong>
+                        <strong>
+                            <span class="admin-name">ADMIN</span>
+                        </strong>
 
+                    </div>
+
+                    <div class="admin-photo">
+                        <img src="logo.png" alt="Admin">
+                    </div>
                 </div>
 
-                <div class="admin-photo">
-                    <img src="logo.png" alt="Admin">
-                </div>
+                <a href="ai-moto.html" class="ask-ai">
+
+                    <i class="fa-solid fa-robot"></i>
+
+                    Ask AI Moto
+
+                </a>
 
             </div>
 
         </header>
-
-        <div class="ai-row">
-
-            <a href="ai-moto.html" class="ask-ai">
-
-                <img src="icons/ai moto.png" alt="AI Moto">
-
-                Ask AI Moto
-
-            </a>
-
-        </div>
 
         <section class="stats-grid">
 
             <div class="stat-card" id="cardTotalPatients" data-filter="all" title="Click to view all patients">
 
                 <div class="stat-icon blue">
-                    <img src="icons/total registered patients.png" alt="Total Patients">
+                    <i class="fa-solid fa-users"></i>
                 </div>
 
                 <div>
@@ -92,7 +91,7 @@
                 title="Click to filter new patients this month">
 
                 <div class="stat-icon green">
-                    <img src="icons/new this months.png" alt="New Patients">
+                    <i class="fa-solid fa-user-plus"></i>
                 </div>
 
                 <div>
@@ -106,7 +105,7 @@
             <div class="stat-card" id="cardActivePatients" data-filter="active" title="Click to filter active patients">
 
                 <div class="stat-icon purple">
-                    <img src="icons/active patient.png" alt="Active Patients">
+                    <i class="fa-solid fa-user-check"></i>
                 </div>
 
                 <div>
@@ -121,7 +120,7 @@
                 title="Click to filter archived records">
 
                 <div class="stat-icon orange">
-                    <img src="icons/archive records.png" alt="Archive Records">
+                    <i class="fa-solid fa-box-archive"></i>
                 </div>
 
                 <div>
@@ -136,7 +135,7 @@
                 title="Click to filter pending profiles">
 
                 <div class="stat-icon navy">
-                    <img src="icons/pending profiles.png" alt="Pending Profiles">
+                    <i class="fa-solid fa-clock"></i>
                 </div>
 
                 <div>
@@ -450,10 +449,6 @@
                             Health Profile
                         </button>
 
-                        <button class="tab-button" data-tab="history">
-                            History
-                        </button>
-
                         <button class="tab-button" data-tab="records">
                             Records
                         </button>
@@ -653,147 +648,6 @@
                                 </div>
 
                             </form>
-
-                        </div>
-
-                    </div>
-
-                    <div class="tab-content" id="tab-history">
-
-                        <div class="history-tab-layout">
-
-                            <section class="history-sidebar card">
-
-                                <h2 class="panel-title">CONSULTATION HISTORY</h2>
-
-                                <div class="search-box">
-                                    <input type="text" id="historyTabSearch" placeholder="Search consultation...">
-                                    <button type="button">
-                                        <i class="fa-solid fa-filter"></i>
-                                        Filter
-                                    </button>
-                                </div>
-
-                                <div class="history-filter-chips">
-                                    <button class="chip active" data-hfilter="all">All</button>
-                                    <button class="chip" data-hfilter="general">General Consultation</button>
-                                    <button class="chip" data-hfilter="followup">Follow-up Consultation</button>
-                                </div>
-
-                                <div class="history-list" id="historyTabList">
-                                    <div class="patient-list-empty">
-                                        <i class="fa-solid fa-file-medical"></i>
-                                        <p>No consultations yet</p>
-                                        <small>Create a new consultation to get started</small>
-                                    </div>
-                                </div>
-
-                                <button class="new-consultation" type="button" id="historyNewConsultBtn">
-                                    <i class="fa-solid fa-plus"></i>
-                                    New Consultation
-                                </button>
-
-                            </section>
-
-                            <section class="history-detail card">
-
-                                <div class="section-heading">
-                                    <h2 id="historyDetailTitle">HISTORY DETAILS</h2>
-                                    <div class="section-actions">
-                                        <button type="button" id="historyEditBtn">
-                                            <i class="fa-solid fa-pen"></i>
-                                            Edit
-                                        </button>
-                                        <button type="button" id="historyPrintBtn">
-                                            <i class="fa-solid fa-print"></i>
-                                            Print
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <h3 class="history-section-title">
-                                    <i class="fa-solid fa-heart-pulse"></i>
-                                    VITAL SIGNS
-                                </h3>
-
-                                <div class="history-vitals-grid">
-                                    <div class="history-vital-card">
-                                        <label>Temperature</label>
-                                        <div class="vital-value" id="hVitalTemp">—</div>
-                                        <small>°C</small>
-                                    </div>
-
-                                    <div class="history-vital-card">
-                                        <label>Respiratory Rate</label>
-                                        <div class="vital-value" id="hVitalRR">—</div>
-                                        <small>breaths/min</small>
-                                    </div>
-
-                                    <div class="history-vital-card">
-                                        <label>Blood Pressure</label>
-                                        <div class="vital-value" id="hVitalBP">—</div>
-                                        <small>mmHg</small>
-                                    </div>
-
-                                    <div class="history-vital-card">
-                                        <label>Oxygen Saturation</label>
-                                        <div class="vital-value" id="hVitalO2">—</div>
-                                        <small>SpO₂ %</small>
-                                    </div>
-
-                                    <div class="history-vital-card">
-                                        <label>Heart Rate</label>
-                                        <div class="vital-value" id="hVitalHR">—</div>
-                                        <small>bpm</small>
-                                    </div>
-
-                                    <div class="history-vital-card">
-                                        <label>Height</label>
-                                        <div class="vital-value" id="hVitalHeight">—</div>
-                                        <small>cm</small>
-                                    </div>
-
-                                    <div class="history-vital-card">
-                                        <label>Weight</label>
-                                        <div class="vital-value" id="hVitalWeight">—</div>
-                                        <small>kg</small>
-                                    </div>
-                                </div>
-
-                                <div class="history-divider"></div>
-
-                                <h3 class="history-section-title">
-                                    <i class="fa-solid fa-stethoscope"></i>
-                                    PHYSICAL EXAMINATION
-                                </h3>
-
-                                <div class="history-text-box" id="hPhysicalExam">—</div>
-
-                                <div class="history-divider"></div>
-
-                                <h3 class="history-section-title">
-                                    <i class="fa-solid fa-notes-medical"></i>
-                                    ASSESSMENT
-                                </h3>
-
-                                <div class="history-text-box" id="hAssessment">—</div>
-
-                                <div class="history-divider"></div>
-
-                                <h3 class="history-section-title">
-                                    <i class="fa-solid fa-clipboard-list"></i>
-                                    PLAN / TREATMENT
-                                </h3>
-
-                                <div class="history-text-box" id="hPlanTreatment">—</div>
-
-                                <div class="history-empty-state" id="historyEmptyState">
-                                    <i class="fa-solid fa-file-medical"></i>
-                                    <h3>Select a consultation</h3>
-                                    <p>Choose a record from the list on the left to view its details.</p>
-                                </div>
-
-                            </section>
 
                         </div>
 

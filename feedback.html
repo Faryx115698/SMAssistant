@@ -27,14 +27,14 @@
                 <div class="admin-profile">
                     <div class="admin-text">
                         <small>You are logged in as</small>
-                        <strong class="admin-name">ADMINISTRATOR</strong>
+                        <strong class="admin-name">ADMIN</strong>
                     </div>
                     <div class="admin-photo">
-                        <img src="icons/admin.png" alt="Admin" onerror="this.src='logo.png'">
+                        <img src="logo.png" alt="Admin" onerror="this.src='logo.png'">
                     </div>
                 </div>
                 <button class="ask-ai" onclick="location.href='ai-moto.html'">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> Ask AI Moto
+                    <i class="fas fa-robot"></i> Ask AI Moto
                 </button>
             </div>
         </header>
@@ -168,24 +168,22 @@
 
         <!-- TAB 4: Log Walk-in Feedback -->
         <section class="tab-content" id="submit">
-            <div class="card" style="max-width: 680px;">
+            <div class="card feedback-form-card">
                 <div class="card-header">
                     <h2>Record Resident Feedback / Walk-in Concern</h2>
                 </div>
-                <form id="feedbackForm" onsubmit="handleFeedbackSubmit(event)">
-                    <div class="form-group">
+                <form id="feedbackForm" class="feedback-form-grid" onsubmit="handleFeedbackSubmit(event)">
+                    <div class="form-group form-full">
                         <label>Resident / Patient Name (or Anonymous) *</label>
                         <input type="text" id="fbName" required placeholder="e.g. Maria Del Rosario (or Anonymous)">
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                        <div class="form-group">
-                            <label>Contact Number</label>
-                            <input type="text" id="fbContact" placeholder="09XX-XXX-XXXX">
-                        </div>
-                        <div class="form-group">
-                            <label>Purok / Address</label>
-                            <input type="text" id="fbPurok" placeholder="Purok 1">
-                        </div>
+                    <div class="form-group">
+                        <label>Contact Number</label>
+                        <input type="text" id="fbContact" placeholder="09XX-XXX-XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label>Purok / Address</label>
+                        <input type="text" id="fbPurok" placeholder="Purok 1">
                     </div>
                     <div class="form-group">
                         <label>Category *</label>
@@ -208,11 +206,11 @@
                             <option value="1">⭐ Poor (1 Star)</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group form-full">
                         <label>Feedback Message / Specific Details *</label>
                         <textarea id="fbDetails" rows="4" required placeholder="Describe the resident's feedback, complaint, or recommendation..."></textarea>
                     </div>
-                    <div class="form-actions">
+                    <div class="form-actions form-full">
                         <button type="submit" class="btn-primary">Save Feedback Record</button>
                     </div>
                 </form>

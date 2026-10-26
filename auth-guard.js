@@ -50,14 +50,18 @@ async function checkAuthGuard() {
 
 function populateUserData(user) {
     if (!user) return;
-    const nameElements = document.querySelectorAll("#adminName, .admin-name, [data-user-name]");
+    const nameElements = document.querySelectorAll("#adminName, [data-user-name]");
     nameElements.forEach(el => {
         el.textContent = user.name;
     });
 
-    const roleElements = document.querySelectorAll("#adminRole, .admin-role, [data-user-role]");
+    const role = String(user.role || "ADMINISTRATOR").trim().toUpperCase();
+    const displayRole = role === "ADMINISTRATOR" ? "ADMIN" : role;
+    const roleElements = document.querySelectorAll(
+        "#adminRole, .admin-name, .admin-role, [data-user-role]"
+    );
     roleElements.forEach(el => {
-        el.textContent = (user.role || "ADMINISTRATOR").toUpperCase();
+        el.textContent = displayRole;
     });
 
     window.dispatchEvent(new CustomEvent("user-authenticated", { detail: user }));

@@ -8,6 +8,7 @@
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
     <link rel="stylesheet" href="sms-notifications.css">
+    <link rel="stylesheet" href="darkmode.css">
     <link rel="stylesheet" href="admin-profile.css">
 </head>
 
@@ -26,21 +27,22 @@
 
         <div class="header-right">
 
-            <div class="admin-profile">
+                <div class="admin-profile">
 
-                <div class="admin-text">
-                    <small>You are logged in as</small>
-                    <strong><span class="admin-name">ADMIN</span></strong>
+                    <div class="admin-text">
+                        <small>You are logged in as</small>
+
+                        <strong>
+                            <span class="admin-name">ADMIN</span>
+                        </strong>
+                    </div>
+
+                    <img src="logo.png" alt="Admin" class="admin-photo">
+
                 </div>
-
-                <div class="admin-photo">
-                    <img src="logo.png" alt="Admin Icon">
-                </div>
-
-            </div>
 
             <button class="ask-ai">
-                <span>+</span>
+                <i class="fa-solid fa-robot"></i>
                 Ask AI Moto
             </button>
 
@@ -185,40 +187,6 @@
                     <option>Senior Citizens</option>
                     <option>Custom List</option>
                 </select>
-
-
-                <div class="recipient-icons">
-
-                    <button type="button" class="recipient-type active">
-                        <div class="small-icon purple-icon">
-                            <i class="fa-solid fa-users"></i>
-                        </div>
-                        <span>All Patients</span>
-                    </button>
-
-                    <button type="button" class="recipient-type">
-                        <div class="small-icon red-icon">
-                            <i class="fa-solid fa-female"></i>
-                        </div>
-                        <span>Pregnant</span>
-                    </button>
-
-                    <button type="button" class="recipient-type">
-                        <div class="small-icon blue-icon">
-                            <i class="fa-solid fa-baby"></i>
-                        </div>
-                        <span>Infant/Child</span>
-                    </button>
-
-                    <button type="button" class="recipient-type">
-                        <div class="small-icon gray-icon">
-                            <i class="fa-solid fa-list"></i>
-                        </div>
-                        <span>Custom List</span>
-                    </button>
-
-                </div>
-
 
                 <label class="field-label message-label">
                     Message
@@ -784,36 +752,6 @@ document.addEventListener("DOMContentLoaded", function () {
         remainingChars.textContent = "160";
 
         document.getElementById("recipientSelect").value = "";
-
-    });
-
-
-    const recipientButtons = document.querySelectorAll(".recipient-type");
-
-    recipientButtons.forEach(function (button) {
-
-        button.addEventListener("click", function () {
-
-            recipientButtons.forEach(function (item) {
-                item.classList.remove("active");
-            });
-
-            button.classList.add("active");
-
-            const text = button.querySelector("span").textContent;
-
-            const select = document.getElementById("recipientSelect");
-
-            for (let i = 0; i < select.options.length; i++) {
-
-                if (select.options[i].text === text) {
-                    select.selectedIndex = i;
-                    break;
-                }
-
-            }
-
-        });
 
     });
 

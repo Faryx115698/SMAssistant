@@ -7,6 +7,7 @@
     <title>Immunization and Vaccination</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="immunization.css">
+    <link rel="stylesheet" href="darkmode.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
@@ -32,14 +33,14 @@
                     </div>
 
                     <div class="admin-photo">
-                        <img src="icons/admin.png" alt="Admin Icon"
+                        <img src="logo.png" alt="Admin Icon"
                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                         <i class="fa-solid fa-user" style="display:none;"></i>
                     </div>
                 </div>
 
                 <button class="ask-ai" type="button" onclick="window.location.href='ai-moto.html'">
-                    <i class="fa-solid fa-plus"></i> Ask AI Moto
+                    <i class="fa-solid fa-robot"></i> Ask AI Moto
                 </button>
             </div>
         </header>
@@ -49,10 +50,8 @@
         <section class="summary-cards">
 
             <div class="summary-card card-blue">
-                <div class="summary-icon">
-                    <img src="icons/immunization-patients.png" alt="Patients"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <i class="fa-solid fa-syringe" style="display:none;"></i>
+                <div class="summary-icon" aria-hidden="true">
+                    <i class="fa-solid fa-users"></i>
                 </div>
                 <div>
                     <span>Total Patients</span>
@@ -62,10 +61,8 @@
             </div>
 
             <div class="summary-card card-green">
-                <div class="summary-icon">
-                    <img src="icons/fully-immunized.png" alt="Completed doses"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <i class="fa-solid fa-shield-heart" style="display:none;"></i>
+                <div class="summary-icon" aria-hidden="true">
+                    <i class="fa-solid fa-syringe"></i>
                 </div>
                 <div>
                     <span>Completed Doses</span>
@@ -75,10 +72,8 @@
             </div>
 
             <div class="summary-card card-orange">
-                <div class="summary-icon">
-                    <img src="icons/due-this-month.png" alt="Due This Month"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <i class="fa-solid fa-calendar-days" style="display:none;"></i>
+                <div class="summary-icon" aria-hidden="true">
+                    <i class="fa-solid fa-calendar-check"></i>
                 </div>
                 <div>
                     <span>Due This Month</span>
@@ -88,10 +83,8 @@
             </div>
 
             <div class="summary-card card-red">
-                <div class="summary-icon">
-                    <img src="icons/overdue-vaccines.png" alt="Overdue"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <i class="fa-solid fa-triangle-exclamation" style="display:none;"></i>
+                <div class="summary-icon" aria-hidden="true">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
                 <div>
                     <span>Overdue</span>
@@ -101,10 +94,8 @@
             </div>
 
             <div class="summary-card card-purple">
-                <div class="summary-icon">
-                    <img src="icons/vaccines-today.png" alt="Vaccines Today"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <i class="fa-solid fa-syringe" style="display:none;"></i>
+                <div class="summary-icon" aria-hidden="true">
+                    <i class="fa-solid fa-syringe"></i>
                 </div>
                 <div>
                     <span>Vaccines Today</span>

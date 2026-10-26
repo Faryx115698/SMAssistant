@@ -7,18 +7,11 @@
     <title>Settings - Smart Assistant</title>
 
     <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="darkmode.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <script>
-        (function () {
-            const darkMode = localStorage.getItem("darkMode");
-
-            if (darkMode === "true") {
-                document.documentElement.classList.add("dark-mode");
-            }
-        })();
-    </script>
+    <script src="darkmode.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <link rel="stylesheet" href="admin-profile.css">
@@ -53,7 +46,7 @@
                 </div>
 
                 <a href="ai-moto.html" class="ask-ai">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <i class="fa-solid fa-robot"></i>
                     Ask AI Moto
                 </a>
 
@@ -262,6 +255,19 @@
 
                     <div class="preference-list">
 
+                        <div class="preference-item">
+                            <div class="preference-icon">
+                                <i class="fa-solid fa-moon"></i>
+                            </div>
+                            <div class="preference-text">
+                                <strong>Enable Dark Mode</strong>
+                                <span>Use dark theme throughout the system.</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="darkModeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
 
                         <div class="preference-item">
 
@@ -358,28 +364,6 @@
                                 <option value="25">25</option>
                                 <option value="50">50</option>
                             </select>
-
-                        </div>
-
-
-                        <div class="preference-item">
-
-                            <div class="preference-icon">
-                                <i class="fa-solid fa-moon"></i>
-                            </div>
-
-                            <div class="preference-text">
-                                <strong>Enable Dark Mode</strong>
-                                <span>Use dark theme throughout the system.</span>
-                            </div>
-
-                            <label class="switch">
-
-                                <input type="checkbox" id="darkModeToggle">
-
-                                <span class="slider"></span>
-
-                            </label>
 
                         </div>
 
@@ -817,42 +801,6 @@
     <script>
 
         document.addEventListener("DOMContentLoaded", function () {
-
-            const darkModeToggle = document.getElementById("darkModeToggle");
-
-            const savedDarkMode = localStorage.getItem("darkMode");
-
-            if (savedDarkMode === "true") {
-                darkModeToggle.checked = true;
-                document.documentElement.classList.add("dark-mode");
-                document.body.classList.add("dark-mode");
-            } else {
-                darkModeToggle.checked = false;
-                document.documentElement.classList.remove("dark-mode");
-                document.body.classList.remove("dark-mode");
-            }
-
-
-            darkModeToggle.addEventListener("change", function () {
-
-                if (this.checked) {
-
-                    document.documentElement.classList.add("dark-mode");
-                    document.body.classList.add("dark-mode");
-
-                    localStorage.setItem("darkMode", "true");
-
-                } else {
-
-                    document.documentElement.classList.remove("dark-mode");
-                    document.body.classList.remove("dark-mode");
-
-                    localStorage.setItem("darkMode", "false");
-
-                }
-
-            });
-
 
             const tabs = document.querySelectorAll(".settings-tab");
             const sections = document.querySelectorAll(

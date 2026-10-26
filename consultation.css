@@ -1473,6 +1473,356 @@ img {
     color: #ffffff;
 }
 
+/* Match the health education page's clean cards and header alignment */
+
+body {
+    background:
+        radial-gradient(ellipse at 90% 0%, rgba(190, 221, 255, .28), transparent 34%),
+        var(--bg);
+    font-size: 14px;
+}
+
+.page-header {
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.page-header h1 {
+    position: relative;
+    width: fit-content;
+    margin-top: 0;
+    padding-bottom: 9px;
+    font-size: clamp(1.8rem, 2vw, 2.5rem);
+    line-height: 1.2;
+}
+
+.page-header h1::after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 48px;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #0759b7, #48a6e8);
+    content: "";
+}
+
+.page-header p {
+    color: var(--muted);
+    font-size: .9rem;
+    font-weight: 400;
+}
+
+.header-right {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-text {
+    padding: 7px 12px;
+    border: 1px solid #d7e0ec;
+    border-radius: 30px;
+    background: #fff;
+}
+
+.admin-text small {
+    font-size: .68rem;
+}
+
+.admin-text strong {
+    font-size: .85rem;
+}
+
+.ask-ai {
+    min-height: 38px;
+    padding: 9px 15px;
+    border: 0;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: #fff;
+    font-size: .78rem;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, .2);
+}
+
+.ask-ai:hover {
+    background: linear-gradient(135deg, #183276, #2f70d8);
+    box-shadow: 0 6px 16px rgba(30, 58, 138, .28);
+}
+
+.card,
+.patient-card,
+.record-tabs {
+    border-color: #d8e2ef;
+    border-radius: 12px;
+    box-shadow: 0 5px 18px rgba(25, 54, 91, .055);
+}
+
+.patient-card {
+    background: linear-gradient(135deg, #fff 70%, #f4f9ff);
+}
+
+.patient-information::before {
+    background: linear-gradient(145deg, #e3f1ff, #d5e8ff);
+}
+
+.patient-stat-column {
+    border-color: #e1e8f1;
+}
+
+.record-tabs {
+    gap: 4px;
+    padding: 5px;
+    background: #fff;
+}
+
+.record-tab {
+    border-radius: 8px;
+    color: #61718a;
+    font-size: .8rem;
+    transition: background .18s ease, color .18s ease;
+}
+
+.record-tab:hover {
+    background: #f1f6fd;
+    color: var(--blue);
+}
+
+.record-tab.active {
+    background: linear-gradient(135deg, #0759b7, #287ed0);
+    color: #fff;
+}
+
+.record-tab.active::after {
+    display: none;
+}
+
+.details-panel,
+.history-panel,
+.side-card {
+    padding: 18px;
+}
+
+.panel-title,
+.section-heading h2,
+.side-card-heading h2 {
+    color: #1b355b;
+    font-size: .95rem;
+}
+
+.consultation-card {
+    border-color: #e0e7f0;
+    border-radius: 9px;
+    transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+.consultation-card:hover {
+    border-color: #b8d4f4;
+    background: #f6faff;
+}
+
+.consultation-card.selected {
+    border-color: #75a9e4;
+    background: #edf6ff;
+    box-shadow: inset 3px 0 #2475c4;
+}
+
+.consultation-summary {
+    border-color: #d5e3f2;
+    border-radius: 9px;
+    background: linear-gradient(120deg, #f5f9ff, #f5f3ff);
+}
+
+.info-box,
+.exam-text,
+.assessment-box,
+.follow-up,
+.attachment {
+    border-color: #d8e2ef;
+    border-radius: 8px;
+    background: #f8faff;
+}
+
+.side-card table {
+    border-color: #d8e2ef;
+    border-radius: 8px;
+}
+
+.side-card th {
+    background: #edf5ff;
+    color: #294b73;
+}
+
+.section-actions button,
+.upload-button,
+.profile-button,
+.search-box button {
+    border-color: #d3deeb;
+    border-radius: 8px;
+}
+
+.new-consultation {
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0759b7, #287ed0);
+}
+
+.new-consultation:hover {
+    background: #064b98;
+}
+
+/* Keep consultation cards and header consistent with health education */
+
+.admin-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 12px;
+    border: 1px solid #d7e0ec;
+    border-radius: 30px;
+    background: #fff;
+}
+
+.admin-text {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    text-align: right;
+    line-height: 1.2;
+}
+
+.admin-photo {
+    display: flex;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    overflow: hidden;
+    border: 1px solid #d8e2ef;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.admin-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.card,
+.patient-card,
+.record-tabs {
+    border-color: #d8e2ef;
+    border-radius: 12px;
+    box-shadow: 0 5px 18px rgba(25, 54, 91, .055);
+}
+
+.patient-card {
+    background: linear-gradient(135deg, #fff 70%, #f4f9ff);
+}
+
+.patient-stat-column {
+    border-color: #e1e8f1;
+}
+
+.record-tabs {
+    gap: 4px;
+    padding: 5px;
+    background: #fff;
+}
+
+.record-tab {
+    border-radius: 8px;
+    color: #61718a;
+    font-size: .8rem;
+    transition: background .18s ease, color .18s ease;
+}
+
+.record-tab:hover {
+    background: #f1f6fd;
+    color: var(--blue);
+}
+
+.record-tab.active {
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0759b7, #287ed0);
+    color: #fff;
+}
+
+.record-tab.active::after {
+    display: none;
+}
+
+.details-panel,
+.history-panel,
+.side-card {
+    padding: 18px;
+}
+
+.panel-title,
+.section-heading h2,
+.side-card-heading h2 {
+    color: #1b355b;
+    font-size: .95rem;
+}
+
+.consultation-card {
+    border-color: #e0e7f0;
+    border-radius: 9px;
+    transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+.consultation-card:hover {
+    border-color: #b8d4f4;
+    background: #f6faff;
+}
+
+.consultation-card.selected {
+    border-color: #75a9e4;
+    background: #edf6ff;
+    box-shadow: inset 3px 0 #2475c4;
+}
+
+.consultation-summary {
+    border-color: #d5e3f2;
+    border-radius: 9px;
+    background: linear-gradient(120deg, #f5f9ff, #f5f3ff);
+}
+
+.info-box,
+.exam-text,
+.assessment-box,
+.follow-up,
+.attachment {
+    border-color: #d8e2ef;
+    border-radius: 8px;
+    background: #f8faff;
+}
+
+.side-card th {
+    background: #edf5ff;
+    color: #294b73;
+}
+
+.section-actions button,
+.upload-button,
+.profile-button,
+.search-box button {
+    border-color: #d3deeb;
+    border-radius: 8px;
+}
+
+.new-consultation {
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0759b7, #287ed0);
+}
+
+.new-consultation:hover {
+    background: #064b98;
+}
+
 /* LARGE TABLETS AND SMALL DESKTOPS */
 
 @media (max-width: 1450px) {
@@ -1613,7 +1963,8 @@ img {
     }
 
     .header-right {
-        align-items: flex-end;
+        flex-direction: row;
+        align-items: center;
         margin-left: auto;
     }
 
@@ -1817,4 +2168,14 @@ img {
         border: 0;
         box-shadow: none;
     }
+}
+
+.record-tab.active::after {
+    display: none;
+    content: none;
+}
+
+.page-header h1::after {
+    display: none;
+    content: none;
 }

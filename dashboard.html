@@ -7,6 +7,7 @@
     <title>Dashboard | Smart Assistant</title>
     <link rel="stylesheet" href="sidebar.css">
     <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="darkmode.css">
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script src="darkmode.js"></script>
@@ -28,30 +29,30 @@
                 </p>
             </div>
 
-            <div class="admin-profile">
-                <div class="admin-info">
-                    <span>You are logged in as:</span>
-                    <strong id="adminRole">ADMINISTRATOR</strong>
+            <div class="header-actions">
+                <div class="admin-profile">
+                    <div class="admin-info">
+                        <span>You are logged in as:</span>
+                        <strong id="adminRole">ADMIN</strong>
+                    </div>
+
+                    <div class="profile-image">
+                        <img src="logo.png" alt="Admin">
+                    </div>
                 </div>
 
-                <div class="profile-image">
-                    <img src="logo.png" alt="Admin">
-                </div>
+                <a href="ai-moto.html" class="ai-button">
+                    <i class="fas fa-robot"></i>
+                    Ask AI Moto
+                </a>
             </div>
-        </div>
-
-        <div class="ai-button-container">
-            <a href="ai-moto.html" class="ai-button">
-                <img src="icons/ai moto.png" alt="">
-                Ask AI Moto
-            </a>
         </div>
 
         <section class="summary-cards">
 
             <div class="summary-card">
                 <div class="summary-icon">
-                    <img src="icons/total registered patients.png" alt="">
+                    <i class="fas fa-users"></i>
                 </div>
                 <div class="summary-content">
                     <h3>Total Registered</h3>
@@ -62,7 +63,7 @@
 
             <div class="summary-card">
                 <div class="summary-icon">
-                    <img src="icons/maternal health.png" alt="">
+                   <i class="fa-solid fa-person-pregnant stat-icon"></i>
                 </div>
                 <div class="summary-content">
                     <h3>Active Maternal</h3>
@@ -73,7 +74,7 @@
 
             <div class="summary-card">
                 <div class="summary-icon">
-                    <img src="icons/infants and child monitoring.png" alt="">
+                    <i class="fas fa-baby"></i>
                 </div>
                 <div class="summary-content">
                     <h3>Infant and Child</h3>
@@ -84,7 +85,7 @@
 
             <div class="summary-card">
                 <div class="summary-icon">
-                    <img src="icons/tbdots cases.png" alt="">
+                    <i class="fas fa-pills"></i>
                 </div>
                 <div class="summary-content">
                     <h3>TB DOTS</h3>
@@ -95,7 +96,7 @@
 
             <div class="summary-card">
                 <div class="summary-icon">
-                    <img src="icons/low stock drugs alert.png" alt="">
+                    <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <div class="summary-content">
                     <h3>Low Stock Drugs</h3>
@@ -110,7 +111,7 @@
 
             <div class="dashboard-card schedule-card">
                 <div class="card-title">
-                    <img src="icons/appointment.png" alt="">
+                    <i class="fas fa-calendar-alt"></i>
                     <h2>Today's Schedule</h2>
                 </div>
 
@@ -130,7 +131,7 @@
             <!-- TODAY'S APPOINTMENTS -->
             <div class="dashboard-card appointment-card">
                 <div class="card-title">
-                    <img src="icons/appointment.png" alt="">
+                    <i class="fas fa-calendar-check"></i>
                     <h2>Today's Appointment</h2>
                 </div>
 
@@ -151,7 +152,7 @@
             <!-- ANNOUNCEMENTS -->
             <div class="dashboard-card announcements-card">
                 <div class="card-title">
-                    <img src="icons/announcement.png" alt="">
+                    <i class="fas fa-bullhorn"></i>
                     <h2>Announcements</h2>
                 </div>
 
@@ -211,7 +212,7 @@
             <!-- MEDICINE SUMMARY -->
             <div class="dashboard-card medicine-card">
                 <div class="card-title">
-                    <img src="icons/medicine inventory and issuance.png" alt="">
+                    <i class="fas fa-capsules"></i>
                     <h2>Medicine Inventory &amp; Issuance Summary</h2>
                 </div>
 
@@ -278,7 +279,7 @@
             <div class="program-grid">
 
                 <div class="program-item">
-                    <img src="icons/immunization and vaccination.png" alt="">
+                    <i class="fas fa-syringe"></i>
                     <div>
                         <span>Immunization &amp; Vaccination</span>
                         <strong id="progImmunizationCount">0</strong>
@@ -287,7 +288,7 @@
                 </div>
 
                 <div class="program-item">
-                    <img src="icons/maternal health.png" alt="">
+                    <i class="fas fa-mother"></i>
                     <div>
                         <span>Maternal Health</span>
                         <strong id="progMaternalCount">0</strong>
@@ -296,7 +297,7 @@
                 </div>
 
                 <div class="program-item">
-                    <img src="icons/infants and child monitoring.png" alt="">
+                    <i class="fas fa-baby"></i>
                     <div>
                         <span>Infant and Child Health</span>
                         <strong id="progChildCount">0</strong>
@@ -305,7 +306,7 @@
                 </div>
 
                 <div class="program-item">
-                    <img src="icons/tbdots cases.png" alt="">
+                    <i class="fas fa-pills"></i>
                     <div>
                         <span>TB DOTS</span>
                         <strong id="progTbCount">0</strong>
@@ -314,7 +315,7 @@
                 </div>
 
                 <div class="program-item">
-                    <img src="icons/health education.png" alt="">
+                    <i class="fas fa-graduation-cap"></i>
                     <div>
                         <span>Health Education</span>
                         <strong id="progHealthEduCount">0</strong>

@@ -31,7 +31,9 @@ html {
 
 body {
     min-height: 100vh;
-    background: var(--page-bg);
+    background:
+        radial-gradient(ellipse at 90% 0%, rgba(190, 221, 255, 0.28), transparent 34%),
+        var(--page-bg);
     color: var(--text);
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
@@ -53,9 +55,9 @@ img {
 .dashboard-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 24px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .dashboard-header h1 {
@@ -82,6 +84,13 @@ img {
     background: var(--card-bg);
     border: 1px solid var(--border);
     border-radius: 30px;
+}
+
+.header-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 12px;
 }
 
 .admin-info {
@@ -137,18 +146,13 @@ img {
     border-radius: 50%;
 }
 
-.ai-button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin: -8px 0 20px;
-}
-
 .ai-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 10px 16px;
+    min-height: 38px;
+    padding: 9px 15px;
     border: 0;
     border-radius: 24px;
     background: linear-gradient(135deg, #1e3a8a, #3b82f6);
@@ -190,7 +194,7 @@ img {
     overflow: hidden;
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 13px;
+    border-radius: 12px;
     box-shadow: var(--shadow);
 }
 
@@ -289,7 +293,7 @@ img {
     min-width: 0;
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 14px;
+    border-radius: 12px;
     box-shadow: var(--shadow);
 }
 
@@ -297,7 +301,7 @@ img {
     display: flex;
     flex-direction: column;
     min-height: 255px;
-    padding: 19px;
+    padding: 18px;
 }
 
 .card-title {
@@ -637,7 +641,7 @@ img {
     min-height: 76px;
     padding: 12px;
     border: 1px solid var(--border);
-    border-radius: 11px;
+    border-radius: 10px;
     background: #fff;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
@@ -750,13 +754,8 @@ img {
         font-size: clamp(24px, 5vw, 30px);
     }
 
-    .admin-profile {
+    .header-actions {
         align-self: flex-start;
-    }
-
-    .ai-button-container {
-        justify-content: flex-start;
-        margin-top: 0;
     }
 
     .summary-cards {
@@ -808,24 +807,26 @@ img {
         line-height: 1.55;
     }
 
-    .admin-profile {
+    .header-actions {
         width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .admin-profile {
+        width: auto;
         justify-content: flex-start;
-        padding: 8px 11px;
+        padding: 7px 10px;
     }
 
     .admin-info {
         text-align: left;
     }
 
-    .ai-button-container {
-        margin-bottom: 15px;
-    }
-
     .ai-button {
-        min-height: 40px;
-        padding: 10px 15px;
-        font-size: 12px;
+        min-height: 38px;
+        padding: 9px 12px;
+        font-size: 11px;
     }
 
     .summary-cards {
@@ -992,5 +993,115 @@ img {
     .appointment-list small {
         grid-column: 2;
         text-align: left;
+    }
+}
+
+/* Consistent, softer card styling */
+
+.summary-card,
+.dashboard-card,
+.health-programs {
+    border-color: #d8e2ef;
+    box-shadow: 0 5px 18px rgba(25, 54, 91, .055);
+}
+
+.summary-card {
+    background: linear-gradient(145deg, #fff 65%, #f5f9ff);
+}
+
+.dashboard-card,
+.health-programs {
+    border-radius: 12px;
+}
+
+.card-title {
+    padding-bottom: 11px;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.card-title h2 {
+    color: #1b355b;
+}
+
+.schedule-list div,
+.medicine-summary > div,
+.program-item {
+    border-color: #e0e7f0;
+    border-radius: 9px;
+}
+
+.schedule-list div {
+    background: #f6faff;
+}
+
+.medicine-summary > div,
+.program-item {
+    background: linear-gradient(145deg, #fff, #f8faff);
+}
+
+.program-item {
+    transition: border-color .18s ease, background .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+.program-item:hover {
+    transform: translateY(-1px);
+    border-color: #b8d4f4;
+    background: #f6faff;
+}
+
+.dashboard-header h1 {
+    font-size: clamp(28px, 2.2vw, 32px);
+    line-height: 1.2;
+}
+
+.dashboard-grid {
+    grid-auto-rows: minmax(255px, 1fr);
+    align-items: stretch;
+}
+
+.dashboard-card {
+    height: 100%;
+    min-height: 255px;
+}
+
+.card-title {
+    min-height: 38px;
+}
+
+.card-title h2 {
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.summary-card {
+    min-height: 100px;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-auto-rows: auto;
+    }
+
+    .dashboard-card {
+        height: auto;
+        min-height: 255px;
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard-header h1 {
+        font-size: clamp(24px, 6vw, 28px);
+    }
+
+    .dashboard-card {
+        min-height: 0;
+    }
+
+    .card-title {
+        min-height: 0;
+    }
+
+    .card-title h2 {
+        font-size: 14px;
     }
 }

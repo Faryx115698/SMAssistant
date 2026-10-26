@@ -1785,7 +1785,7 @@ body.modal-open {
    RESPONSIVE LAYOUT
 ====================================== */
 
-/* Wide screens: patient list, profile, right panel */
+/* Wide screens: patient list beside the profile and care information */
 @media (min-width: 1451px) {
     .maternal-layout {
         grid-template-columns:
@@ -1823,8 +1823,7 @@ body.modal-open {
     }
 }
 
-/* Laptop: profile actions move beside profile details,
-   and appointment cards flow below the main profile */
+/* Laptop: profile actions move beside profile details */
 @media (max-width: 1450px) {
     .maternal-layout {
         grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
@@ -2209,6 +2208,7 @@ body.modal-open {
     .record-tabs,
     .patient-list,
     .right-column,
+    .upcoming-appointments,
     .profile-actions,
     .add-visit,
     .disclaimer,
@@ -2233,5 +2233,228 @@ body.modal-open {
     .notes {
         box-shadow: none;
         break-inside: avoid;
+    }
+}
+
+/* Match the health education page's clean card and header styling */
+
+body {
+    background:
+        radial-gradient(ellipse at 90% 0%, rgba(190, 221, 255, .28), transparent 34%),
+        var(--bg);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.main-content {
+    padding-top: 20px;
+}
+
+.page-header {
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 16px;
+}
+
+.page-header h1 {
+    margin-top: 0;
+    font-size: clamp(1.8rem, 2vw, 2.5rem);
+    line-height: 1.2;
+}
+
+.page-header p {
+    color: var(--muted);
+    font-size: .9rem;
+}
+
+.header-right {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+}
+
+.admin-profile {
+    gap: 10px;
+    padding: 6px 12px;
+    border-color: #d7e0ec;
+}
+
+.admin-text small {
+    font-size: .68rem;
+}
+
+.admin-text strong {
+    font-size: .85rem;
+}
+
+.admin-photo {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    border-width: 1px;
+}
+
+.ask-ai {
+    min-height: 38px;
+    padding: 9px 15px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    font-size: .78rem;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, .2);
+}
+
+.ask-ai:hover {
+    background: linear-gradient(135deg, #183276, #2f70d8);
+    box-shadow: 0 6px 16px rgba(30, 58, 138, .28);
+}
+
+.card,
+.summary-grid .stat-card,
+.record-tabs,
+.side-card {
+    border-color: #d8e2ef;
+    border-radius: 12px;
+    box-shadow: 0 5px 18px rgba(25, 54, 91, .055);
+}
+
+.summary-grid .stat-card {
+    background: linear-gradient(145deg, #fff 65%, #f5f9ff);
+}
+
+.summary-grid .stat-card h3 {
+    color: #50627b;
+}
+
+.summary-grid .stat-card strong {
+    color: #17345c;
+}
+
+.summary-grid .stat-card small {
+    color: #738198;
+}
+
+.record-tabs {
+    gap: 4px;
+    padding: 5px;
+    background: #fff;
+}
+
+.record-tab {
+    border: 0;
+    border-radius: 8px;
+    color: #61718a;
+    font-size: .82rem;
+    transition: background .18s ease, color .18s ease;
+}
+
+.record-tab:hover {
+    background: #f1f6fd;
+    color: var(--blue);
+}
+
+.record-tab.active {
+    border-bottom-color: transparent;
+    background: linear-gradient(135deg, #0759b7, #287ed0);
+    color: #fff;
+}
+
+.patient-list-header {
+    background: linear-gradient(145deg, #fff, #f5f9ff);
+}
+
+.patient-list-header h2,
+.maternal-section-heading h2,
+.side-title h2 {
+    color: #1b355b;
+}
+
+.patients-scroll {
+    background: #f8faff;
+}
+
+.maternal-patient-item {
+    border-color: #e0e7f0;
+    border-radius: 9px;
+    transition: border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+.maternal-patient-item:hover {
+    border-color: #b8d4f4;
+    background: #f6faff;
+}
+
+.maternal-patient-item.selected {
+    border-color: #75a9e4;
+    background: #edf6ff;
+    box-shadow: inset 3px 0 #2475c4;
+}
+
+.patient-profile {
+    background: linear-gradient(135deg, #fff 70%, #f4f9ff);
+}
+
+.large-patient-icon {
+    background: linear-gradient(145deg, #f3e6ff, #e7d8fb);
+}
+
+.profile-strip {
+    border-color: #e4dcf2;
+    border-radius: 9px;
+    background: linear-gradient(120deg, #f7f1ff, #f1f7ff);
+}
+
+.anc-card th,
+.care-table th {
+    background: #edf5ff;
+    color: #294b73;
+}
+
+.anc-card tbody tr:nth-child(even),
+.care-table tbody tr:nth-child(even) {
+    background: #f9fbfe;
+}
+
+.anc-card tbody tr:hover,
+.care-table tbody tr:hover {
+    background: #f0f7ff;
+}
+
+.patient-search,
+.patient-risk-filter select,
+.profile-actions button {
+    border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        padding-top: 70px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .header-right {
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin-top: 0;
+    }
+
+    .admin-text {
+        text-align: right;
+    }
+}
+
+@media (max-width: 650px) {
+    .header-right {
+        align-items: center;
+        flex-direction: row;
+        gap: 9px;
+    }
+
+    .summary-grid .stat-card {
+        border-radius: 10px;
     }
 }
