@@ -2,11 +2,14 @@
 -- in the Supabase SQL Editor before enabling the live patient portal.
 -- A patient account must have a confirmed email matching exactly one patient record.
 -- Assign staff roles in auth.users.app_metadata using a trusted server/admin tool.
--- Deploy supabase/functions/invite-patient and allow your site's login.html?auth=setup
--- URL in Supabase Auth redirect URLs; configure email delivery for invitations.
-
+-- Deploy create-patient-account.
+-- During an in-person visit, the patient enters their own password on the
+-- staff-authorized registration screen; no email or SMS delivery is required.
 ALTER TABLE public.patients
-    ADD COLUMN IF NOT EXISTS portal_invited_at TIMESTAMPTZ;
+    ADD COLUMN IF NOT EXISTS portal_account_created_at TIMESTAMPTZ;
+
+DROP FUNCTION IF EXISTS public.consume_patient_account_setup_code(TEXT, TEXT);
+DROP TABLE IF EXISTS public.patient_account_setup_codes;
 
 CREATE OR REPLACE FUNCTION public.current_patient_id()
 RETURNS BIGINT
@@ -15,15 +18,19 @@ STABLE
 SECURITY DEFINER
 SET search_path = public, pg_temp
 AS $$
-    SELECT CASE WHEN count(*) = 1 THEN min(id) END
-    FROM public.patients
-    WHERE email IS NOT NULL
-      AND lower(email) = lower(auth.jwt() ->> 'email')
-      AND EXISTS (
-          SELECT 1 FROM auth.users u
-          WHERE u.id = auth.uid()
-            AND u.email_confirmed_at IS NOT NULL
-            AND lower(u.email) = lower(auth.jwt() ->> 'email')
+    SELECT CASE WHEN count(*) = 1 THEN min(p.id) END
+    FROM public.patients p
+    JOIN auth.users u ON u.id = auth.uid()
+    WHERE p.email IS NOT NULL
+      AND lower(p.email) = lower(u.email)
+      AND u.email_confirmed_at IS NOT NULL
+      AND lower(auth.jwt() -> 'app_metadata' ->> 'role') = 'patient'
+      AND (
+          auth.jwt() -> 'app_metadata' ->> 'patient_id' IS NULL
+          OR (
+              auth.jwt() -> 'app_metadata' ->> 'patient_id' ~ '^[0-9]+$'
+              AND (auth.jwt() -> 'app_metadata' ->> 'patient_id')::BIGINT = p.id
+          )
       )
 $$;
 

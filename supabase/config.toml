@@ -3,3 +3,6 @@ verify_jwt = true
 
 [functions.invite-staff]
 verify_jwt = true
+
+[functions.create-patient-account]
+verify_jwt = true

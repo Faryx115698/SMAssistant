@@ -848,6 +848,60 @@ function initFormHandlers() {
         });
     }
 
+    const changePasswordForm = document.getElementById("changePasswordForm");
+    if (changePasswordForm) {
+        changePasswordForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const button = document.getElementById("btnChangePassword");
+            const email = portalState.user && portalState.user.email;
+            const currentPassword = document.getElementById("currentPassword").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmNewPassword").value;
+            if (!email) {
+                showToast("Your account email is unavailable. Sign out and sign in again.", "error");
+                return;
+            }
+            if (newPassword.length < 12) {
+                showToast("Choose a new password with at least 12 characters.", "error");
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                showToast("The new password and confirmation do not match.", "error");
+                return;
+            }
+            if (newPassword === currentPassword) {
+                showToast("Choose a new password different from your current password.", "error");
+                return;
+            }
+
+            if (button) {
+                button.disabled = true;
+                button.textContent = "Updating...";
+            }
+            try {
+                const { error: reauthError } = await window.sb.auth.signInWithPassword({
+                    email,
+                    password: currentPassword
+                });
+                if (reauthError) throw reauthError;
+
+                const { error: updateError } = await window.sb.auth.updateUser({ password: newPassword });
+                if (updateError) throw updateError;
+
+                changePasswordForm.reset();
+                showToast("Your password has been changed.", "success");
+            } catch (error) {
+                console.error("Patient password change failed:", error);
+                showToast(`Could not change your password: ${error.message || "Please try again."}`, "error");
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = "Change Password";
+                }
+            }
+        });
+    }
+
     const btnSaveSettings = document.getElementById("btnSaveSettings");
     if (btnSaveSettings) {
         btnSaveSettings.addEventListener("click", function () {

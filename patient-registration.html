@@ -202,10 +202,7 @@
                                 New Patient
                             </h2>
 
-                            <p>
-                                Add a patient record and email the patient a secure link to set their portal password.
-                                Their date of birth verifies the record and is never used as a password.
-                            </p>
+                            <p>Add the patient record first. If the patient wants portal access, they can enter their own password afterward.</p>
 
                         </div>
 
@@ -369,7 +366,7 @@
 
                                     <i class="fa-solid fa-user-plus"></i>
 
-                                    Save Patient & Send Invite
+                                    Save Patient
 
                                 </button>
 
@@ -426,9 +423,9 @@
 
                         <div class="record-actions">
 
-                            <button type="button" id="portalInviteBtn" hidden>
-                                <i class="fa-solid fa-envelope"></i>
-                                <span>Send portal invite</span>
+                            <button type="button" id="portalPasswordBtn" hidden>
+                                <i class="fa-solid fa-key"></i>
+                                <span>Set up patient portal</span>
                             </button>
 
                             <button type="button" id="editPatientBtn" class="edit-patient-btn" title="Click to edit patient information">
@@ -444,6 +441,24 @@
                         </div>
 
                     </div>
+
+                    <section id="portalPasswordPanel" class="portal-account-setup" hidden aria-labelledby="portalPasswordHeading">
+                        <h3 id="portalPasswordHeading">Patient portal password</h3>
+                        <p>Give the patient the keyboard so they can enter and confirm their own password. Do not ask them to say it aloud. The password is sent securely to Supabase to create their sign-in; it is not saved to the patient record.</p>
+                        <form id="portalPasswordForm" autocomplete="off">
+                            <label>
+                                Patient's password (at least 8 characters)
+                                <input type="password" id="portalPassword" autocomplete="new-password" minlength="8" maxlength="128" required>
+                            </label>
+                            <label>
+                                Confirm password
+                                <input type="password" id="portalPasswordConfirm" autocomplete="new-password" minlength="8" maxlength="128" required>
+                            </label>
+                            <button type="submit" id="portalPasswordSubmit">Create portal account</button>
+                            <button type="button" id="portalPasswordCancel">Cancel</button>
+                        </form>
+                    </section>
+                    <p id="portalAccountStatus" class="portal-account-status" role="status" hidden></p>
 
                     <nav class="record-tabs">
 

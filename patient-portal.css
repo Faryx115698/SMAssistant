@@ -714,6 +714,13 @@ img {
     resize: vertical;
 }
 
+.password-guidance {
+    margin: -4px 0 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
 .btn-primary-submit {
     width: 100%;
     padding: 12px 20px;

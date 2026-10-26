@@ -247,15 +247,6 @@ form,
     z-index: 2;
 }
 
-.setup-help {
-    position: relative;
-    z-index: 2;
-    margin: 12px 0 18px;
-    color: #f1f1f5;
-    font-size: 14px;
-    line-height: 1.5;
-}
-
 .message.error {
     color: #ffdddd;
     background: rgba(170, 30, 30, 0.45);

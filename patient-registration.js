@@ -69,7 +69,7 @@ async function fetchLivePatients() {
                         contact_number: dbP.contact_number || existing.contact_number || "",
                         telephone: dbP.telephone || existing.telephone || "",
                         email: dbP.email || existing.email || "",
-                        portal_invited_at: dbP.portal_invited_at || existing.portal_invited_at || null,
+                        portal_account_created_at: dbP.portal_account_created_at || null,
                         address: dbP.address || existing.address || "",
                         status: dbP.status || "Active",
                         created_at: dbP.created_at || existing.created_at || "",
@@ -251,13 +251,7 @@ function populatePatientData(patientId) {
     setVal("pEmail", patient.email);
     setVal("pAddress", patient.address);
 
-    const portalInviteBtn = document.getElementById("portalInviteBtn");
-    if (portalInviteBtn) {
-        portalInviteBtn.hidden = !patient.email || !patient.birth_date || Boolean(patient.portal_invited_at);
-        portalInviteBtn.disabled = false;
-        const label = portalInviteBtn.querySelector("span");
-        if (label) label.textContent = "Send portal invite";
-    }
+    updatePortalAccountControls(patient);
 
     // 3. Health Profile Form Inputs
     setVal("hBloodType", patient.blood_type || "");
@@ -488,11 +482,27 @@ function initEventListeners() {
         });
     }
 
-    const portalInviteBtn = document.getElementById("portalInviteBtn");
-    if (portalInviteBtn) {
-        portalInviteBtn.addEventListener("click", async function () {
+    const portalPasswordBtn = document.getElementById("portalPasswordBtn");
+    const portalPasswordPanel = document.getElementById("portalPasswordPanel");
+    const portalPasswordCancel = document.getElementById("portalPasswordCancel");
+    const portalPasswordForm = document.getElementById("portalPasswordForm");
+    if (portalPasswordBtn) {
+        portalPasswordBtn.addEventListener("click", function () {
+            if (portalPasswordPanel) portalPasswordPanel.hidden = false;
+            document.getElementById("portalPassword")?.focus();
+        });
+    }
+    if (portalPasswordCancel) {
+        portalPasswordCancel.addEventListener("click", function () {
+            if (portalPasswordForm) portalPasswordForm.reset();
+            if (portalPasswordPanel) portalPasswordPanel.hidden = true;
+        });
+    }
+    if (portalPasswordForm) {
+        portalPasswordForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
             const patient = patientsList.find(item => item.id === selectedPatientId);
-            if (patient) await sendPatientPortalInvite(patient, portalInviteBtn);
+            if (patient) await createPatientPortalAccount(patient, portalPasswordForm);
         });
     }
 
@@ -690,8 +700,8 @@ function applyFilters() {
 async function handleSavePersonalForm() {
     const patient = patientsList.find(p => p.id === selectedPatientId);
     if (!patient) return;
+    const originalPatient = { ...patient };
     const originalEmail = String(patient.email || "").trim().toLowerCase();
-
     // Update patient object in memory
     patient.first_name = document.getElementById("pFirstName").value;
     patient.middle_name = document.getElementById("pMiddleName").value;
@@ -708,13 +718,19 @@ async function handleSavePersonalForm() {
     patient.telephone = document.getElementById("pTelephone").value;
     patient.email = document.getElementById("pEmail").value;
     patient.address = document.getElementById("pAddress").value;
-    const emailChanged = originalEmail !== String(patient.email || "").trim().toLowerCase();
-    if (emailChanged) patient.portal_invited_at = null;
-
+    const emailChanged = String(patient.email || "").trim().toLowerCase() !==
+        originalEmail;
+    if (emailChanged && patient.portal_account_created_at) {
+        Object.assign(patient, originalPatient);
+        populatePatientData(patient.id);
+        setPatientEditMode(false);
+        showNotice("This patient already has a portal account. Contact the administrator before changing the account email.", "error");
+        return;
+    }
     // Sync to Supabase if available
     if (window.sb && typeof isConfigured !== "undefined" && isConfigured) {
         try {
-            await window.sb.from("patients").update({
+            const { error } = await window.sb.from("patients").update({
                 first_name: patient.first_name,
                 middle_name: patient.middle_name,
                 last_name: patient.last_name,
@@ -728,11 +744,15 @@ async function handleSavePersonalForm() {
                 contact_number: patient.contact_number,
                 telephone: patient.telephone,
                 email: patient.email,
-                address: patient.address,
-                ...(emailChanged ? { portal_invited_at: null } : {})
+                address: patient.address
             }).eq("id", patient.id);
+            if (error) throw error;
         } catch (err) {
             console.warn("Supabase update error:", err);
+            Object.assign(patient, originalPatient);
+            showNotice(`Could not save the patient information to Supabase: ${err.message || err}`, "error");
+            populatePatientData(patient.id);
+            return;
         }
     }
 
@@ -909,7 +929,7 @@ async function handleSaveNewPatientForm() {
     }
     newPatient.id = patientInsert.data.id;
     newPatient.patient_code = patientInsert.data.patient_code || newCode;
-    newPatient.portal_invited_at = patientInsert.data.portal_invited_at || null;
+    newPatient.portal_account_created_at = patientInsert.data.portal_account_created_at || null;
     if (patientInsert.data.created_at) newPatient.created_at = patientInsert.data.created_at;
 
     let healthProfileWarning = "";
@@ -937,59 +957,91 @@ async function handleSaveNewPatientForm() {
     updateCounterCards();
     applyFilters();
     showSelectedPatientView(newPatient.id);
-    showNotice(`Patient ${firstName} ${lastName} (${newPatient.patient_code}) saved. Sending the portal invitation...`, "info");
-    await sendPatientPortalInvite(newPatient, document.getElementById("portalInviteBtn"), healthProfileWarning.trim());
+    const warning = healthProfileWarning.trim();
+    showNotice(
+        `Patient ${firstName} ${lastName} (${newPatient.patient_code}) saved. If they want portal access, they can enter their password using Set up patient portal.${warning ? ` ${warning}` : ""}`,
+        warning ? "error" : "success"
+    );
 }
 
-async function sendPatientPortalInvite(patient, button, existingWarning = "") {
-    if (!patient.email || !patient.birth_date) {
-        showNotice("A patient email and date of birth are required to send a portal invitation.", "error");
+function updatePortalAccountControls(patient) {
+    const button = document.getElementById("portalPasswordBtn");
+    const setup = document.getElementById("portalPasswordPanel");
+    const passwordForm = document.getElementById("portalPasswordForm");
+    const status = document.getElementById("portalAccountStatus");
+    if (button) {
+        button.hidden = !patient.email || Boolean(patient.portal_account_created_at);
+        button.disabled = false;
+    }
+    if (setup) setup.hidden = true;
+    if (passwordForm) passwordForm.reset();
+    if (status) {
+        status.hidden = !patient.portal_account_created_at;
+        status.textContent = patient.portal_account_created_at
+            ? "Patient portal account is set up. The patient can sign in using this record's email and password."
+            : "";
+    }
+}
+
+async function createPatientPortalAccount(patient, passwordForm) {
+    if (!patient.email) {
+        showNotice("Add and save an email address on the patient record before creating a portal account.", "error");
         return false;
     }
-    if (patient.portal_invited_at) {
-        showNotice("A portal invitation has already been sent to this patient's email.", "info");
+    if (patient.portal_account_created_at) {
+        showNotice("This patient already has a portal account.", "info");
         return false;
     }
 
-    const label = button && button.querySelector("span");
-    if (button) button.disabled = true;
-    if (label) label.textContent = "Sending...";
+    const password = document.getElementById("portalPassword").value;
+    const confirmation = document.getElementById("portalPasswordConfirm").value;
+    if (password.length < 8 || password.length > 128) {
+        showNotice("The patient password must be between 8 and 128 characters.", "error");
+        return false;
+    }
+    if (password !== confirmation) {
+        showNotice("The patient password entries do not match.", "error");
+        return false;
+    }
+
+    const submitButton = document.getElementById("portalPasswordSubmit");
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Creating account...";
+    }
     try {
-        const redirectTo = new URL("login.html?auth=setup", window.location.href).href;
-        const { data, error } = await window.sb.functions.invoke("invite-patient", {
-            body: {
-                patientId: patient.id,
-                email: patient.email,
-                birthDate: patient.birth_date,
-                redirectTo
-            }
+        const { data, error } = await window.sb.functions.invoke("create-patient-account", {
+            body: { patientId: patient.id, password }
         });
-        if (error) throw new Error(await getPatientInviteError(error));
-        if (!data || data.invited !== true) {
-            throw new Error("The invitation service did not confirm that an invitation was sent.");
+        if (error) throw new Error(await getPatientAccountError(error));
+        if (!data || data.created !== true) {
+            throw new Error("The service did not confirm that the patient portal account was created.");
         }
 
-        patient.portal_invited_at = data.invitedAt || new Date().toISOString();
-        if (button) {
-            button.hidden = true;
-            button.disabled = false;
-        }
-        const warnings = [existingWarning, data.warning].filter(Boolean);
-        showNotice(
-            `Portal setup invitation sent to ${patient.email}.${warnings.length ? ` ${warnings.join(" ")}` : ""}`,
-            warnings.length ? "error" : "success"
-        );
+        const createdAt = new Date().toISOString();
+        patient.portal_account_created_at = createdAt;
+        const listPatient = patientsList.find(item => item.id === patient.id);
+        if (listPatient) listPatient.portal_account_created_at = createdAt;
+        if (passwordForm) passwordForm.reset();
+        const panel = document.getElementById("portalPasswordPanel");
+        if (panel) panel.hidden = true;
+        updatePortalAccountControls(patient);
+        showNotice("Patient portal account created. The patient can now sign in with the email on this record and the password they entered.", "success");
         return true;
     } catch (error) {
-        console.error("Could not send patient portal invitation:", error);
-        if (button) button.disabled = false;
-        if (label) label.textContent = "Send portal invite";
-        showNotice(`Patient record saved, but the portal invitation was not sent: ${error.message}${existingWarning ? ` ${existingWarning}` : ""}`, "error");
+        console.error("Could not create patient portal account:", error);
+        showNotice(`Could not create the patient portal account: ${error.message || "Please try again."}`, "error");
         return false;
+    } finally {
+        if (passwordForm) passwordForm.reset();
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = "Create portal account";
+        }
     }
 }
 
-async function getPatientInviteError(error) {
+async function getPatientAccountError(error) {
     const response = error.context;
     if (response && typeof response.clone === "function") {
         try {
@@ -999,7 +1051,7 @@ async function getPatientInviteError(error) {
             // Keep the Supabase Functions error below when no JSON response is available.
         }
     }
-    return error.message || "Could not send the patient portal invitation.";
+    return error.message || "Could not create the patient portal account.";
 }
 
 function showNotice(msg, type = "success") {

@@ -101,6 +101,11 @@
                     <i class="fa-solid fa-gear"></i>
                     <span>Settings</span>
                 </button>
+
+                <button type="button" class="nav-item" data-tab="password">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Password &amp; Security</span>
+                </button>
             </nav>
 
             <!-- Registered Resident Card Bottom -->
@@ -383,6 +388,37 @@
                         <button type="button" class="btn-save-settings" id="btnSaveSettings">
                             Save Settings
                         </button>
+                    </div>
+                </section>
+
+                <section class="tab-pane" id="pane-password">
+                    <div class="page-header-box">
+                        <h2>Password &amp; Security</h2>
+                        <p>Change the password you use to sign in to your patient portal.</p>
+                    </div>
+
+                    <div class="ui-card">
+                        <form id="changePasswordForm">
+                            <div class="form-grid">
+                                <div class="form-group form-group-full">
+                                    <label class="form-label" for="currentPassword">Current password</label>
+                                    <input class="form-input" id="currentPassword" name="current_password"
+                                        type="password" autocomplete="current-password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="newPassword">New password</label>
+                                    <input class="form-input" id="newPassword" name="new_password"
+                                        type="password" autocomplete="new-password" minlength="12" maxlength="128" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="confirmNewPassword">Confirm new password</label>
+                                    <input class="form-input" id="confirmNewPassword" name="confirm_new_password"
+                                        type="password" autocomplete="new-password" minlength="12" maxlength="128" required>
+                                </div>
+                            </div>
+                            <p class="password-guidance">Use at least 12 characters. Avoid birthdays, names, and passwords used on other sites.</p>
+                            <button type="submit" class="btn-primary-submit" id="btnChangePassword">Change Password</button>
+                        </form>
                     </div>
                 </section>
 

@@ -7,14 +7,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!form || !email || !password) return;
 
-    const setupSection = document.getElementById("patientPasswordSetup");
-    if (new URLSearchParams(window.location.search).get("auth") === "setup" && setupSection) {
-        form.hidden = true;
-        setupSection.hidden = false;
-        initializePatientPasswordSetup();
-        return;
-    }
-
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -125,84 +117,4 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    async function initializePatientPasswordSetup() {
-        const setupForm = document.getElementById("patientPasswordSetupForm");
-        const setupMessage = document.getElementById("setupMessage");
-        const setupButton = document.getElementById("setupPasswordBtn");
-        if (!window.sb || typeof isConfigured === "undefined" || !isConfigured || !setupForm) {
-            showSetupMessage("Patient account setup is unavailable. Contact the health center.", "error");
-            return;
-        }
-
-        let sessionResult;
-        try {
-            sessionResult = await window.sb.auth.getSession();
-        } catch (sessionError) {
-            showSetupMessage(sessionError.message || "Could not validate this invitation. Ask the health center for help.", "error");
-            return;
-        }
-        const { data, error } = sessionResult;
-        if (error || !data.session) {
-            showSetupMessage("This invitation link is invalid or expired. Ask the health center to send a new invitation.", "error");
-            return;
-        }
-        if (String(data.session.user?.app_metadata?.role || "").toLowerCase() !== "patient") {
-            showSetupMessage("This link is not a valid patient invitation. Sign out and ask the health center to send a new link.", "error");
-            return;
-        }
-
-        setupForm.addEventListener("submit", async function (event) {
-            event.preventDefault();
-            const newPassword = document.getElementById("newPatientPassword").value;
-            const confirmPassword = document.getElementById("confirmPatientPassword").value;
-            if (newPassword.length < 10) {
-                showSetupMessage("Choose a password with at least 10 characters.", "error");
-                return;
-            }
-            if (newPassword !== confirmPassword) {
-                showSetupMessage("The passwords do not match.", "error");
-                return;
-            }
-
-            setupButton.disabled = true;
-            setupButton.textContent = "Saving...";
-            let passwordError;
-            try {
-                ({ error: passwordError } = await window.sb.auth.updateUser({ password: newPassword }));
-            } catch (updateError) {
-                setupButton.disabled = false;
-                setupButton.textContent = "Set Password";
-                showSetupMessage(updateError.message || "Could not set your password. Please try again.", "error");
-                return;
-            }
-            if (passwordError) {
-                setupButton.disabled = false;
-                setupButton.textContent = "Set Password";
-                showSetupMessage(passwordError.message, "error");
-                return;
-            }
-
-            let signOutError;
-            try {
-                ({ error: signOutError } = await window.sb.auth.signOut());
-            } catch (signOutException) {
-                showSetupMessage("Your password was set, but sign-out failed. Return to this page and sign in with your new password.", "error");
-                return;
-            }
-            if (signOutError) {
-                showSetupMessage("Your password was set, but sign-out failed. Return to this page and sign in with your new password.", "error");
-                return;
-            }
-            window.history.replaceState({}, document.title, window.location.pathname);
-            setupForm.hidden = true;
-            showSetupMessage("Password set successfully. You can now sign in to your patient portal.", "success");
-        });
-
-        function showSetupMessage(message, type) {
-            if (!setupMessage) return;
-            setupMessage.textContent = message;
-            setupMessage.className = `message ${type}`;
-            setupMessage.style.display = "block";
-        }
-    }
 });
