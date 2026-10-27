@@ -730,7 +730,7 @@ function initFormHandlers() {
             chat.appendChild(createElement("div", "user-message", text));
             input.value = "";
             try {
-                const { data, error } = await window.sb.functions.invoke("ai-moto", {
+                const { data, error } = await window.sb.functions.invoke("bright-service", {
                     body: { messages: [{ role: "user", text }] }
                 });
                 if (error) throw new Error(await getAiError(error));

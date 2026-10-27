@@ -4,11 +4,86 @@
 session_start();
 require_once __DIR__ . '/db.php';
 
-if (!isset($_SESSION["user"])) {
-    jsonError("Unauthorized", 401);
+function isConsultationStaffRole($role) {
+    $role = str_replace(' ', '_', strtolower(trim((string) $role)));
+    return in_array($role, [
+        'admin', 'administrator', 'staff', 'nurse', 'doctor',
+        'health_worker', 'midwife', 'records_staff'
+    ], true);
 }
 
-$adminName = $_SESSION["user"]["full_name"] ?? "ADMIN CYRON";
+function requireConsultationStaff() {
+    if (isset($_SESSION["user"])) {
+        $user = $_SESSION["user"];
+        $role = $user["role"] ?? "";
+        if (isConsultationStaffRole($role)) {
+            return $user["full_name"] ?? $user["name"] ?? "Health Center Staff";
+        }
+        jsonError("Your account is not authorized to save consultations.", 403);
+    }
+
+    $headers = function_exists('getallheaders')
+        ? array_change_key_case(getallheaders(), CASE_LOWER)
+        : [];
+    $authorization = $_SERVER["HTTP_AUTHORIZATION"] ?? $headers["authorization"] ?? "";
+    $apiKey = $_SERVER["HTTP_APIKEY"] ?? $headers["apikey"] ?? "";
+    if (!preg_match('/^Bearer\s+(.+)$/i', $authorization, $matches) || $apiKey === "") {
+        jsonError("Sign in with an authorized staff account to save consultations.", 401);
+    }
+
+    $context = stream_context_create([
+        "http" => [
+            "method" => "GET",
+            "header" => "apikey: " . $apiKey . "\r\nAuthorization: " . $authorization . "\r\n",
+            "timeout" => 10,
+            "ignore_errors" => true
+        ]
+    ]);
+
+    set_error_handler(function ($severity, $message, $file, $line) {
+        throw new ErrorException($message, 0, $severity, $file, $line);
+    });
+    try {
+        $authResponse = file_get_contents(
+            "https://xlsmuakkcicxwdllyrou.supabase.co/auth/v1/user",
+            false,
+            $context
+        );
+        $responseStatus = $http_response_header[0] ?? "";
+    } catch (Throwable $error) {
+        error_log("Consultation auth verification failed: " . $error->getMessage());
+        jsonError("Could not verify your staff session. Please try again.", 503);
+    } finally {
+        restore_error_handler();
+    }
+
+    if ($authResponse === false || !preg_match('/\s200\s/', $responseStatus)) {
+        jsonError("Your session is invalid or expired. Sign in again.", 401);
+    }
+
+    $user = json_decode($authResponse, true);
+    $metadata = $user["app_metadata"] ?? [];
+    $role = $metadata["role"] ?? "";
+    $roles = is_array($metadata["roles"] ?? null) ? $metadata["roles"] : [];
+    $roles = array_map(
+        static fn($metadataRole) => is_string($metadataRole) ? strtolower($metadataRole) : "",
+        $roles
+    );
+    $isStaffAdmin = ($metadata["staff_admin"] ?? false) === true
+        || ($metadata["staff_admin"] ?? "") === "true";
+    $isStaff = $isStaffAdmin
+        || isConsultationStaffRole($role)
+        || in_array("admin", $roles, true)
+        || in_array("administrator", $roles, true);
+
+    if (!$isStaff) {
+        jsonError("Your account is not authorized to save consultations.", 403);
+    }
+
+    return $user["user_metadata"]["full_name"] ?? $user["email"] ?? "Health Center Staff";
+}
+
+$adminName = requireConsultationStaff();
 
 // Ensure tables exist
 $conn->query("
