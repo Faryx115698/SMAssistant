@@ -429,8 +429,8 @@
                 <section class="tab-pane" id="pane-prescriptions">
                     <div class="prescriptions-header-row">
                         <div>
-                            <h2>Active Prescriptions &amp; Refills</h2>
-                            <p style="font-size: 13.5px; color: var(--text-muted);">Manage prescription refills provided by Barangay Talimundoc Pharmacy.</p>
+                            <h2>Prescription Records &amp; Refills</h2>
+                            <p style="font-size: 13.5px; color: var(--text-muted);">Review prescriptions recorded by the health center and request a refill.</p>
                         </div>
                         <button type="button" class="btn-request-refill-top" onclick="openNewRefillModal()">
                             <i class="fa-solid fa-plus"></i>
@@ -767,11 +767,11 @@
         </div>
     </div>
 
-    <!-- Modal 3: Rx Digital PDF Preview Modal -->
+    <!-- Modal 3: Prescription Record Copy -->
     <div class="modal-backdrop" id="modalRxPdf">
         <div class="modal-box" style="max-width: 600px;">
             <div class="modal-header">
-                <h3 class="modal-title">Digital Prescription Slip (Rx)</h3>
+                <h3 class="modal-title">Prescription Record Copy</h3>
                 <button type="button" class="modal-close-btn" onclick="closeModal('modalRxPdf')">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -780,7 +780,7 @@
                 <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 10px; margin-bottom: 14px;">
                     <h3 style="font-size: 16px; margin: 0; text-transform: uppercase;">Barangay Talimundoc Health Center</h3>
                     <p style="font-size: 12px; margin: 2px 0;">Orani, Bataan &bull; Republic of the Philippines</p>
-                    <p style="font-size: 11px; margin: 0; color: #475569;">OFFICIAL DIGITAL PRESCRIPTION</p>
+                    <p style="font-size: 11px; margin: 0; color: #475569;">PRESCRIPTION INFORMATION — PATIENT COPY</p>
                 </div>
 
                 <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 14px;">
@@ -788,20 +788,19 @@
                     <div><strong>Date:</strong> <span id="rxPdfDate"></span></div>
                 </div>
 
-                <div style="font-size: 28px; font-weight: bold; font-family: serif; color: #2563eb; margin: 10px 0 6px;">
-                    &#8478;
-                </div>
-
                 <div style="padding-left: 20px; margin-bottom: 20px;">
                     <h4 style="font-size: 17px; margin: 0; color: #0f172a;" id="rxPdfMedName"></h4>
                     <p style="font-size: 14px; margin-top: 4px; color: #334155;" id="rxPdfInstructions"></p>
-                    <p style="font-size: 12px; margin-top: 2px; color: #64748b;">Dispense #30 (Thirty) Tablets - Refill authorized</p>
                 </div>
 
                 <div style="text-align: right; margin-top: 30px; border-top: 1px solid #cbd5e1; padding-top: 10px;">
                     <div style="font-weight: bold; font-size: 14px;" id="rxPdfDoctor"></div>
-                    <div style="font-size: 11px; color: #64748b;">License No: <span id="rxPdfPrc"></span></div>
+                    <div style="font-size: 11px; color: #64748b;">License number: <span id="rxPdfPrc"></span></div>
                 </div>
+                <p style="font-size: 11px; margin: 16px 0 0; color: #475569;">
+                    Patient record copy only. This is not a valid prescription or authorization to dispense medication.
+                    Contact the health center for a signed prescription.
+                </p>
             </div>
             <div style="display: flex; gap: 10px;">
                 <button type="button" class="btn-primary-submit" onclick="printPatientDocument()">
@@ -830,16 +829,44 @@
                     <strong style="font-size: 15px;" id="modalConsultDate"></strong>
                 </div>
                 <div>
+                    <span class="form-label">Visit Type &amp; Status</span>
+                    <strong style="font-size: 14px;" id="modalConsultVisitStatus"></strong>
+                </div>
+                <div>
                     <span class="form-label">Diagnosis / Assessment</span>
                     <strong style="font-size: 15px; color: var(--primary);" id="modalConsultDiagnosis"></strong>
+                </div>
+                <div>
+                    <span class="form-label">Secondary Diagnosis</span>
+                    <strong style="font-size: 14px;" id="modalConsultSecondaryDiagnosis"></strong>
                 </div>
                 <div>
                     <span class="form-label">Attending Medical Personnel</span>
                     <strong style="font-size: 14px;" id="modalConsultDoctor"></strong>
                 </div>
                 <div>
-                    <span class="form-label">Clinical Notes &amp; Recommendations</span>
-                    <div style="background: var(--bg-subtle); padding: 14px; border-radius: 6px; font-size: 13.5px; color: var(--text-secondary); line-height: 1.5; border: 1px solid var(--border-color);" id="modalConsultNotes"></div>
+                    <span class="form-label">Chief Complaint</span>
+                    <div class="consult-summary-value" id="modalConsultComplaint"></div>
+                </div>
+                <div>
+                    <span class="form-label">History of Present Illness</span>
+                    <div class="consult-summary-value" id="modalConsultHistory"></div>
+                </div>
+                <div>
+                    <span class="form-label">Physical Examination</span>
+                    <div class="consult-summary-value" id="modalConsultPhysicalExam"></div>
+                </div>
+                <div>
+                    <span class="form-label">Plan / Treatment</span>
+                    <div class="consult-summary-value" id="modalConsultPlan"></div>
+                </div>
+                <div>
+                    <span class="form-label">Clinical Notes</span>
+                    <div class="consult-summary-value" id="modalConsultNotes"></div>
+                </div>
+                <div>
+                    <span class="form-label">Follow-up</span>
+                    <strong style="font-size: 14px;" id="modalConsultFollowUp"></strong>
                 </div>
             </div>
             <button type="button" class="btn-primary-submit" onclick="closeModal('modalConsultSummary')">

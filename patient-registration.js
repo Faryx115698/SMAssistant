@@ -5,6 +5,7 @@ let patientsList = [];
 let selectedPatientId = null;
 let currentFilter = "all";
 let isEditingPatient = false;
+let latestConsultationRequest = 0;
 
 document.addEventListener("DOMContentLoaded", function () {
     initTabs();
@@ -264,19 +265,14 @@ function populatePatientData(patientId) {
     const sLastDate = document.getElementById("summaryLastConsultDate");
     const sLastType = document.getElementById("summaryLastConsultType");
     if (sLastDate && sLastType) {
-        if (patient.lastConsultationDate) {
-            sLastDate.textContent = patient.lastConsultationDate;
-            sLastType.textContent = patient.lastConsultationType || "General Consultation";
-            sLastDate.style.display = "block";
-            sLastType.style.display = "block";
-            const noCons = document.getElementById("summaryNoConsultation");
-            if (noCons) noCons.style.display = "none";
-        } else {
-            sLastDate.style.display = "none";
-            sLastType.style.display = "none";
-            const noCons = document.getElementById("summaryNoConsultation");
-            if (noCons) noCons.style.display = "block";
+        sLastDate.style.display = "none";
+        sLastType.style.display = "none";
+        const noCons = document.getElementById("summaryNoConsultation");
+        if (noCons) {
+            noCons.textContent = "Loading consultation history...";
+            noCons.style.display = "block";
         }
+        loadLatestConsultationSummary(patient.id);
     }
 
     const sNextAppt = document.getElementById("summaryNextAppt");
@@ -327,6 +323,59 @@ function formatDate(dateStr) {
         }
     } catch (e) {}
     return dateStr;
+}
+
+async function loadLatestConsultationSummary(patientId) {
+    const requestId = ++latestConsultationRequest;
+    const dateElement = document.getElementById("summaryLastConsultDate");
+    const typeElement = document.getElementById("summaryLastConsultType");
+    const emptyElement = document.getElementById("summaryNoConsultation");
+    if (!window.sb) {
+        if (emptyElement && requestId === latestConsultationRequest) {
+            emptyElement.textContent = "Consultation history is unavailable.";
+        }
+        return;
+    }
+
+    try {
+        const { data, error } = await window.sb.from("consultations")
+            .select("consultation_date, visit_type")
+            .eq("patient_id", patientId)
+            .order("consultation_date", { ascending: false })
+            .order("consultation_time", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+        if (error) throw error;
+        if (requestId !== latestConsultationRequest) return;
+
+        if (data) {
+            if (dateElement) {
+                dateElement.textContent = formatDate(data.consultation_date);
+                dateElement.style.display = "block";
+            }
+            if (typeElement) {
+                typeElement.textContent = data.visit_type || "Consultation";
+                typeElement.style.display = "block";
+            }
+            if (emptyElement) emptyElement.style.display = "none";
+        } else {
+            if (dateElement) dateElement.style.display = "none";
+            if (typeElement) typeElement.style.display = "none";
+            if (emptyElement) {
+                emptyElement.textContent = "No consultation recorded.";
+                emptyElement.style.display = "block";
+            }
+        }
+    } catch (error) {
+        if (requestId !== latestConsultationRequest) return;
+        console.error("Could not load the patient's latest consultation:", error);
+        if (dateElement) dateElement.style.display = "none";
+        if (typeElement) typeElement.style.display = "none";
+        if (emptyElement) {
+            emptyElement.textContent = "Consultation history could not be loaded.";
+            emptyElement.style.display = "block";
+        }
+    }
 }
 
 // Render Patient List in Sidebar

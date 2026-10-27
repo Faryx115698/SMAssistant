@@ -2089,6 +2089,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 form.reset();
 
+                const prescriptionRows = document.getElementById("prescriptionRows");
+                if (prescriptionRows) {
+                    const rows = prescriptionRows.querySelectorAll(".prescription-row");
+                    rows.forEach((row, index) => {
+                        if (index > 0) {
+                            row.remove();
+                        } else {
+                            row.querySelectorAll("input").forEach((input) => {
+                                input.value = "";
+                            });
+                        }
+                    });
+                }
+
             }
 
             const activePatient = JSON.parse(
@@ -2189,11 +2203,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (modal && editButton) {
 
-
-
         editButton.addEventListener("click", function () {
 
-            modal.classList.add("show");
+            if (typeof window.openSelectedConsultationEditor === "function") {
+                window.openSelectedConsultationEditor();
+            } else {
+                alert("Select a consultation before editing.");
+            }
 
         });
 
@@ -2205,11 +2221,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (modal && historyEditButton) {
 
-
-
         historyEditButton.addEventListener("click", function () {
 
-            modal.classList.add("show");
+            if (typeof window.openSelectedConsultationEditor === "function") {
+                window.openSelectedConsultationEditor();
+            } else {
+                alert("Select a consultation before editing.");
+            }
 
         });
 
@@ -2405,9 +2423,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
         form.addEventListener("submit", async function(event) {
             event.preventDefault();
+            const submitButton = form.querySelector('button[type="submit"]');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.dataset.originalText = submitButton.textContent.trim();
+                submitButton.textContent = "Saving...";
+            }
 
             try {
-                if (!window.sb || typeof SUPABASE_ANON_KEY === "undefined") {
+                if (!window.sb) {
                     throw new Error("Authentication is not configured. Reload the page and sign in again.");
                 }
 
@@ -2418,26 +2442,128 @@ document.addEventListener("DOMContentLoaded", function () {
                     throw new Error("Your session has expired. Sign in again.");
                 }
 
-                const response = await fetch("api/consultations.php", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": `Bearer ${sessionData.session.access_token}`,
-                        "apikey": SUPABASE_ANON_KEY
-                    },
-                    body: new FormData(form)
-                });
-                const result = await response.json();
-
-                if (!response.ok || !result.success) {
-                    alert(result.error || "Failed to save consultation.");
-                    return;
+                const formData = new FormData(form);
+                const patientId = Number(formData.get("patient_id"));
+                const visitType = String(formData.get("visit_type") || "").trim();
+                const consultationDate = String(formData.get("consultation_date") || "");
+                const consultationTime = String(formData.get("consultation_time") || "");
+                if (!patientId || !visitType || !consultationDate || !consultationTime) {
+                    throw new Error("Complete the patient, date, time, and visit type before saving.");
                 }
 
-                alert(result.message || "Consultation saved successfully!");
+                const consultation = {
+                    patient_id: patientId,
+                    consultation_date: consultationDate,
+                    consultation_time: consultationTime,
+                    visit_type: visitType,
+                    status: String(formData.get("status") || "Completed"),
+                    provider_name: sessionData.session.user.user_metadata?.full_name
+                        || sessionData.session.user.email
+                        || "Health Center Staff",
+                    chief_complaint: String(formData.get("chief_complaint") || "").trim() || null,
+                    history_present_illness: String(formData.get("history_present_illness") || "").trim() || null,
+                    physical_examination: String(formData.get("physical_examination") || "").trim() || null,
+                    primary_diagnosis: String(formData.get("primary_diagnosis") || "").trim() || null,
+                    diagnosis_code: String(formData.get("diagnosis_code") || "").trim() || null,
+                    secondary_diagnosis: String(formData.get("secondary_diagnosis") || "").trim() || null,
+                    treatment_plan: String(formData.get("treatment_plan") || "").trim() || null,
+                    notes: String(formData.get("notes") || "").trim() || null,
+                    follow_up_date: String(formData.get("follow_up_date") || "") || null,
+                    follow_up_time: String(formData.get("follow_up_time") || "") || null
+                };
+                const consultationId = Number(formData.get("consultation_id")) || 0;
+                const consultationQuery = consultationId
+                    ? window.sb.from("consultations").update(consultation)
+                        .eq("id", consultationId).eq("patient_id", patientId)
+                    : window.sb.from("consultations").insert(consultation);
+                const { data: savedConsultation, error: consultationError } =
+                    await consultationQuery.select().single();
+                if (consultationError) throw consultationError;
+
+                const savedIdInput = form.querySelector('[name="consultation_id"]');
+                if (savedIdInput) savedIdInput.value = String(savedConsultation.id);
+
+                const numericValue = (name) => {
+                    const value = String(formData.get(name) || "").trim();
+                    return value ? Number(value) : null;
+                };
+                const vitalSigns = {
+                    consultation_id: savedConsultation.id,
+                    temperature: numericValue("temperature"),
+                    respiratory_rate: numericValue("respiratory_rate"),
+                    blood_pressure: String(formData.get("blood_pressure") || "").trim() || null,
+                    oxygen_saturation: numericValue("oxygen_saturation"),
+                    heart_rate: numericValue("heart_rate"),
+                    height: numericValue("height"),
+                    weight: numericValue("weight")
+                };
+                const { data: existingVitals, error: vitalsLookupError } = await window.sb
+                    .from("vital_signs").select("id").eq("consultation_id", savedConsultation.id)
+                    .order("created_at", { ascending: false }).limit(1).maybeSingle();
+                if (vitalsLookupError) {
+                    throw new Error(`Consultation saved, but vital signs could not be checked: ${vitalsLookupError.message}`);
+                }
+                if (existingVitals) {
+                    const { error } = await window.sb.from("vital_signs")
+                        .update(vitalSigns).eq("id", existingVitals.id);
+                    if (error) {
+                        throw new Error(`Consultation saved, but vital signs could not be saved: ${error.message}`);
+                    }
+                } else if (Object.values(vitalSigns).some((value, index) => index > 0 && value !== null)) {
+                    const { error } = await window.sb.from("vital_signs").insert(vitalSigns);
+                    if (error) {
+                        throw new Error(`Consultation saved, but vital signs could not be saved: ${error.message}`);
+                    }
+                }
+
+                const medicineValues = formData.getAll("medicine[]");
+                const prescriptions = medicineValues.map((medicine, index) => ({
+                    consultation_id: savedConsultation.id,
+                    medicine: String(medicine || "").trim(),
+                    dose: String(formData.getAll("dose[]")[index] || "").trim() || null,
+                    frequency: String(formData.getAll("frequency[]")[index] || "").trim() || null,
+                    duration: String(formData.getAll("duration[]")[index] || "").trim() || null,
+                    instructions: String(formData.getAll("instructions[]")[index] || "").trim() || null
+                })).filter((prescription) => prescription.medicine);
+                const { data: existingPrescriptions, error: prescriptionsLookupError } = await window.sb
+                    .from("prescriptions").select("id").eq("consultation_id", savedConsultation.id);
+                if (prescriptionsLookupError) {
+                    throw new Error(`Consultation saved, but prescriptions could not be checked: ${prescriptionsLookupError.message}`);
+                }
+                let insertedPrescriptionIds = [];
+                if (prescriptions.length) {
+                    const { data, error } = await window.sb.from("prescriptions")
+                        .insert(prescriptions).select("id");
+                    if (error) {
+                        throw new Error(`Consultation saved, but prescriptions could not be saved: ${error.message}`);
+                    }
+                    insertedPrescriptionIds = data.map((prescription) => prescription.id);
+                }
+                if (existingPrescriptions.length) {
+                    const { error } = await window.sb.from("prescriptions").delete()
+                        .in("id", existingPrescriptions.map((prescription) => prescription.id));
+                    if (error) {
+                        if (insertedPrescriptionIds.length) {
+                            const { error: rollbackError } = await window.sb.from("prescriptions")
+                                .delete().in("id", insertedPrescriptionIds);
+                            if (rollbackError) {
+                                console.error("Could not roll back replacement prescriptions:", rollbackError);
+                            }
+                        }
+                        throw new Error(`Consultation saved, but previous prescriptions could not be replaced: ${error.message}`);
+                    }
+                }
+
+                alert("Consultation record saved successfully.");
                 window.location.reload();
             } catch (error) {
                 console.error("Consultation save failed:", error);
-                alert("Unable to save consultation. Check your connection and try again.");
+                alert(error.message || "Unable to save consultation. Check your connection and try again.");
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = submitButton.dataset.originalText || "Save Consultation";
+                }
             }
         });
     });
@@ -2604,11 +2730,13 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const requestHeaders = {
-            "Authorization": `Bearer ${session.access_token}`,
-            "apikey": SUPABASE_ANON_KEY
-        };
+        let selectedConsultation = null;
+        let selectedVitalSigns = null;
+        let selectedPrescriptions = [];
         const renderConsultation = (consultation, vitalSigns, prescriptions) => {
+            selectedConsultation = consultation;
+            selectedVitalSigns = vitalSigns;
+            selectedPrescriptions = prescriptions || [];
             const dateTime = [
                 formatDate(consultation.consultation_date),
                 formatTime(consultation.consultation_time)
@@ -2687,7 +2815,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const button = document.createElement("button");
                 button.type = "button";
                 button.className = "history-item";
-                button.dataset.consultationId = String(consultation.consultation_id);
+                button.dataset.consultationId = String(consultation.id);
                 button.dataset.visitType = String(consultation.visit_type || "").toLowerCase();
                 const title = document.createElement("strong");
                 title.textContent = consultation.visit_type || "Consultation";
@@ -2707,26 +2835,87 @@ document.addEventListener("DOMContentLoaded", function () {
                 item.classList.toggle("active", item === button);
             });
             try {
-                const params = new URLSearchParams({
-                    patient_id: String(activePatient.id),
-                    consultation_id: String(consultation.consultation_id)
-                });
-                const response = await fetch(`api/consultations.php?${params}`, {
-                    headers: requestHeaders
-                });
-                const result = await response.json();
-                if (!response.ok || !result.success || !result.selectedConsultation) {
-                    throw new Error(result.error || "Could not load this consultation.");
-                }
+                const [vitalResult, prescriptionResult] = await Promise.all([
+                    window.sb.from("vital_signs").select("*")
+                        .eq("consultation_id", consultation.id)
+                        .order("created_at", { ascending: false }).limit(1),
+                    window.sb.from("prescriptions").select("*")
+                        .eq("consultation_id", consultation.id)
+                        .order("created_at", { ascending: true })
+                ]);
+                if (vitalResult.error) throw vitalResult.error;
+                if (prescriptionResult.error) throw prescriptionResult.error;
                 renderConsultation(
-                    result.selectedConsultation,
-                    result.vitalSigns,
-                    result.prescriptions
+                    consultation,
+                    vitalResult.data?.[0] || null,
+                    prescriptionResult.data || []
                 );
             } catch (error) {
                 console.error("Could not load consultation details:", error);
                 showHistoryMessage(error.message || "Could not load consultation details.");
             }
+        };
+
+        window.openSelectedConsultationEditor = () => {
+            if (!selectedConsultation) {
+                alert("Select a consultation before editing.");
+                return;
+            }
+            const form = document.getElementById("consultationForm");
+            if (!form) return;
+            const fieldNames = [
+                "patient_id", "consultation_date", "consultation_time", "visit_type",
+                "status", "chief_complaint", "history_present_illness",
+                "physical_examination", "primary_diagnosis", "diagnosis_code",
+                "secondary_diagnosis", "treatment_plan", "notes", "follow_up_date",
+                "follow_up_time"
+            ];
+            fieldNames.forEach((name) => {
+                const field = form.elements.namedItem(name);
+                if (field) field.value = selectedConsultation[name] || "";
+            });
+            form.elements.namedItem("consultation_id").value = String(selectedConsultation.id);
+
+            const rows = document.getElementById("prescriptionRows");
+            if (rows) {
+                rows.replaceChildren();
+                selectedPrescriptions.forEach((prescription) => {
+                    const row = document.createElement("div");
+                    row.className = "prescription-row";
+                    ["medicine", "dose", "frequency", "duration", "instructions"].forEach((name) => {
+                        const input = document.createElement("input");
+                        input.type = "text";
+                        input.name = `${name}[]`;
+                        input.placeholder = name === "medicine" ? "Medicine" : name[0].toUpperCase() + name.slice(1);
+                        input.value = prescription[name] || "";
+                        row.appendChild(input);
+                    });
+                    const removeButton = document.createElement("button");
+                    removeButton.type = "button";
+                    removeButton.className = "remove-prescription";
+                    removeButton.innerHTML = '<i class="fa-solid fa-trash"></i>';
+                    row.appendChild(removeButton);
+                    rows.appendChild(row);
+                });
+                if (!selectedPrescriptions.length) {
+                    document.getElementById("addPrescription")?.click();
+                }
+            }
+
+            const vitalFields = {
+                temperature: selectedVitalSigns?.temperature,
+                respiratory_rate: selectedVitalSigns?.respiratory_rate,
+                blood_pressure: selectedVitalSigns?.blood_pressure,
+                oxygen_saturation: selectedVitalSigns?.oxygen_saturation,
+                heart_rate: selectedVitalSigns?.heart_rate,
+                height: selectedVitalSigns?.height,
+                weight: selectedVitalSigns?.weight
+            };
+            Object.entries(vitalFields).forEach(([name, value]) => {
+                const field = form.elements.namedItem(name);
+                if (field) field.value = value ?? "";
+            });
+            document.getElementById("consultationModal")?.classList.add("show");
         };
 
         document.getElementById("historyTabSearch")?.addEventListener("input", renderList);
@@ -2741,20 +2930,17 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         try {
-            const params = new URLSearchParams({ patient_id: String(activePatient.id) });
-            const response = await fetch(`api/consultations.php?${params}`, {
-                headers: requestHeaders
-            });
-            const result = await response.json();
-            if (!response.ok || !result.success) {
-                throw new Error(result.error || "Could not load consultation history.");
-            }
-            consultations = Array.isArray(result.consultations) ? result.consultations : [];
+            const { data, error } = await window.sb.from("consultations").select("*")
+                .eq("patient_id", activePatient.id)
+                .order("consultation_date", { ascending: false })
+                .order("consultation_time", { ascending: false });
+            if (error) throw error;
+            consultations = Array.isArray(data) ? data : [];
             renderList();
             const first = consultations[0];
             if (first) {
                 const selectedButton = historyList.querySelector(
-                    `[data-consultation-id="${first.consultation_id}"]`
+                    `[data-consultation-id="${first.id}"]`
                 );
                 if (selectedButton) await selectConsultation(first, selectedButton);
             }

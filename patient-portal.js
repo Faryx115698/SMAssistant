@@ -244,10 +244,7 @@ function renderConsultations() {
         const actionCell = document.createElement("td");
         const button = createElement("button", "btn-view-summary", "View Summary");
         button.type = "button";
-        button.addEventListener("click", () => openConsultationSummaryModal(
-            date, diagnosis, consultation.provider_name || "Health center",
-            consultation.notes || consultation.treatment_plan || consultation.chief_complaint || "No additional notes are available."
-        ));
+        button.addEventListener("click", () => openConsultationSummaryModal(consultation));
         actionCell.appendChild(button);
         row.appendChild(actionCell);
         tableBody.appendChild(row);
@@ -916,7 +913,14 @@ function initFormHandlers() {
         });
     }
 
-    const preferences = JSON.parse(localStorage.getItem(`sm_patient_preferences_${portalState.user.id}`) || "{}");
+    let preferences = {};
+    try {
+        preferences = JSON.parse(
+            localStorage.getItem(`sm_patient_preferences_${portalState.user.id}`) || "{}"
+        );
+    } catch (error) {
+        console.warn("Could not read saved patient preferences:", error);
+    }
     ["prefSms", "prefEmergency", "prefEmail"].forEach(id => {
         const input = document.getElementById(id);
         if (input && typeof preferences[id] === "boolean") input.checked = preferences[id];
@@ -1099,13 +1103,33 @@ window.openRxPdfModal = function (med, instructions, doctor, prc, date) {
     openModal("modalRxPdf");
 };
 
-window.openConsultationSummaryModal = function (date, diagnosis, doctor, notes) {
+window.openConsultationSummaryModal = function (consultation) {
     const modal = document.getElementById("modalConsultSummary");
     if (!modal) return;
-    document.getElementById("modalConsultDate").textContent = date;
-    document.getElementById("modalConsultDiagnosis").textContent = diagnosis;
-    document.getElementById("modalConsultDoctor").textContent = doctor;
-    document.getElementById("modalConsultNotes").textContent = notes;
+    const setSummaryValue = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value || "Not recorded";
+    };
+    const followUp = [
+        consultation.follow_up_date ? formatPortalDate(consultation.follow_up_date) : "",
+        consultation.follow_up_time ? formatPortalTime(consultation.follow_up_time) : ""
+    ].filter(Boolean).join(" at ");
+
+    setSummaryValue("modalConsultDate", formatPortalDate(consultation.consultation_date));
+    setSummaryValue("modalConsultVisitStatus",
+        [consultation.visit_type, consultation.status].filter(Boolean).join(" · "));
+    setSummaryValue("modalConsultDiagnosis", [
+        consultation.primary_diagnosis,
+        consultation.diagnosis_code ? `(${consultation.diagnosis_code})` : ""
+    ].filter(Boolean).join(" "));
+    setSummaryValue("modalConsultSecondaryDiagnosis", consultation.secondary_diagnosis);
+    setSummaryValue("modalConsultDoctor", consultation.provider_name || "Health center");
+    setSummaryValue("modalConsultComplaint", consultation.chief_complaint);
+    setSummaryValue("modalConsultHistory", consultation.history_present_illness);
+    setSummaryValue("modalConsultPhysicalExam", consultation.physical_examination);
+    setSummaryValue("modalConsultPlan", consultation.treatment_plan);
+    setSummaryValue("modalConsultNotes", consultation.notes);
+    setSummaryValue("modalConsultFollowUp", followUp);
     openModal("modalConsultSummary");
 };
 

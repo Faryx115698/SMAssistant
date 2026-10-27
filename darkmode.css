@@ -1,15 +1,15 @@
 html.dark-mode,
 html.dark-mode body {
-    background: #111827 !important;
-    color: #e5e7eb !important;
+    background: #0b1220 !important;
+    color: #cbd5e1 !important;
 }
 
 html.dark-mode .main-content {
-    background: #111827 !important;
+    background: #0b1220 !important;
 }
 
 html.dark-mode main {
-    color: #e5e7eb;
+    color: #cbd5e1;
 }
 
 html.dark-mode .sidebar {
@@ -98,10 +98,10 @@ html.dark-mode .right-card,
 html.dark-mode .content-card,
 html.dark-mode .panel,
 html.dark-mode .table-card {
-    background: #1f2937 !important;
-    border-color: #374151 !important;
-    color: #e5e7eb !important;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35) !important;
+    background: #152238 !important;
+    border-color: #2a3a52 !important;
+    color: #d7e0ec !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
 }
 
 html.dark-mode .record-tabs,
@@ -120,9 +120,9 @@ html.dark-mode .section-actions button,
 html.dark-mode .upload-button,
 html.dark-mode .outline-button,
 html.dark-mode .cancel-button {
-    background: #1f2937 !important;
-    color: #e5e7eb !important;
-    border-color: #4b5563 !important;
+    background: #111c2e !important;
+    color: #d7e0ec !important;
+    border-color: #34445c !important;
 }
 
 html.dark-mode h1,
@@ -464,9 +464,9 @@ html.dark-mode .patient-list {
 }
 
 html.dark-mode .patient-card {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #f1f5f9 !important;
+    background: #152238 !important;
+    border-color: #2a3a52 !important;
+    color: #d7e0ec !important;
 }
 
 html.dark-mode .patient-card:hover {
@@ -541,12 +541,12 @@ html.dark-mode :is(.main-content, .content-body) :is(
     h1, h2, h3, h4, h5, h6,
     p, span, small, label, strong, b, em,
     li, td, th, dt, dd, figcaption
-):not([class*="badge"]):not([class*="status"]) {
-    color: #e5e7eb !important;
+):not([class*="badge"]):not([class*="status"]):not([class*="success"]):not([class*="warning"]):not([class*="danger"]):not([class*="error"]) {
+    color: #cbd5e1 !important;
 }
 
 html.dark-mode :is(.main-content, .content-body) :is(h1, h2, h3, h4, h5, h6) {
-    color: #f3f4f6 !important;
+    color: #f1f5f9 !important;
 }
 
 html.dark-mode .admin-profile {
@@ -632,4 +632,105 @@ html.dark-mode .main-content :is(.ask-ai, .ai-button, .header-button[href="ai-mo
         padding: 9px 12px !important;
         font-size: 11px !important;
     }
+}
+
+html.dark-mode .main-content :is(
+    .card, [class$="-card"], .panel, [class$="-panel"],
+    .details-panel, .history-detail, .history-sidebar,
+    .table-wrap, .table-container, .table-card, .list-container,
+    .content-section, .filter-card, .metric-card, .report-tabs,
+    .announcement-tools, .patient-list, .patient-list-header
+) {
+    background-color: #152238 !important;
+    border-color: #2a3a52 !important;
+    color: #d7e0ec !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+}
+
+html.dark-mode .main-content :is(
+    .search-box input, .search-box button, .filter-field input,
+    .filter-field select, .history-sidebar .search-box input,
+    .report-tab, .chip, .history-list .history-item,
+    .patient-search, .patient-list-empty, .history-empty-state,
+    .history-text-box, .history-vital-card, .chart-bar-track
+) {
+    background: #101b2c !important;
+    border-color: #2a3a52 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .main-content :is(
+    .history-list .history-item:hover,
+    .history-list .history-item.active,
+    .report-tab:hover,
+    .chip.active
+) {
+    background: #1b3554 !important;
+    border-color: #3b6b9f !important;
+    color: #eff6ff !important;
+}
+
+html.dark-mode .main-content :is(
+    .page-header p, .dashboard-header p, .page-title p,
+    .subtitle, .description, .muted, .text-muted,
+    .history-list .history-item small, .history-list .history-item span,
+    .history-vital-card label, .history-vital-card small
+) {
+    color: #94a3b8 !important;
+}
+
+html.dark-mode .main-content :is(
+    .history-list .history-item strong, .history-vital-card .vital-value,
+    .summary-content strong, .program-item strong
+) {
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .main-content :is(
+    .history-divider, .history-detail .section-heading,
+    .history-vital-card, .history-text-box
+) {
+    border-color: #2a3a52 !important;
+}
+
+html.dark-mode .main-content :is(
+    input, select, textarea
+) {
+    background-color: #0f1929 !important;
+    border-color: #34445c !important;
+    color: #e2e8f0 !important;
+    color-scheme: dark;
+}
+
+html.dark-mode .main-content :is(input, textarea)::placeholder {
+    color: #718096 !important;
+}
+
+html.dark-mode .main-content :is(input, select, textarea):focus {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.14) !important;
+}
+
+html.dark-mode .main-content :is(.table-wrap, .table-container) table,
+html.dark-mode .main-content table {
+    background: #152238 !important;
+    color: #cbd5e1 !important;
+}
+
+html.dark-mode .main-content :is(th, td) {
+    border-color: #2a3a52 !important;
+}
+
+html.dark-mode .main-content th {
+    background: #1b2b42 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark-mode .main-content tr:hover td {
+    background: #1b2b42 !important;
+}
+
+html.dark-mode .main-content .admin-profile {
+    background: #152238 !important;
+    border-color: #2a3a52 !important;
 }

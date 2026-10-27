@@ -1865,6 +1865,18 @@ img {
     text-align: center;
 }
 
+.consult-summary-value {
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--bg-subtle);
+    color: var(--text-secondary);
+    font-size: 13.5px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
 .portal-loading .tab-pane {
     display: none !important;
 }
