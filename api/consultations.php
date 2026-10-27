@@ -335,9 +335,9 @@ $vitalSigns = null;
 $prescriptions = [];
 
 if ($consultationId > 0) {
-    $stmt = $conn->prepare("SELECT * FROM consultations WHERE consultation_id = ? LIMIT 1");
+    $stmt = $conn->prepare("SELECT * FROM consultations WHERE consultation_id = ? AND user_id = ? LIMIT 1");
     if ($stmt) {
-        $stmt->bind_param("i", $consultationId);
+        $stmt->bind_param("ii", $consultationId, $patientId);
         $stmt->execute();
         $selectedConsultation = $stmt->get_result()->fetch_assoc();
         $stmt->close();

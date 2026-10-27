@@ -998,6 +998,35 @@ img {
     min-height: 120px;
 }
 
+.history-list .history-item {
+    display: grid;
+    gap: 4px;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #dfe6f0;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #334155;
+    text-align: left;
+    cursor: pointer;
+}
+
+.history-list .history-item:hover,
+.history-list .history-item.active {
+    border-color: #75a9e4;
+    background: #edf6ff;
+}
+
+.history-list .history-item strong {
+    font-size: 10px;
+}
+
+.history-list .history-item small,
+.history-list .history-item span {
+    color: #64748b;
+    font-size: 9px;
+}
+
 .patient-list-empty {
     display: flex;
     flex-direction: column;

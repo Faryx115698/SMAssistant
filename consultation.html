@@ -304,7 +304,7 @@
 
                                 <span>Date &amp; Time</span>
 
-                                <strong>
+                                <strong id="consultationDateTimeDisplay">
 
                                     May 10, 2026<br>
 
@@ -322,7 +322,7 @@
 
                                 <span>Conducted By</span>
 
-                                <strong>
+                                <strong id="consultationProviderDisplay">
 
                                     
 
@@ -338,7 +338,7 @@
 
                                 <span>Type of Visit</span>
 
-                                <strong>
+                                <strong id="consultationVisitTypeDisplay">
 
                                     General Consultation
 
@@ -354,7 +354,7 @@
 
                                 <span>Status</span>
 
-                                <strong class="completed">
+                                <strong class="completed" id="consultationStatusDisplay">
 
                                     Completed
 
@@ -378,7 +378,7 @@
 
 
 
-                                <div class="info-box">
+                                <div class="info-box" id="consultationChiefComplaintDisplay">
 
                                     
 
@@ -394,7 +394,7 @@
 
 
 
-                                <div class="info-box">
+                                <div class="info-box" id="consultationHistoryDisplay">
 
                                     
 
@@ -459,7 +459,7 @@
 
 
 
-                                <span>
+                                <span id="consultationPrimaryDiagnosisDisplay">
 
                                     
 
@@ -467,7 +467,7 @@
 
 
 
-                                <small>
+                                <small id="consultationDiagnosisCodeDisplay">
 
                                     
 
@@ -489,7 +489,7 @@
 
                             <div class="diagnosis-row">
 
-                                <span>
+                                <span id="consultationSecondaryDiagnosisDisplay">
 
                                     
 
@@ -553,7 +553,7 @@
 
 
 
-                                <tbody>
+                                <tbody id="consultationPrescriptionRows">
 
 
 
@@ -617,7 +617,7 @@
 
 
 
-                            <p>No prescriptions recorded.</p>
+                            <p id="consultationNoPrescriptions">No prescriptions recorded.</p>
 
 
 
@@ -653,7 +653,7 @@
 
 
 
-                                <strong>
+                                <strong id="consultationFollowUpDateDisplay">
 
                                     
 
@@ -661,7 +661,7 @@
 
 
 
-                                <span>
+                                <span id="consultationFollowUpTimeDisplay">
 
                                     
 
@@ -2536,6 +2536,233 @@ document.addEventListener("DOMContentLoaded", function () {
             viewBtn.href = 'patient-registration.html?patient_id=' + patient.id;
         }
     })();
+    </script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+        const historyList = document.getElementById("historyTabList");
+        if (!historyList) return;
+
+        const showHistoryMessage = (message) => {
+            const empty = document.createElement("div");
+            empty.className = "patient-list-empty";
+            const text = document.createElement("p");
+            text.textContent = message;
+            empty.appendChild(text);
+            historyList.replaceChildren(empty);
+        };
+        const setText = (id, value) => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value || "—";
+        };
+        const formatDate = (value) => {
+            if (!value) return "—";
+            const date = new Date(`${value}T12:00:00`);
+            return Number.isNaN(date.getTime())
+                ? value
+                : date.toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric"
+                });
+        };
+        const formatTime = (value) => {
+            if (!value) return "";
+            const [hours, minutes] = value.split(":");
+            const date = new Date();
+            date.setHours(Number(hours), Number(minutes), 0, 0);
+            return date.toLocaleTimeString(undefined, {
+                hour: "numeric",
+                minute: "2-digit"
+            });
+        };
+
+        let session;
+        try {
+            if (!window.sb || typeof SUPABASE_ANON_KEY === "undefined") {
+                throw new Error("Authentication is not configured. Reload the page and sign in again.");
+            }
+            const { data: sessionData, error: sessionError } =
+                await window.sb.auth.getSession();
+            if (sessionError) throw sessionError;
+            session = sessionData.session;
+            if (!session) throw new Error("Your session has expired. Sign in again.");
+        } catch (error) {
+            console.error("Could not load consultation history session:", error);
+            showHistoryMessage(error.message || "Could not authenticate to load consultation history.");
+            return;
+        }
+
+        let activePatient;
+        try {
+            activePatient = JSON.parse(localStorage.getItem("sm_active_patient") || "null");
+        } catch (error) {
+            console.error("Could not read the selected patient:", error);
+        }
+        if (!activePatient || !activePatient.id) {
+            showHistoryMessage("Select a patient to view consultation history.");
+            return;
+        }
+
+        const requestHeaders = {
+            "Authorization": `Bearer ${session.access_token}`,
+            "apikey": SUPABASE_ANON_KEY
+        };
+        const renderConsultation = (consultation, vitalSigns, prescriptions) => {
+            const dateTime = [
+                formatDate(consultation.consultation_date),
+                formatTime(consultation.consultation_time)
+            ].filter(Boolean).join(" · ");
+            setText("consultationDateTimeDisplay", dateTime);
+            setText("consultationProviderDisplay", consultation.provider_name);
+            setText("consultationVisitTypeDisplay", consultation.visit_type);
+            setText("consultationStatusDisplay", consultation.status);
+            setText("consultationChiefComplaintDisplay", consultation.chief_complaint);
+            setText("consultationHistoryDisplay", consultation.history_present_illness);
+            setText("consultationPrimaryDiagnosisDisplay", consultation.primary_diagnosis);
+            setText("consultationDiagnosisCodeDisplay", consultation.diagnosis_code);
+            setText("consultationSecondaryDiagnosisDisplay", consultation.secondary_diagnosis);
+            setText("consultationFollowUpDateDisplay", formatDate(consultation.follow_up_date));
+            setText("consultationFollowUpTimeDisplay", formatTime(consultation.follow_up_time));
+            setText("historyDetailTitle", `${consultation.visit_type || "Consultation"} · ${formatDate(consultation.consultation_date)}`);
+            setText("hVitalTemp", vitalSigns?.temperature);
+            setText("hVitalRR", vitalSigns?.respiratory_rate);
+            setText("hVitalBP", vitalSigns?.blood_pressure);
+            setText("hVitalO2", vitalSigns?.oxygen_saturation);
+            setText("hVitalHR", vitalSigns?.heart_rate);
+            setText("hVitalHeight", vitalSigns?.height);
+            setText("hVitalWeight", vitalSigns?.weight);
+            setText("hPhysicalExam", consultation.physical_examination);
+            setText("hAssessment", [
+                consultation.primary_diagnosis,
+                consultation.diagnosis_code ? `(${consultation.diagnosis_code})` : "",
+                consultation.secondary_diagnosis
+            ].filter(Boolean).join(" · "));
+            setText("hPlanTreatment", consultation.treatment_plan);
+            setText("hNotes", consultation.notes);
+
+            const rows = document.getElementById("consultationPrescriptionRows");
+            if (rows) {
+                rows.replaceChildren();
+                (prescriptions || []).forEach((prescription) => {
+                    const row = document.createElement("tr");
+                    ["medicine", "dose", "frequency", "duration"].forEach((field) => {
+                        const cell = document.createElement("td");
+                        cell.textContent = prescription[field] || "—";
+                        row.appendChild(cell);
+                    });
+                    rows.appendChild(row);
+                });
+            }
+            const noPrescriptions = document.getElementById("consultationNoPrescriptions");
+            if (noPrescriptions) noPrescriptions.hidden = Boolean(prescriptions && prescriptions.length);
+
+            const emptyState = document.getElementById("historyEmptyState");
+            if (emptyState) emptyState.style.display = "none";
+        };
+
+        let consultations = [];
+        let activeFilter = "all";
+        const renderList = () => {
+            const search = (document.getElementById("historyTabSearch")?.value || "").trim().toLowerCase();
+            const visible = consultations.filter((consultation) => {
+                const visitType = String(consultation.visit_type || "").toLowerCase();
+                const matchesFilter = activeFilter === "all"
+                    || (activeFilter === "general" && visitType.includes("general"))
+                    || (activeFilter === "followup" && visitType.includes("follow-up"));
+                const matchesSearch = `${visitType} ${consultation.status || ""} ${consultation.consultation_date || ""}`
+                    .toLowerCase().includes(search);
+                return matchesFilter && matchesSearch;
+            });
+
+            if (!visible.length) {
+                showHistoryMessage(consultations.length
+                    ? "No consultations match your search."
+                    : "No consultations recorded for this patient yet.");
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            visible.forEach((consultation) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "history-item";
+                button.dataset.consultationId = String(consultation.consultation_id);
+                button.dataset.visitType = String(consultation.visit_type || "").toLowerCase();
+                const title = document.createElement("strong");
+                title.textContent = consultation.visit_type || "Consultation";
+                const date = document.createElement("small");
+                date.textContent = formatDate(consultation.consultation_date);
+                const status = document.createElement("span");
+                status.textContent = consultation.status || "Completed";
+                button.append(title, date, status);
+                button.addEventListener("click", () => selectConsultation(consultation, button));
+                fragment.appendChild(button);
+            });
+            historyList.replaceChildren(fragment);
+        };
+
+        const selectConsultation = async (consultation, button) => {
+            historyList.querySelectorAll(".history-item").forEach((item) => {
+                item.classList.toggle("active", item === button);
+            });
+            try {
+                const params = new URLSearchParams({
+                    patient_id: String(activePatient.id),
+                    consultation_id: String(consultation.consultation_id)
+                });
+                const response = await fetch(`api/consultations.php?${params}`, {
+                    headers: requestHeaders
+                });
+                const result = await response.json();
+                if (!response.ok || !result.success || !result.selectedConsultation) {
+                    throw new Error(result.error || "Could not load this consultation.");
+                }
+                renderConsultation(
+                    result.selectedConsultation,
+                    result.vitalSigns,
+                    result.prescriptions
+                );
+            } catch (error) {
+                console.error("Could not load consultation details:", error);
+                showHistoryMessage(error.message || "Could not load consultation details.");
+            }
+        };
+
+        document.getElementById("historyTabSearch")?.addEventListener("input", renderList);
+        document.querySelectorAll(".history-filter-chips .chip").forEach((chip) => {
+            chip.addEventListener("click", () => {
+                document.querySelectorAll(".history-filter-chips .chip").forEach((item) => {
+                    item.classList.toggle("active", item === chip);
+                });
+                activeFilter = chip.dataset.hfilter || "all";
+                renderList();
+            });
+        });
+
+        try {
+            const params = new URLSearchParams({ patient_id: String(activePatient.id) });
+            const response = await fetch(`api/consultations.php?${params}`, {
+                headers: requestHeaders
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                throw new Error(result.error || "Could not load consultation history.");
+            }
+            consultations = Array.isArray(result.consultations) ? result.consultations : [];
+            renderList();
+            const first = consultations[0];
+            if (first) {
+                const selectedButton = historyList.querySelector(
+                    `[data-consultation-id="${first.consultation_id}"]`
+                );
+                if (selectedButton) await selectConsultation(first, selectedButton);
+            }
+        } catch (error) {
+            console.error("Could not load consultation history:", error);
+            showHistoryMessage(error.message || "Could not load consultation history.");
+        }
+    });
     </script>
 
 </body>
