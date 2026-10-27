@@ -1099,7 +1099,7 @@
 
 
 
-        <form method="POST">
+        <form method="POST" id="consultationForm">
 
 
 
@@ -1121,7 +1121,7 @@
 
                 name="patient_id"
 
-                value="1"
+                value=""
 
             >
 
@@ -2061,7 +2061,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const modal = document.getElementById("consultationModal");
 
-    const newButton = document.getElementById("newConsultationButton");
+    const newButton = document.getElementById("historyNewConsultBtn");
 
     const closeButton = document.getElementById("closeModal");
 
@@ -2085,13 +2085,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const form = modal.querySelector("form");
 
-
-
             if (form) {
 
                 form.reset();
 
             }
+
+            const activePatient = JSON.parse(
+                localStorage.getItem("sm_active_patient") || "null"
+            );
+            const patientIdInput = modal.querySelector('[name="patient_id"]');
+
+            if (!activePatient || !activePatient.id || !patientIdInput) {
+                alert("Select a patient before creating a consultation.");
+                return;
+            }
+
+            patientIdInput.value = String(activePatient.id);
 
 
 
@@ -2390,26 +2400,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById("consultationForm") || document.querySelector("form");
-        if (form) {
-            form.addEventListener("submit", async function(e) {
-                e.preventDefault();
-                const fd = new FormData(form);
-                fd.append("save_consultation", "1");
-                try {
-                    const res = await fetch("api/consultations.php", { method: "POST", body: fd });
-                    const d = await res.json();
-                    if (d.success) {
-                        alert(d.message || "Consultation saved successfully!");
-                        window.location.reload();
-                    } else {
-                        alert(d.error || "Failed to save consultation.");
-                    }
-                } catch(err) {
-                    alert("Network error saving consultation.");
+        const form = document.getElementById("consultationForm");
+        if (!form) return;
+
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            try {
+                const response = await fetch("api/consultations.php", {
+                    method: "POST",
+                    body: new FormData(form)
+                });
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    alert(result.error || "Failed to save consultation.");
+                    return;
                 }
-            });
-        }
+
+                alert(result.message || "Consultation saved successfully!");
+                window.location.reload();
+            } catch (error) {
+                console.error("Consultation save failed:", error);
+                alert("Unable to save consultation. Check your connection and try again.");
+            }
+        });
     });
     </script>
     <script src="sidebar.js"></script>
